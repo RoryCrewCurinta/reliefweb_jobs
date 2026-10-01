@@ -3,3 +3,6 @@
 *.duckdb.wal
 backup_*
 .env
+reliefweb_jobs.duckdb.tmp/
+__pycache__/
+*.pyc
