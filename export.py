@@ -26,6 +26,7 @@ TOP_ORGS = 150          # orgs that get their own monthly series
 TOP_ORGS_TOPICS = 100   # orgs in the org x topic x year table
 MIN_ORG_POSTS = 50      # tilt rows need this many org posts in the period
 GAP_RATIO = 0.6         # month flagged if below 60% of the median of the 12 months around it
+RECENT_MONTHS = 24      # months of org x topic x month detail (who is hiring for what, recently)
 
 
 BUNDLE = {}
@@ -142,6 +143,20 @@ def main():
                               "columns": ["org", "topic", "year", "title", "any"],
                               "rows": rows,
                               "org_year_totals": org_years})
+
+    # 4b. Org x topic x month for the most recent months, all top orgs (for "who is hiring for what" cards)
+    #     rows: [org_index into orgs.json, topic_index, month_index into "months" below, title, any]; title > 0 only
+    recent = months[-RECENT_MONTHS:]
+    ridx = {m: k for k, m in enumerate(recent)}
+    ai = {oid: k for k, oid in enumerate(ids)}
+    rrows = [[ai[o], ti[c], ridx[m], int(t), int(a)] for o, c, m, t, a in con.execute("""
+            SELECT jo.org_id, h.concept, strftime(jo.m, '%Y-%m'), sum(h.in_title::INT), count(*)
+            FROM jo JOIN concept_hits h ON h.job_id = jo.job_id
+            WHERE jo.org_id IN (SELECT unnest(?)) AND strftime(jo.m, '%Y-%m') >= ?
+            GROUP BY 1, 2, 3 HAVING sum(h.in_title::INT) > 0""", [ids, recent[0]]).fetchall() if c in ti and m in ridx]
+    write("org_topics_recent.json", {"months": recent,
+                                     "columns": ["org", "topic", "month", "title", "any"],
+                                     "rows": rrows})
 
     # 5. Flat yearly tables matching the design doc's data contract (CSV, one row per record)
     last_year = int(months[-1][:4])

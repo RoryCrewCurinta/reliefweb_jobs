@@ -125,16 +125,16 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 .card .nm{font-family:var(--font-display);font-weight:600;font-size:15px;line-height:1.25;min-width:0;overflow-wrap:anywhere}
 .card .mt{grid-column:2/4;font-size:12px;color:var(--muted)}
 .card .big{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--good);font-variant-numeric:tabular-nums;white-space:nowrap}
-.explain{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
-.ex{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:transparent;opacity:.72;transition:opacity .15s}
-.ex.on{background:var(--surface);border-color:var(--accent);opacity:1;box-shadow:inset 3px 0 0 var(--accent)}
-.ex h4{margin:0 0 4px;font-family:var(--font-display);font-size:14px}
-.ex h4 span{font-weight:400;color:var(--muted)}
-.ex p{margin:0 0 6px;font-size:13px;color:var(--ink-2)}
-.ex ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--ink-2);display:grid;gap:3px}
-.exstat{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}
-.exstat b{color:var(--ink);font-family:var(--font-display)}
-@media (max-width:860px){.cards{grid-template-columns:minmax(0,1fr)}.hotrow{grid-template-columns:minmax(0,1fr);gap:4px}.hotk{padding-top:0}.explain{grid-template-columns:minmax(0,1fr)}}
+@media (max-width:860px){.cards{grid-template-columns:minmax(0,1fr)}.hotrow{grid-template-columns:minmax(0,1fr);gap:4px}.hotk{padding-top:0}}
+.matchnote{margin:-4px 0 14px;font-size:12px;line-height:1.45;color:var(--muted);max-width:110ch}
+.matchnote b{color:var(--ink-2);font-weight:600}
+.soar{margin-top:28px}
+.combos{grid-template-columns:repeat(3,minmax(0,1fr))}
+.card .who{display:block;font-size:12px;font-weight:600;color:var(--accent-ink);text-transform:none;margin-bottom:1px}
+.card .ic.combo{background:var(--good-soft);color:var(--good)}
+.soarhead h3{font-size:17px;margin-bottom:2px}
+.soarhead{margin-bottom:12px}
+.soarhead .sub{margin:0;font-size:12.5px;color:var(--muted);max-width:110ch}
 .movers{width:100%;border-collapse:collapse;font-size:13.5px}
 .movers th{font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:0 6px 8px;border-bottom:1px solid var(--line)}
 .movers td{padding:8px 6px;border-bottom:1px solid var(--grid);vertical-align:middle}
@@ -218,7 +218,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 
   <section class="block" id="topics">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Topic trends</h2>
-      <p>Pick a group, then up to six topics. Choose how a post is counted for a topic below.</p></div>
+      <p>Pick a group, then up to six topics.</p></div>
     <div class="controls"><div class="chips" id="groupChips" role="group" aria-label="Topic group"></div></div>
     <div class="controls">
       <span><span class="ctl-label">Measure</span><span class="seg" id="measureSeg">
@@ -226,23 +226,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <span><span class="ctl-label">Match on</span><span class="seg" id="metricSeg">
         <button type="button" data-v="ti">Title</button><button type="button" data-v="an">Title or description</button></span></span>
     </div>
-    <div class="explain" id="explain">
-      <div class="ex" data-v="ti">
-        <h4>Title <span>· the role <em>is</em> the topic</span></h4>
-        <p>Counts a post only when the topic is named in the job title, such as "Cash &amp; Voucher Assistance Officer".</p>
-        <ul><li><b>Strong:</b> few false matches, and stable over time because titles are short and change little.</li>
-        <li><b>Weak:</b> misses roles where the topic is part of the job but not its name. Thin for digital and emerging topics.</li>
-        <li><b>Use for:</b> how much hiring is <em>for</em> this specialism.</li></ul>
-      </div>
-      <div class="ex" data-v="an">
-        <h4>Title or description <span>· the role <em>mentions</em> the topic</span></h4>
-        <p>Also counts posts that mention the topic anywhere in the ad, such as a WASH Officer asked to "coordinate with cash actors".</p>
-        <ul><li><b>Strong:</b> finds skills and expectations spread across many roles, and gives enough posts to track emerging topics.</li>
-        <li><b>Weak:</b> one passing mention is enough. Funder lines ("funded by USAID"), organisation blurbs and recruitment wording ("persons with disabilities are encouraged to apply") can count. Ads have also got longer, which nudges matches up over time.</li>
-        <li><b>Use for:</b> how widely a topic runs through humanitarian work.</li></ul>
-      </div>
-      <p class="exstat" id="exStat"></p>
-    </div>
+    <p class="matchnote"><b>Title</b> means the role is the topic. <b>Title or description</b> means the role mentions it: broader and noisier. Titles are the safer default; descriptions also catch skills spread across many roles and emerging topics, but a funder line or stock recruitment wording can count too.</p>
     <div class="grid2">
       <div class="panel">
         <h3 id="trendTitle"></h3>
@@ -291,6 +275,10 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <p class="sub">Topic share in this organisation's posts ÷ share across all posts. 2.0× means twice the sector rate. Topics with fewer than 10 of its posts are left out.</p>
         <ul class="tilt" id="tilt"></ul>
       </div>
+    </div>
+    <div class="soar">
+      <div class="soarhead"><h3>Who's hiring for what: last 6 months</h3><p class="sub" id="soarSub"></p></div>
+      <div class="cards combos" id="combos"></div>
     </div>
     <div class="panel" style="margin-top:20px">
       <div class="mvhead"><h3>Who's hiring <span id="omRecentLab">since 2025</span></h3>
@@ -474,7 +462,6 @@ document.getElementById("tableToggle").onclick=()=>{st.table=!st.table;renderTop
 document.querySelectorAll("#dirSeg button").forEach(b=>b.onclick=()=>{st.falling=b.dataset.v==="down";renderMovers();});
 
 function renderTopics(){
-  if(typeof renderExplain==='function')renderExplain();
   const g=GROUPS[st.g],watch=isWatch(g),measure=watch?"count":st.measure,k=st.metric;
   [...chipBox.children].forEach((b,i)=>b.setAttribute("aria-pressed",i===st.g));
   document.querySelectorAll("#measureSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.v===measure);b.disabled=watch&&b.dataset.v==="share";});
@@ -584,7 +571,8 @@ function adapt(R){
   const tIdx=new Map(ot.orgs.map((n,i)=>[n,i]));
   const orgs=R.orgs.orgs.map(o=>({n:o.name,short:o.short,m:o.jobs,y:toY(o.jobs,R.orgs.months),oi:tIdx.has(o.name)?tIdx.get(o.name):-1})).map(o=>(o.hasTilt=o.oi>=0,o));
   orgs.sort((a,b)=>b.y.reduce((x,y)=>x+y,0)-a.y.reduce((x,y)=>x+y,0));
-  return {years,total,months,topics,orgs,meta:R.meta,ot,nTiltOrgs:ot.orgs.length,mo:{months:R.orgs.months,total:R.orgs.months.map(m=>R.totals.jobs[R.totals.months.indexOf(m)]||0)}};
+  const rawOrgs=R.orgs.orgs.map(o=>o.name),rawTopics=R.topics.topics.map(t=>t.topic);
+  return {rawOrgs,rawTopics,ort:R.org_topics_recent,topicByName:new Map(topics.map(t=>[t.t,t])),orgByName:new Map(orgs.map(o=>[o.n,o])),years,total,months,topics,orgs,meta:R.meta,ot,nTiltOrgs:ot.orgs.length,mo:{months:R.orgs.months,total:R.orgs.months.map(m=>R.totals.jobs[R.totals.months.indexOf(m)]||0)}};
 }
 function tiltFor(o){
   const ot=D.ot,inP=y=>y>=P2[0]&&y<=P2[1];
@@ -608,12 +596,20 @@ function renderHot(){
   ho.innerHTML=orr.map(x=>{const nm=x.o.n.length>34&&x.o.short?x.o.short:x.o.n;return `<button type="button" class="card" data-i="${x.i}" title="${x.o.n}"><span class="ic">${ICON.org}</span><span class="nm">${nm}</span><span class="big">×${x.o.ratio.toFixed(1)}</span><span class="mt">${fmtN(x.o.rec)} posts since ${MO[rs].slice(0,4)} (${fmtN(x.o.base)} before)</span></button>`;}).join("");
   ho.querySelectorAll(".card").forEach(c=>c.onclick=()=>pickOrg(+c.dataset.i,true));
 }
-function renderExplain(){
-  const k=st.metric;document.querySelectorAll("#explain .ex").forEach(e=>e.classList.toggle("on",e.dataset.v===k));
-  const g=GROUPS[st.g];const ti=byG[g].reduce((s,t)=>s+sumR(t.ti,P2),0),an=byG[g].reduce((s,t)=>s+sumR(t.an,P2),0);
-  document.getElementById("exStat").innerHTML=ti?`In <b>${g}</b>, ${pLab(P2)}: <b>${fmtN(ti)}</b> title matches against <b>${fmtN(an)}</b> title-or-description matches, <b>${(an/ti).toFixed(0)}×</b> as many. Topics marked <span class="flag" style="margin-left:0">Review</span> have description matching still being checked.`:"";
+function renderSoar(){
+  const host=document.getElementById("combos"),sub=document.getElementById("soarSub");
+  const R=D.ort;if(!R||!R.rows.length){sub.textContent="Needs org_topics_recent in data.js: re-run export.py.";host.innerHTML="";return;}
+  const n=R.months.length,s6=n-6,b6=n-12;const tot=new Map(D.mo.months.map((m,i)=>[m,D.mo.total[i]]));
+  const tR=R.months.slice(s6).reduce((a,m)=>a+(tot.get(m)||0),0),tB=R.months.slice(b6,s6).reduce((a,m)=>a+(tot.get(m)||0),0);
+  sub.textContent=`Organisation and role-type pairs with the biggest rise in posts, ${mLab(R.months[s6])} – ${mLab(R.months[n-1])} against the 6 months before. Role type = topic named in the job title. Rise is adjusted for the change in total ReliefWeb posting; pairs need at least 8 posts in the last 6 months. Small numbers: read as signals.`;
+  const agg=new Map();R.rows.forEach(([o,t,m,ti])=>{if(m<b6)return;const k=o+"|"+t;const d=agg.get(k)||[0,0];d[m>=s6?1:0]+=ti;agg.set(k,d);});
+  const RO=D.rawOrgs,RT=D.rawTopics;
+  const list=[...agg].map(([k,[a,b]])=>{const [o,t]=k.split("|").map(Number);return {o:RO[o],t:RT[t],a,b,x:b-a*tR/tB};}).filter(c=>c.b>=8&&c.x>0&&D.topicByName.has(c.t)&&!isWatch(D.topicByName.get(c.t).g)).sort((p,q)=>q.x-p.x).slice(0,6);
+  host.innerHTML=list.map(c=>{const nm=c.o.length>30&&D.orgByName.get(c.o)?.short?D.orgByName.get(c.o).short:c.o;return `<button type="button" class="card" data-o="${c.o.replace(/"/g,"&quot;")}" data-t="${c.t}" title="${c.o} · ${c.t}"><span class="ic combo">${ICON.topic}</span><span class="nm"><span class="who">${nm}</span>${c.t}</span><span class="big">+${Math.round(c.x)}</span><span class="mt">${fmtN(c.b)} posts in the last 6 months (${fmtN(c.a)} before)</span></button>`;}).join("")||'<p class="sub">No pairs reach the minimum yet.</p>';
+  host.querySelectorAll(".card").forEach(c=>c.onclick=()=>{const i=D.orgs.findIndex(o=>o.n===c.dataset.o);if(i>=0)pickOrg(i,true);});
 }
-function renderAll(){renderVol();renderHot();renderExplain();renderTopics();renderMovers();renderOrgMovers();renderOrg();}
+function openTopic(name){const t=D.topics.find(x=>x.t===name);st.g=GROUPS.indexOf(t.g);st.metric="ti";const sl=slotsOf(t.g);if(!sl.includes(t.t)){const f=sl.indexOf(null);sl[f>=0?f:5]=t.t;}save();renderTopics();renderMovers();document.getElementById("topics").scrollIntoView({behavior:"smooth"});}
+function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderOrgMovers();renderOrg();}
 renderAll();
 let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(renderAll,120);});
 const mq=matchMedia("(prefers-color-scheme: dark)");mq.addEventListener&&mq.addEventListener("change",renderAll);
