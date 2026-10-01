@@ -115,6 +115,26 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 .combo li small{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
 .combo li[aria-selected="true"],.combo li:hover{background:var(--accent-soft);color:var(--accent-ink)}
 .combo li.none{color:var(--muted);cursor:default;background:none}
+.hotrow{display:grid;grid-template-columns:120px minmax(0,1fr);gap:14px;align-items:start;margin-bottom:12px}
+.hotk{font-family:var(--font-display);font-size:12px;text-transform:uppercase;letter-spacing:.06em;color:var(--muted);padding-top:16px}
+.cards{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:12px}
+.card{display:grid;grid-template-columns:40px minmax(0,1fr) auto;gap:4px 12px;align-items:center;text-align:left;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:14px;cursor:pointer;font:inherit;color:inherit;min-width:0}
+.card:hover{border-color:var(--accent)}
+.card .ic{grid-row:span 2;width:40px;height:40px;border-radius:50%;background:var(--accent-soft);color:var(--accent-ink);display:grid;place-items:center}
+.card .ic svg{width:20px;height:20px}
+.card .nm{font-family:var(--font-display);font-weight:600;font-size:15px;line-height:1.25;min-width:0;overflow-wrap:anywhere}
+.card .mt{grid-column:2/4;font-size:12px;color:var(--muted)}
+.card .big{font-family:var(--font-display);font-weight:700;font-size:22px;color:var(--good);font-variant-numeric:tabular-nums;white-space:nowrap}
+.explain{display:grid;grid-template-columns:repeat(2,minmax(0,1fr));gap:12px;margin-bottom:16px}
+.ex{border:1px solid var(--line);border-radius:var(--r);padding:12px 14px;background:transparent;opacity:.72;transition:opacity .15s}
+.ex.on{background:var(--surface);border-color:var(--accent);opacity:1;box-shadow:inset 3px 0 0 var(--accent)}
+.ex h4{margin:0 0 4px;font-family:var(--font-display);font-size:14px}
+.ex h4 span{font-weight:400;color:var(--muted)}
+.ex p{margin:0 0 6px;font-size:13px;color:var(--ink-2)}
+.ex ul{margin:0;padding-left:18px;font-size:12.5px;color:var(--ink-2);display:grid;gap:3px}
+.exstat{grid-column:1/-1;margin:0;font-size:12.5px;color:var(--muted)}
+.exstat b{color:var(--ink);font-family:var(--font-display)}
+@media (max-width:860px){.cards{grid-template-columns:minmax(0,1fr)}.hotrow{grid-template-columns:minmax(0,1fr);gap:4px}.hotk{padding-top:0}.explain{grid-template-columns:minmax(0,1fr)}}
 .movers{width:100%;border-collapse:collapse;font-size:13.5px}
 .movers th{font-weight:500;font-size:11.5px;text-transform:uppercase;letter-spacing:.05em;color:var(--muted);text-align:left;padding:0 6px 8px;border-bottom:1px solid var(--line)}
 .movers td{padding:8px 6px;border-bottom:1px solid var(--grid);vertical-align:middle}
@@ -189,15 +209,39 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     </div>
   </section>
 
+  <section class="block" id="hot">
+    <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Hot <span class="recLab">since Jan 2025</span></h2>
+      <p id="hotSub"></p></div>
+    <div class="hotrow"><span class="hotk">Topics</span><div class="cards" id="hotTopics"></div></div>
+    <div class="hotrow"><span class="hotk">Organisations</span><div class="cards" id="hotOrgs"></div></div>
+  </section>
+
   <section class="block" id="topics">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Topic trends</h2>
-      <p>Pick a group, then up to six topics. <b>Title</b> means the role is the topic. <b>Title or description</b> means the role mentions it: broader and noisier.</p></div>
+      <p>Pick a group, then up to six topics. Choose how a post is counted for a topic below.</p></div>
     <div class="controls"><div class="chips" id="groupChips" role="group" aria-label="Topic group"></div></div>
     <div class="controls">
       <span><span class="ctl-label">Measure</span><span class="seg" id="measureSeg">
         <button type="button" data-v="share">Share of posts</button><button type="button" data-v="count">Post count</button></span></span>
       <span><span class="ctl-label">Match on</span><span class="seg" id="metricSeg">
         <button type="button" data-v="ti">Title</button><button type="button" data-v="an">Title or description</button></span></span>
+    </div>
+    <div class="explain" id="explain">
+      <div class="ex" data-v="ti">
+        <h4>Title <span>· the role <em>is</em> the topic</span></h4>
+        <p>Counts a post only when the topic is named in the job title, such as "Cash &amp; Voucher Assistance Officer".</p>
+        <ul><li><b>Strong:</b> few false matches, and stable over time because titles are short and change little.</li>
+        <li><b>Weak:</b> misses roles where the topic is part of the job but not its name. Thin for digital and emerging topics.</li>
+        <li><b>Use for:</b> how much hiring is <em>for</em> this specialism.</li></ul>
+      </div>
+      <div class="ex" data-v="an">
+        <h4>Title or description <span>· the role <em>mentions</em> the topic</span></h4>
+        <p>Also counts posts that mention the topic anywhere in the ad, such as a WASH Officer asked to "coordinate with cash actors".</p>
+        <ul><li><b>Strong:</b> finds skills and expectations spread across many roles, and gives enough posts to track emerging topics.</li>
+        <li><b>Weak:</b> one passing mention is enough. Funder lines ("funded by USAID"), organisation blurbs and recruitment wording ("persons with disabilities are encouraged to apply") can count. Ads have also got longer, which nudges matches up over time.</li>
+        <li><b>Use for:</b> how widely a topic runs through humanitarian work.</li></ul>
+      </div>
+      <p class="exstat" id="exStat"></p>
     </div>
     <div class="grid2">
       <div class="panel">
@@ -210,6 +254,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       </div>
       <div class="panel">
         <div class="mvhead"><h3>Biggest movers</h3>
+          <span class="seg" id="mpSeg" aria-label="Period"><button type="button" data-v="recent" class="recLab">Since Jan 2025</button><button type="button" data-v="long" id="mpLong">Long view</button></span>
           <div class="dirseg" id="dirSeg" role="tablist" aria-label="Direction">
             <button type="button" role="tab" data-v="up" class="up"><span aria-hidden="true">▲</span> Rising</button><button type="button" role="tab" data-v="down" class="down"><span aria-hidden="true">▼</span> Falling</button>
           </div></div>
@@ -309,6 +354,17 @@ const LAST=Y.filter((y,i)=>M[i]===12).pop();
 const P2=[LAST-3,LAST],P1=[LAST-10,LAST-7];
 const pLab=p=>p[0]+"–"+String(p[1]).slice(2), pShort=p=>String(p[0]).slice(2)+"–"+String(p[1]).slice(2);
 document.querySelectorAll(".p2lab").forEach(e=>e.textContent=pLab(P2));
+const RECENT_START="2025-01";
+const MO=D.mo.months, rs=Math.max(0,MO.indexOf(RECENT_START)), len=MO.length-rs, bs=Math.max(0,rs-len);
+const mLab=m=>MON[+m.slice(5)-1]+" "+m.slice(0,4);
+const sumM=(a,i,j)=>{let s=0;for(let k=i;k<j;k++)s+=a[k];return s;};
+const totRecent=sumM(D.mo.total,rs,MO.length), totBase=sumM(D.mo.total,bs,rs);
+const R0=mLab(MO[rs]),R1=mLab(MO[MO.length-1]),B0=mLab(MO[bs]),B1=mLab(MO[rs-1]);
+document.querySelectorAll(".recLab").forEach(e=>e.textContent="Since "+R0);
+document.querySelectorAll("h2 .recLab").forEach(e=>e.textContent="since "+R0);
+document.getElementById("mpLong").textContent="Long view";
+/* topic change since the recent start: share of posts, recent window vs same length before */
+function topicRecent(t,k){const a=sumM(t[k==="ti"?"mti":"man"],bs,rs),b=sumM(t[k==="ti"?"mti":"man"],rs,MO.length);return {nA:a,nB:b,a:100*a/totBase,b:100*b/totRecent};}
 const GROUPS=[];const byG={};
 D.topics.forEach(t=>{if(!byG[t.g]){byG[t.g]=[];GROUPS.push(t.g);}byG[t.g].push(t);});
 GROUPS.sort((a,b)=>(a.startsWith("Watch")?1:0)-(b.startsWith("Watch")?1:0));
@@ -331,7 +387,7 @@ function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti
 let st={g:GROUPS.indexOf("Cross-cutting & inclusion"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
 try{const s=JSON.parse(localStorage.getItem("tv2")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv2",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,omMode:st.omMode,tilt:st.tilt}}));}catch(e){}}
+function save(){try{localStorage.setItem("tv2",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,mp:st.mp,omMode:st.omMode,tilt:st.tilt}}));}catch(e){}}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -418,6 +474,7 @@ document.getElementById("tableToggle").onclick=()=>{st.table=!st.table;renderTop
 document.querySelectorAll("#dirSeg button").forEach(b=>b.onclick=()=>{st.falling=b.dataset.v==="down";renderMovers();});
 
 function renderTopics(){
+  if(typeof renderExplain==='function')renderExplain();
   const g=GROUPS[st.g],watch=isWatch(g),measure=watch?"count":st.measure,k=st.metric;
   [...chipBox.children].forEach((b,i)=>b.setAttribute("aria-pressed",i===st.g));
   document.querySelectorAll("#measureSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.v===measure);b.disabled=watch&&b.dataset.v==="share";});
@@ -441,25 +498,25 @@ function renderTopics(){
 
 function spark(t,k,color){const v=t[k].map((c,i)=>c/T[i]).slice(1,-1);const w=64,h=20,mx=Math.max(...v)||1;const pts=v.map((a,i)=>`${(i*w/(v.length-1)).toFixed(1)},${(h-2-(h-4)*a/mx).toFixed(1)}`);const l=pts[pts.length-1].split(",");
   return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="${l[0]}" cy="${l[1]}" r="2.5" fill="${color}"/></svg>`;}
+function moverRows(k,mp){
+  if(mp==="recent")return D.topics.filter(t=>!isWatch(t.g)).map(t=>({t,...topicRecent(t,k)})).filter(r=>r.nA>=20&&r.nB>=20).map(r=>(r.r=r.b/r.a,r));
+  return D.topics.filter(t=>!isWatch(t.g)&&sumR(t[k],P1)>=20&&sumR(t[k],P2)>=20).map(t=>({t,a:share(t,k,P1),b:share(t,k,P2)})).map(r=>(r.r=r.b/r.a,r));}
+document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dataset.v;save();renderMovers();});
 function renderMovers(){
-  const k=st.metric;
-  document.getElementById("moverSub").textContent=`Share of posts with the topic ${k==="ti"?"in the title":"in the title or description"}, ${pLab(P1)} vs ${pLab(P2)}. Topics need at least 20 matching posts in each period. Watchlist excluded.`;
-  const rows=D.topics.filter(t=>!isWatch(t.g)&&sumR(t[k],P1)>=20&&sumR(t[k],P2)>=20).map(t=>({t,a:share(t,k,P1),b:share(t,k,P2)})).map(r=>(r.r=r.b/r.a,r));
+  const k=st.metric,mp=st.mp||"recent";
+  document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp));
+  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"in the title":"in the title or description"}, `+(mp==="recent"?`${R0} – ${R1} against the ${len} months before (${B0} – ${B1}).`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
+  const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
   document.querySelectorAll("#dirSeg button").forEach(b=>{const on=(b.dataset.v==="down")===st.falling;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
   document.getElementById("moverNote").textContent=`${st.falling?"Largest relative falls":"Largest relative rises"} of ${rows.length} topics`;
-  document.getElementById("movers").innerHTML=`<thead><tr><th>Topic</th><th class="hide-sm">${Y[0]}–${String(Y[Y.length-1]).slice(2)}</th><th class="n">${pShort(P1)}</th><th class="n">${pShort(P2)}</th><th class="n">Change</th></tr></thead><tbody>`+
+  document.getElementById("movers").innerHTML=`<thead><tr><th>Topic</th><th class="hide-sm">${Y[0]}–${String(Y[Y.length-1]).slice(2)}</th><th class="n">${mp==="recent"?"Before":pShort(P1)}</th><th class="n">${mp==="recent"?"Since "+MO[rs].slice(0,4):pShort(P2)}</th><th class="n">Change</th></tr></thead><tbody>`+
    rows.slice(0,8).map(r=>{const up=r.r>=1;const cls=up?"up":"down";const lab=up?"×"+r.r.toFixed(1):"−"+Math.round(100*(1-r.r))+"%";
      return `<tr><td>${r.t.t}${k==="an"&&REVIEW.has(r.t.t)?'<span class="flag">Review</span>':""}<div style="font-size:11.5px;color:var(--muted)">${r.t.g}</div></td><td class="hide-sm">${spark(r.t,k,css(up?"--accent":"--bad"))}</td><td class="n">${fmtS(r.a)}</td><td class="n">${fmtS(r.b)}</td><td class="n"><span class="pill ${cls}"><span aria-hidden="true">${up?"▲":"▼"}</span>${lab}</span></td></tr>`;}).join("")+"</tbody>";
 }
 
 /* organisations */
 /* recent-hiring window: Jan 2025 to latest month, against the same number of months just before */
-const RECENT_START="2025-01";
-const MO=D.mo.months, rs=Math.max(0,MO.indexOf(RECENT_START)), len=MO.length-rs, bs=Math.max(0,rs-len);
-const mLab=m=>MON[+m.slice(5)-1]+" "+m.slice(0,4);
-const sumM=(a,i,j)=>{let s=0;for(let k=i;k<j;k++)s+=a[k];return s;};
-const totRecent=sumM(D.mo.total,rs,MO.length), totBase=sumM(D.mo.total,bs,rs);
 D.orgs.forEach(o=>{o.rec=sumM(o.m,rs,MO.length);o.base=sumM(o.m,bs,rs);o.shR=100*o.rec/totRecent;o.shB=100*o.base/totBase;o.ratio=o.base?o.shR/o.shB:Infinity;});
 const rec=o=>o.rec;
 if(!D.orgs[st.org]||st.orgSet!==1){st.org=D.orgs.reduce((a,o,i)=>rec(o)>rec(D.orgs[a])?i:a,0);}
@@ -486,7 +543,6 @@ inp.value=D.orgs[st.org].n;
 let omMode=st.omMode||"top";
 document.querySelectorAll("#orgDirSeg button").forEach(b=>b.onclick=()=>{omMode=b.dataset.v;st.omMode=omMode;save();renderOrgMovers();});
 function renderOrgMovers(){
-  const R0=mLab(MO[rs]),R1=mLab(MO[MO.length-1]),B0=mLab(MO[bs]),B1=mLab(MO[rs-1]);
   document.getElementById("omRecentLab").textContent="since "+R0;
   document.querySelectorAll("#orgDirSeg button").forEach(b=>{const on=b.dataset.v===omMode;b.setAttribute("aria-pressed",on);b.setAttribute("aria-selected",on);});
   document.getElementById("omSub").textContent=omMode==="top"?`Most job posts ${R0} – ${R1} (${len} months). Change compares each organisation's share of all ReliefWeb posts with the ${len} months before (${B0} – ${B1}).`
@@ -523,7 +579,7 @@ function adapt(R){
   const ym=R.totals.months.map(m=>+m.slice(0,4));const years=[...new Set(ym)];
   const toY=(arr,ms)=>{const o=years.map(()=>0);arr.forEach((v,i)=>{o[years.indexOf(+ms[i].slice(0,4))]+=v;});return o;};
   const total=toY(R.totals.jobs,R.totals.months),months=years.map(y=>ym.filter(x=>x===y).length);
-  const topics=R.topics.topics.map(t=>({t:t.topic,g:t.group,ti:toY(t.title,R.topics.months),an:toY(t.any,R.topics.months)}));
+  const topics=R.topics.topics.map(t=>({t:t.topic,g:t.group,ti:toY(t.title,R.topics.months),an:toY(t.any,R.topics.months),mti:t.title,man:t.any}));
   const ot=R.org_topics||{orgs:[],rows:[],org_year_totals:[],topics:[]};
   const tIdx=new Map(ot.orgs.map((n,i)=>[n,i]));
   const orgs=R.orgs.orgs.map(o=>({n:o.name,short:o.short,m:o.jobs,y:toY(o.jobs,R.orgs.months),oi:tIdx.has(o.name)?tIdx.get(o.name):-1})).map(o=>(o.hasTilt=o.oi>=0,o));
@@ -539,7 +595,25 @@ function tiltFor(o){
   const mk=c=>Object.entries(hit).map(([ti,h])=>{const t=byName.get(ot.topics[ti]);const all=sumR(t[c===0?"ti":"an"],P2)/N;return [t.t,all&&nop?(h[c]/nop)/all:0,h[c],nop];}).filter(x=>x[2]>=10&&nop>=50).sort((a,b)=>b[1]-a[1]).slice(0,5);
   o.tt=mk(0);o.ta=mk(1);
 }
-function renderAll(){renderVol();renderTopics();renderMovers();renderOrgMovers();renderOrg();}
+const ICON={topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
+  org:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h3M8 12h3M8 16h3M3 21h18"/></svg>'};
+function renderHot(){
+  document.getElementById("hotSub").textContent=`The three topics and organisations whose share of ReliefWeb posts grew most between the ${len} months before ${R0} and ${R0} – ${R1}. Topics use job titles and need at least 20 posts in each period; organisations need 20 before and 50 since.`;
+  const tr=moverRows("ti","recent").sort((a,b)=>b.r-a.r).slice(0,3);
+  const ht=document.getElementById("hotTopics");
+  ht.innerHTML=tr.map(r=>`<button type="button" class="card" data-t="${r.t.t}"><span class="ic">${ICON.topic}</span><span class="nm">${r.t.t}</span><span class="big">×${r.r.toFixed(1)}</span><span class="mt">${r.t.g} · ${fmtN(r.nB)} posts since ${MO[rs].slice(0,4)} (${fmtN(r.nA)} before)</span></button>`).join("");
+  ht.querySelectorAll(".card").forEach(c=>c.onclick=()=>{const t=D.topics.find(x=>x.t===c.dataset.t);st.g=GROUPS.indexOf(t.g);st.metric="ti";const sl=slotsOf(t.g);if(!sl.includes(t.t)){const f=sl.indexOf(null);sl[f>=0?f:5]=t.t;}save();renderTopics();renderMovers();document.getElementById("topics").scrollIntoView({behavior:"smooth"});});
+  const orr=D.orgs.map((o,i)=>({o,i})).filter(x=>x.o.base>=20&&x.o.rec>=50).sort((a,b)=>b.o.ratio-a.o.ratio).slice(0,3);
+  const ho=document.getElementById("hotOrgs");
+  ho.innerHTML=orr.map(x=>{const nm=x.o.n.length>34&&x.o.short?x.o.short:x.o.n;return `<button type="button" class="card" data-i="${x.i}" title="${x.o.n}"><span class="ic">${ICON.org}</span><span class="nm">${nm}</span><span class="big">×${x.o.ratio.toFixed(1)}</span><span class="mt">${fmtN(x.o.rec)} posts since ${MO[rs].slice(0,4)} (${fmtN(x.o.base)} before)</span></button>`;}).join("");
+  ho.querySelectorAll(".card").forEach(c=>c.onclick=()=>pickOrg(+c.dataset.i,true));
+}
+function renderExplain(){
+  const k=st.metric;document.querySelectorAll("#explain .ex").forEach(e=>e.classList.toggle("on",e.dataset.v===k));
+  const g=GROUPS[st.g];const ti=byG[g].reduce((s,t)=>s+sumR(t.ti,P2),0),an=byG[g].reduce((s,t)=>s+sumR(t.an,P2),0);
+  document.getElementById("exStat").innerHTML=ti?`In <b>${g}</b>, ${pLab(P2)}: <b>${fmtN(ti)}</b> title matches against <b>${fmtN(an)}</b> title-or-description matches, <b>${(an/ti).toFixed(0)}×</b> as many. Topics marked <span class="flag" style="margin-left:0">Review</span> have description matching still being checked.`:"";
+}
+function renderAll(){renderVol();renderHot();renderExplain();renderTopics();renderMovers();renderOrgMovers();renderOrg();}
 renderAll();
 let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(renderAll,120);});
 const mq=matchMedia("(prefers-color-scheme: dark)");mq.addEventListener&&mq.addEventListener("change",renderAll);
