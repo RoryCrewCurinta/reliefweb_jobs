@@ -1,16 +1,30 @@
 """
 Harvest ReliefWeb jobs (incl. expired) into reliefweb_jobs.duckdb.
 
+Setup:
+  pip install -r requirements.txt
+  Put your approved appname in .env (never committed):
+    RELIEFWEB_APPNAME=your-approved-appname
+
 Usage:
-  pip install duckdb requests
-  python harvest.py --appname YOUR-APPROVED-APPNAME            # full backfill 2011->today
-  python harvest.py --appname YOUR-APPROVED-APPNAME --update   # only jobs changed since last run
+  python harvest.py            # full backfill 2011->today
+  python harvest.py --update   # only jobs changed since last run
+  python harvest.py --start 2020-01-01
 
 Pages month by month (avoids deep-offset limits) and upserts, so it is safe to
 stop and re-run at any time. API rows replace the body-less Power BI rows.
 """
-import argparse, time, datetime as dt
-import duckdb, requests
+import argparse
+import datetime as dt
+import os
+import time
+
+import duckdb
+import requests
+from dotenv import load_dotenv
+
+load_dotenv()
+APPNAME = os.environ.get("RELIEFWEB_APPNAME")
 
 API = "https://api.reliefweb.int/v2/jobs"
 DB = "reliefweb_jobs.duckdb"
@@ -78,13 +92,17 @@ def months(start, end):
 
 def main():
     ap = argparse.ArgumentParser()
-    ap.add_argument("--appname", required=True)
+    ap.add_argument("--appname", default=APPNAME,
+                    help="Override; defaults to RELIEFWEB_APPNAME from .env")
     ap.add_argument("--update", action="store_true")
     ap.add_argument("--start", default="2011-01-01")
     a = ap.parse_args()
+    if not a.appname:
+        ap.error("No appname: add RELIEFWEB_APPNAME=... to .env")
+
     con = duckdb.connect(DB)
     con.execute(open("schema.sql").read())
-    now = dt.datetime.utcnow().replace(microsecond=0)
+    now = dt.datetime.now(dt.timezone.utc).replace(tzinfo=None, microsecond=0)
 
     if a.update:
         last = con.execute("SELECT max(date_changed) FROM jobs WHERE data_source='api_v2'").fetchone()[0]
