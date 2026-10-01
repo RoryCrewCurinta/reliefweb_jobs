@@ -1,4 +1,4 @@
-   .venv/
-   *.duckdb
-   *.duckdb.wal
-   backup_*
+.venv/
+*.duckdb
+*.duckdb.wal
+backup_*
