@@ -6,3 +6,5 @@ backup_*
 reliefweb_jobs.duckdb.tmp/
 __pycache__/
 *.pyc
+llm_pilot/data/
+Claude outputs/

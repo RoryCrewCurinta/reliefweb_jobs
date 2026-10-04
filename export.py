@@ -27,6 +27,19 @@ TOP_ORGS_TOPICS = 100   # orgs in the org x topic x year table
 MIN_ORG_POSTS = 50      # tilt rows need this many org posts in the period
 GAP_RATIO = 0.6         # month flagged if below 60% of the median of the 12 months around it
 RECENT_MONTHS = 24      # months of org x topic x month detail (who is hiring for what, recently)
+# NGO classification (see docs/data/ORG_CLASSIFICATION.md)
+INCOME_FILE = Path("ref/wb_income_levels.csv")          # World Bank income groups
+OVERRIDES_FILE = Path("ref/org_class_overrides.csv")    # manual corrections, with reasons
+HOME_SHARE = 0.8        # "locally based" = at least this share of an NGO's located posts are in its home country
+MIN_LOCATED_POSTS = 1   # posts with a country needed to apply the test
+# Countries treated as one home for the test (cross-border responses run from next door)
+HOME_PAIRS = [{"Türkiye", "Syrian Arab Republic"}]
+# NGOs based in these countries are always "locally based", whatever the share: the Syria response is run
+# largely by Syrian and Turkish NGOs registered in Türkiye, which also post for neighbouring countries
+ALWAYS_LOCAL_HOMES = {"Türkiye", "Syrian Arab Republic"}
+NGO = "Non-governmental Organization"
+CLS_INTL, CLS_LOCAL, CLS_REGIONAL, CLS_UNKNOWN = ("International NGO", "Locally based NGO",
+                                                  "Regional NGO (global South base)", "NGO (home country unknown)")
 
 
 BUNDLE = {}
@@ -50,6 +63,61 @@ def write_csv(name, header, rows):
 
 def next_month(d):
     return (d.replace(day=28) + dt.timedelta(days=4)).replace(day=1)
+
+
+def classify_orgs(con):
+    """Split ReliefWeb's single 'NGO' type by where each NGO is based. Returns {org_id: class} for every
+    organisation with posts, and writes the full mapping to docs/data/org_classification.csv."""
+    income = {r["iso3"]: r["income_level"] for r in csv.DictReader(open(INCOME_FILE, encoding="utf-8"))}
+    over = {int(r["org_id"]): r for r in csv.DictReader(open(OVERRIDES_FILE, encoding="utf-8"))} \
+        if OVERRIDES_FILE.exists() else {}
+    located = {}
+    for oid, country, n in con.execute("""
+            SELECT jo.org_id, c.country, count(DISTINCT jo.job_id)
+            FROM jo JOIN job_countries c ON c.job_id = jo.job_id GROUP BY 1, 2""").fetchall():
+        located.setdefault(oid, {})[country] = int(n)
+    rows, cls = [], {}
+    for oid, name, otype, home, iso3, n in con.execute("""
+            SELECT jo.org_id, coalesce(g.org_name, any_value(o.org_name)), coalesce(g.org_type, any_value(t.org_type)),
+                   g.home_country, g.home_iso3, count(DISTINCT jo.job_id)
+            FROM jo LEFT JOIN orgs g ON g.org_id = jo.org_id
+                    LEFT JOIN org_types t ON t.org_id = jo.org_id
+                    LEFT JOIN job_orgs o ON o.org_id = jo.org_id AND o.job_id = jo.job_id
+            GROUP BY jo.org_id, g.org_name, g.org_type, g.home_country, g.home_iso3""").fetchall():
+        isos = [x for x in (iso3 or "").split(";") if x]
+        homes = {x.strip() for x in (home or "").split(";") if x.strip()}
+        for pair in HOME_PAIRS:
+            if homes & pair:
+                homes |= pair
+        levels = sorted({income.get(i, "Not classified") for i in isos})
+        loc = located.get(oid, {})
+        n_loc = sum(loc.values())
+        share = (sum(v for k, v in loc.items() if k in homes) / n_loc) if n_loc else None
+        basis, reason = "rule", ""
+        if otype != NGO:
+            c, basis = otype or "Other", "ReliefWeb type"
+        elif oid in over:
+            c, basis, reason = over[oid]["class"], "manual override", over[oid]["reason"]
+        elif not isos:
+            c, reason = CLS_UNKNOWN, "ReliefWeb lists no home country"
+        elif any(income.get(i) == "High income" for i in isos) or any(i not in income for i in isos):
+            c, reason = CLS_INTL, "home country is high-income (or not a country in the World Bank list)"
+        elif homes & ALWAYS_LOCAL_HOMES:
+            c, reason = CLS_LOCAL, "based in Türkiye or Syria: treated as locally based (Syria response)"
+        elif share is not None and n_loc >= MIN_LOCATED_POSTS and share >= HOME_SHARE:
+            c, reason = CLS_LOCAL, f"home country is low/middle-income and {share:.0%} of located posts are there"
+        else:
+            c, reason = CLS_REGIONAL, ("home country is low/middle-income but only "
+                                       f"{share:.0%} of located posts are there" if share is not None
+                                       else "home country is low/middle-income; no posts carry a country")
+        cls[oid] = c
+        rows.append((oid, name, otype, home, "; ".join(levels), int(n), n_loc,
+                     "" if share is None else round(share, 3), c, basis, reason))
+    rows.sort(key=lambda r: (-r[5], r[1] or ""))
+    write_csv("org_classification.csv", ["org_id", "organisation", "reliefweb_type", "home_country",
+              "home_income_level", "posts", "posts_with_country", "share_of_posts_in_home_country",
+              "class", "basis", "reason"], rows)
+    return cls
 
 
 def main():
@@ -157,6 +225,40 @@ def main():
     write("org_topics_recent.json", {"months": recent,
                                      "columns": ["org", "topic", "month", "title", "any"],
                                      "rows": rrows})
+
+    # 4c. Role dimensions straight from ReliefWeb fields (no text matching): jobs per month by
+    #     experience band, job type, organisation type and career category.
+    #     job_meta / org_types are filled by harvest.py (backfill once with: python harvest.py --meta).
+    have = {t for (t,) in con.execute("SELECT table_name FROM information_schema.tables").fetchall()}
+    dims = {}
+
+    def dim(name, sql):
+        d = {}
+        for v, m, n in con.execute(sql).fetchall():
+            if v is not None and m in idx:
+                d.setdefault(v, [0] * len(months))[idx[m]] = int(n)
+        dims[name] = [{"name": k, "jobs": d[k]} for k in sorted(d, key=lambda k: -sum(d[k]))]
+
+    if "job_meta" in have:
+        dim("experience", """SELECT x.experience, strftime(j.m, '%Y-%m'), count(*)
+                             FROM job_meta x JOIN j ON j.id = x.job_id GROUP BY 1, 2""")
+        dim("job_type", """SELECT x.job_type, strftime(j.m, '%Y-%m'), count(*)
+                           FROM job_meta x JOIN j ON j.id = x.job_id GROUP BY 1, 2""")
+    if "orgs" in have and INCOME_FILE.exists():
+        # ReliefWeb's types, with NGOs split by where they are based (docs/data/ORG_CLASSIFICATION.md).
+        # A job posted by organisations of two classes counts once for each.
+        con.execute("CREATE TEMP TABLE org_class (org_id BIGINT, cls VARCHAR)")
+        con.executemany("INSERT INTO org_class VALUES (?, ?)", list(classify_orgs(con).items()))
+        dim("org_type", """SELECT k.cls, strftime(jo.m, '%Y-%m'), count(DISTINCT jo.job_id)
+                           FROM jo JOIN org_class k ON k.org_id = jo.org_id GROUP BY 1, 2""")
+    elif "org_types" in have:
+        dim("org_type", """SELECT t.org_type, strftime(jo.m, '%Y-%m'), count(DISTINCT jo.job_id)
+                           FROM jo JOIN org_types t ON t.org_id = jo.org_id GROUP BY 1, 2""")
+    dim("career_category", """SELECT c.category, strftime(j.m, '%Y-%m'), count(DISTINCT c.job_id)
+                              FROM job_categories c JOIN j ON j.id = c.job_id GROUP BY 1, 2""")
+    tagged = series(con.execute("""SELECT strftime(j.m, '%Y-%m'), count(DISTINCT c.job_id)
+                                   FROM job_categories c JOIN j ON j.id = c.job_id GROUP BY 1""").fetchall())
+    write("roles.json", {"months": months, "dims": dims, "career_category_tagged": tagged})
 
     # 5. Flat yearly tables matching the design doc's data contract (CSV, one row per record)
     last_year = int(months[-1][:4])

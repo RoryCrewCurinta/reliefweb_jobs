@@ -15,6 +15,11 @@ CREATE TABLE IF NOT EXISTS job_orgs        (job_id BIGINT, org_name VARCHAR, org
 CREATE TABLE IF NOT EXISTS job_countries   (job_id BIGINT, country VARCHAR);
 CREATE TABLE IF NOT EXISTS job_categories  (job_id BIGINT, category VARCHAR);
 CREATE TABLE IF NOT EXISTS job_themes      (job_id BIGINT, theme VARCHAR);
+-- Extra ReliefWeb fields (filled by harvest.py; backfill with: python harvest.py --meta)
+CREATE TABLE IF NOT EXISTS job_meta        (job_id BIGINT, job_type VARCHAR, experience VARCHAR, city VARCHAR);
+CREATE TABLE IF NOT EXISTS org_types       (org_id BIGINT, org_type VARCHAR);
+-- ReliefWeb's organisation list: type and home country (refreshed by every harvest, or: python harvest.py --orgs)
+CREATE TABLE IF NOT EXISTS orgs            (org_id BIGINT, org_name VARCHAR, org_shortname VARCHAR, org_type VARCHAR, home_country VARCHAR, home_iso3 VARCHAR, status VARCHAR);
 
 -- Topic taxonomy: concept -> regex patterns (edit freely, then re-run matching)
 CREATE TABLE IF NOT EXISTS concepts (concept VARCHAR PRIMARY KEY, grp VARCHAR, description VARCHAR);

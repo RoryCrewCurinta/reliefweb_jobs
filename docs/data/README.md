@@ -28,6 +28,8 @@ Regenerate with `python export.py`. Never hand-edit these files.
 | `org_topic_tilt.csv` | organisation × topic × period × metric | `org, topic, period, metric, n_org_posts, n_org_topic_posts, org_share, all_share, tilt` |
 | `meta.json` | – | generated date, first/last month, total jobs, `possible_gaps`, rules |
 | `totals.json`, `topics.json`, `orgs.json`, `org_topics.json` | monthly versions | month axis in `months`; series aligned to it |
+| `roles.json` | value × month | jobs by experience band, job type, organisation class and career category (ReliefWeb's own fields, no text matching) |
+| `org_classification.csv` | organisation | ReliefWeb type, home country, share of posts at home, and class (International / Locally based / Regional NGO). Method: [ORG_CLASSIFICATION.md](ORG_CLASSIFICATION.md) |
 | `data.js` | – | all JSON files in one `window.RW_DATA` object, for pages opened from disk |
 
 **Tilt:** `org_share / all_share` for the same period and metric. 2 means the organisation hires for the topic twice as often as the sector. Periods are `2019-2022` and the last four complete years. Only organisations with at least 50 posts in the period are included. Filter on `n_org_topic_posts` too (suggest 10 or more) before showing a tilt: small counts give extreme ratios.
