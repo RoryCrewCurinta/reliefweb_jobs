@@ -2,26 +2,39 @@
 Export small summary JSON files for the dashboard from reliefweb_jobs.duckdb.
 
 Usage:
-  python export.py      # run after match.py; writes docs/data/*.json and docs/data/data.js
+  python export.py      # run after llm_pilot/classify.py load; writes docs/data/*.json and docs/data/data.js
 
 Rules (also written into meta.json so the dashboard can state them):
 - API rows only (data_source = 'api_v2'); the legacy Power BI rows are excluded.
 - The current, incomplete month is always dropped, so charts never end in a false cliff.
-- Topic counts: 'title' = matched in the job title (the role IS the topic);
-  'any' = matched in title or description (the role touches it).
+- Topics come from the llm_topics table: every ad was read by a language model and tagged against the
+  topic list in review/topics_v2_definitions.csv. Two levels are counted:
+  core = the job is this topic; duty = a substantial part of the job, but not its main subject.
+  In the JSON files the series are still called 'title' (= core) and 'any' (= core or duty), the names
+  the dashboard page reads. The CSV files use n_core, n_duty and n_core_or_duty.
+- The dashboard_name column of the topic list replaces the topic name where it is filled in.
+- Small topics (THIN_TOPICS below) are put in the Watchlist group, which the page shows as counts only.
 - A job with several organisations counts once for each of them.
 - Months far below their neighbours are flagged as possible data gaps.
 """
 import csv
 import datetime as dt
 import json
+import os
 import statistics
 from pathlib import Path
 
 import duckdb
 
 DB = "reliefweb_jobs.duckdb"
-OUT = Path("docs/data")
+OUT = Path(os.environ.get("EXPORT_OUT", "docs/data"))   # EXPORT_OUT lets a test run write elsewhere
+TOPICS_FILE = Path("review/topics_v2_definitions.csv")  # the topic list the model was given
+LLM_MODEL = "gpt-6-luna"                                 # which model's tags to chart
+WATCH_GROUP = "Watchlist (small topics)"
+# Too few core posts for a trend line (under about 160 across all years): shown as counts only
+THIN_TOPICS = {"Stablecoins & digital assets", "Group cash transfers", "Blockchain & crypto", "Biometrics",
+               "Humanitarian reset & reform", "Digital payments & financial service providers",
+               "Cash coordination", "Interoperability & data sharing"}
 TOP_ORGS = 150          # orgs that get their own monthly series
 TOP_ORGS_TOPICS = 100   # orgs in the org x topic x year table
 MIN_ORG_POSTS = 50      # tilt rows need this many org posts in the period
@@ -126,8 +139,29 @@ def main():
         con = duckdb.connect(DB, read_only=True)
     except duckdb.IOException as e:
         raise SystemExit(f"Database is in use (is match.py or harvest.py running?)\n{e}")
-    if con.execute("SELECT count(*) FROM concept_hits").fetchone()[0] == 0:
-        raise SystemExit("concept_hits is empty - run match.py first")
+    have_tables = {t for (t,) in con.execute("SELECT table_name FROM information_schema.tables").fetchall()}
+    if "llm_topics" not in have_tables or con.execute(
+            "SELECT count(*) FROM llm_topics WHERE model = ?", [LLM_MODEL]).fetchone()[0] == 0:
+        raise SystemExit(f"llm_topics has no rows for {LLM_MODEL} - run: "
+                         f"python llm_pilot/classify.py load --model {LLM_MODEL} --source all")
+
+    # Topic list: display name, group and order from the CSV the model was given
+    con.execute("CREATE TEMP TABLE tc (ord INTEGER, concept VARCHAR, grp VARCHAR, raw VARCHAR)")
+    con.executemany("INSERT INTO tc VALUES (?, ?, ?, ?)", [
+        (k, (r.get("dashboard_name") or "").strip() or r["topic"],
+         WATCH_GROUP if r["topic"] in THIN_TOPICS else r["group"], r["topic"])
+        for k, r in enumerate(csv.DictReader(open(TOPICS_FILE, encoding="utf-8-sig")))])
+    # One row per job and topic: in_title = tagged core, in_body = tagged duty (and not core)
+    con.execute("""CREATE TEMP TABLE hits AS
+        SELECT l.job_id, t.concept, bool_or(l.level = 'core') AS in_title,
+               NOT bool_or(l.level = 'core') AS in_body
+        FROM llm_topics l JOIN tc t ON t.raw = l.topic
+        WHERE l.model = ? AND l.level IN ('core', 'duty')
+        GROUP BY 1, 2""", [LLM_MODEL])
+    unknown = con.execute("""SELECT DISTINCT topic FROM llm_topics
+                             WHERE model = ? AND topic NOT IN (SELECT raw FROM tc)""", [LLM_MODEL]).fetchall()
+    if unknown:
+        print("  topics in llm_topics that are not in the topic list (ignored):", [u[0] for u in unknown])
 
     cutoff = dt.date.today().replace(day=1)   # start of current month: excluded
     con.execute(f"""CREATE TEMP TABLE j AS
@@ -166,11 +200,11 @@ def main():
             gaps.append({"month": months[i], "jobs": n, "neighbour_median": int(med)})
 
     # 2. Topics per month
-    topics = con.execute("SELECT concept, grp FROM concepts ORDER BY grp, concept").fetchall()
+    topics = con.execute("SELECT concept, grp FROM tc ORDER BY ord").fetchall()
     tdata = {c: {"title": [0] * len(months), "any": [0] * len(months)} for c, _ in topics}
     for c, m, t, a in con.execute("""
             SELECT h.concept, strftime(j.m, '%Y-%m'), sum(h.in_title::INT), count(*)
-            FROM concept_hits h JOIN j ON j.id = h.job_id GROUP BY 1, 2""").fetchall():
+            FROM hits h JOIN j ON j.id = h.job_id GROUP BY 1, 2""").fetchall():
         if c in tdata:
             tdata[c]["title"][idx[m]] = int(t)
             tdata[c]["any"][idx[m]] = int(a)
@@ -201,7 +235,7 @@ def main():
     ti = {c: k for k, (c, _) in enumerate(topics)}
     rows = [[oi[o], ti[c], int(y), int(t), int(a)] for o, c, y, t, a in con.execute("""
             SELECT jo.org_id, h.concept, year(jo.m), sum(h.in_title::INT), count(*)
-            FROM jo JOIN concept_hits h ON h.job_id = jo.job_id
+            FROM jo JOIN hits h ON h.job_id = jo.job_id
             WHERE jo.org_id IN (SELECT unnest(?)) GROUP BY 1, 2, 3""", [top2]).fetchall() if c in ti]
     org_years = [[oi[o], int(y), int(n)] for o, y, n in con.execute("""
             SELECT org_id, year(m), count(*) FROM jo
@@ -219,7 +253,7 @@ def main():
     ai = {oid: k for k, oid in enumerate(ids)}
     rrows = [[ai[o], ti[c], ridx[m], int(t), int(a)] for o, c, m, t, a in con.execute("""
             SELECT jo.org_id, h.concept, strftime(jo.m, '%Y-%m'), sum(h.in_title::INT), count(*)
-            FROM jo JOIN concept_hits h ON h.job_id = jo.job_id
+            FROM jo JOIN hits h ON h.job_id = jo.job_id
             WHERE jo.org_id IN (SELECT unnest(?)) AND strftime(jo.m, '%Y-%m') >= ?
             GROUP BY 1, 2, 3 HAVING sum(h.in_title::INT) > 0""", [ids, recent[0]]).fetchall() if c in ti and m in ridx]
     write("org_topics_recent.json", {"months": recent,
@@ -229,7 +263,7 @@ def main():
     # 4c. Role dimensions straight from ReliefWeb fields (no text matching): jobs per month by
     #     experience band, job type, organisation type and career category.
     #     job_meta / org_types are filled by harvest.py (backfill once with: python harvest.py --meta).
-    have = {t for (t,) in con.execute("SELECT table_name FROM information_schema.tables").fetchall()}
+    have = have_tables
     dims = {}
 
     def dim(name, sql):
@@ -265,9 +299,9 @@ def main():
     last_full = last_year if months[-1].endswith("-12") else last_year - 1
     write_csv("totals_by_year.csv", ["year", "n_posts", "months_covered"], con.execute("""
         SELECT year(m), count(*), count(DISTINCT m) FROM j GROUP BY 1 ORDER BY 1""").fetchall())
-    write_csv("topic_year.csv", ["topic", "group", "year", "n_title_hits", "n_body_hits", "n_any_hits"], con.execute("""
+    write_csv("topic_year.csv", ["topic", "group", "year", "n_core", "n_duty", "n_core_or_duty"], con.execute("""
         SELECT h.concept, c.grp, year(j.m), sum(h.in_title::INT), sum(h.in_body::INT), count(*)
-        FROM concept_hits h JOIN j ON j.id = h.job_id JOIN concepts c USING (concept)
+        FROM hits h JOIN j ON j.id = h.job_id JOIN tc c USING (concept)
         GROUP BY 1, 2, 3 ORDER BY 1, 3""").fetchall())
     names = {oid: name for oid, name, _, _ in top}
     write_csv("org_year.csv", ["org", "org_id", "year", "n_posts"], [
@@ -280,16 +314,16 @@ def main():
                 WITH jp AS (SELECT id FROM j WHERE year(m) BETWEEN ? AND ?),
                 tot AS (SELECT count(*) AS n FROM jp),
                 allh AS (SELECT concept, sum(in_title::INT) AS t, count(*) AS a
-                         FROM concept_hits h JOIN jp ON jp.id = h.job_id GROUP BY 1),
+                         FROM hits h JOIN jp ON jp.id = h.job_id GROUP BY 1),
                 op AS (SELECT org_id, count(DISTINCT job_id) AS n FROM jo
                        WHERE year(m) BETWEEN ? AND ? AND org_id IN (SELECT unnest(?)) GROUP BY 1),
                 oh AS (SELECT jo.org_id, h.concept, sum(h.in_title::INT) AS t, count(*) AS a
-                       FROM jo JOIN concept_hits h ON h.job_id = jo.job_id
+                       FROM jo JOIN hits h ON h.job_id = jo.job_id
                        WHERE year(jo.m) BETWEEN ? AND ? AND jo.org_id IN (SELECT unnest(?)) GROUP BY 1, 2)
                 SELECT oh.org_id, oh.concept, op.n, oh.t, oh.a, allh.t, allh.a, tot.n
                 FROM oh JOIN op USING (org_id) JOIN allh USING (concept), tot
                 WHERE op.n >= ?""", [p0, p1, p0, p1, ids, p0, p1, ids, MIN_ORG_POSTS]).fetchall():
-            for metric, k, K in (("title", t, at), ("any", a, aa)):
+            for metric, k, K in (("core", t, at), ("core_or_duty", a, aa)):
                 if k and K:
                     os_, as_ = k / n_org, K / n_all
                     tilt.append((names[o], c, f"{p0}-{p1}", metric, int(n_org), int(k),
@@ -306,7 +340,10 @@ def main():
         "possible_gaps": gaps,
         "rules": [
             "ReliefWeb API jobs only; current incomplete month excluded.",
-            "title = topic matched in the job title; any = matched in title or description.",
+            "Topics: every ad was read by a language model (GPT-6 Luna) and tagged against the topic list.",
+            "core = the job is this topic; core or duty = it is also a substantial part of other jobs.",
+            "In the data files the series named title holds core and the series named any holds core or duty.",
+            "Ads with under 200 characters of text were not read and carry no topics.",
             "Jobs with several organisations count once for each.",
         ]})
     con.close()

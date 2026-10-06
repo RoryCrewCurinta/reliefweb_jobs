@@ -194,7 +194,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
   <div class="hero">
     <div>
       <h1>What the humanitarian sector <em>hires for</em>, year by year</h1>
-      <p>Every job post on ReliefWeb since <span id="hStart">2011</span>, matched against <span id="hTopics">94</span> topics. Topic trends are shown as a share of all posts in each year, so the overall rise and fall in posting does not read as a rise or fall in a topic.</p>
+      <p>Every job post on ReliefWeb since <span id="hStart">2011</span>, read by a language model and tagged against <span id="hTopics">65</span> topics. Topic trends are shown as a share of all posts in each year, so the overall rise and fall in posting does not read as a rise or fall in a topic.</p>
     </div>
     <div class="facts" aria-label="Dataset summary">
       <div><b id="fJobs">–</b><span>job posts</span></div>
@@ -225,10 +225,10 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     <div class="controls">
       <span><span class="ctl-label">Measure</span><span class="seg" id="measureSeg">
         <button type="button" data-v="share">Share of posts</button><button type="button" data-v="count">Post count</button></span></span>
-      <span><span class="ctl-label">Match on</span><span class="seg" id="metricSeg">
-        <button type="button" data-v="ti">Title</button><button type="button" data-v="an">Title or description</button></span></span>
+      <span><span class="ctl-label">Count</span><span class="seg" id="metricSeg">
+        <button type="button" data-v="ti">Core</button><button type="button" data-v="an">Core or duty</button></span></span>
     </div>
-    <p class="matchnote"><b>Title</b> means the role is the topic. <b>Title or description</b> means the role mentions it: broader and noisier. Titles are the safer default; descriptions also catch skills spread across many roles and emerging topics, but a funder line or stock recruitment wording can count too.</p>
+    <p class="matchnote"><b>Core</b> means the job is the topic: it is the main subject of the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk.</p>
     <div class="grid2">
       <div class="panel">
         <h3 id="trendTitle"></h3>
@@ -294,7 +294,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <div class="orgstats" id="orgStats"></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
           <h3>Topic tilt, <span class="p2lab">recent</span></h3>
-          <span class="seg" id="tiltSeg"><button type="button" data-v="tt">Title</button><button type="button" data-v="ta">Title or desc.</button></span>
+          <span class="seg" id="tiltSeg"><button type="button" data-v="tt">Core</button><button type="button" data-v="ta">Core or duty</button></span>
         </div>
         <p class="sub">Topic share in this organisation's posts ÷ share across all posts. 2.0× means twice the sector rate. Topics with fewer than 10 of its posts are left out.</p>
         <ul class="tilt" id="tilt"></ul>
@@ -322,8 +322,9 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <h3>What is counted</h3>
         <ul>
           <li>Advertised posts on ReliefWeb, including expired ones. Not hires, and not all humanitarian hiring.</li>
-          <li>Each topic is a set of synonym patterns in English, French and Spanish. Renamed terms are merged (CTP→CVA, OFDA/FFP→BHA, DFID→FCDO), so a rename is not a trend.</li>
-          <li>Sentences an organisation repeats across many different ads (equal-opportunity statements, benefits, legal clauses) are removed before matching.</li>
+          <li>Every ad was read by a language model (OpenAI GPT-6 Luna) and tagged against a list of 65 defined topics, in English, French and Spanish. A topic counts when the job itself involves it, not when the word appears in the organisation's description of itself or in standard recruitment wording.</li>
+          <li>Each tag has a level. Core: the job is the topic. Duty: a substantial part of the job. Skills asked for and passing mentions are not counted.</li>
+          <li>A specialist topic also counts under its parent: sexual and reproductive health, epidemics and MHPSS under Health; MPCA, cash coordination and group cash transfers under CVA. Do not add a parent to its specialists.</li>
         </ul>
       </div>
       <div class="panel">
@@ -337,8 +338,10 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <div class="panel">
         <h3>Topics to read carefully</h3>
         <ul>
-          <li><b>Description matches under review:</b> Health, Partnerships &amp; capacity strengthening, Protection (general), Resilience. Prefer title matches for these.</li>
-          <li><b>Gender</b> in descriptions measures how often gender is mainstreamed into job ads, not gender roles.</li>
+          <li><b>The tags are a model's reading, not a hand count.</b> In checks, 98% of its core tags were confirmed by a stronger model, and it found 87% of the core topics that model found. Counts therefore run a little low; trends are more reliable than levels.</li>
+          <li><b>Core or duty</b> is noisier: about three in four duty tags were confirmed.</li>
+          <li><b>Research, studies &amp; evaluation</b> covers research and study roles and evaluation consultancies in general, not only rigorous impact evaluations.</li>
+          <li>Ads with almost no text (about 0.3%) were not read and carry no topics.</li>
           <li><b>Watchlist</b> topics are small. They are shown as counts and should be read as signals.</li>
           <li>Rankings need at least 20 matching posts in each period compared.</li>
         </ul>
@@ -396,10 +399,10 @@ const showTick=(i,W)=>W>=560||i%2===0;
 
 /* state */
 function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti,P2)).slice(0,isWatch(g)?5:4).map(t=>t.t);}
-let st={g:GROUPS.indexOf("Cross-cutting & inclusion"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
+let st={g:GROUPS.indexOf("Cash, markets & social protection"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
-try{const s=JSON.parse(localStorage.getItem("tv2")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv2",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt}}));}catch(e){}}
+try{const s=JSON.parse(localStorage.getItem("tv3")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt}}));}catch(e){}}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -492,8 +495,8 @@ function renderTopics(){
   document.querySelectorAll("#metricSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===k));
   const slots=slotsOf(g);
   document.getElementById("trendTitle").textContent=g;
-  const what=k==="ti"?"in the job title":"in the title or description";
-  document.getElementById("trendSub").textContent=watch?`Emerging topics, too rare for shares: posts per year with the topic ${what}. Read as signals.`:measure==="share"?`Share of all ReliefWeb posts with the topic ${what}`:`Posts per year with the topic ${what}`;
+  const what=k==="ti"?"as a core topic":"as a core topic or a duty";
+  document.getElementById("trendSub").textContent=watch?`Small topics, too rare for shares: posts per year with the topic ${what}. Read as signals.`:measure==="share"?`Share of all ReliefWeb posts with the topic ${what}`:`Posts per year with the topic ${what}`;
   const tc=document.getElementById("topicChips");tc.innerHTML="";const nSel=slots.filter(Boolean).length;
   byG[g].slice().sort((a,b)=>sumR(b[k],P2)-sumR(a[k],P2)).forEach(t=>{const si=slots.indexOf(t.t);const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed",si>=0);
     b.innerHTML=`<i style="background:${si>=0?css(SLOTS[si]):"transparent"}"></i>${t.t}${k==="an"&&REVIEW.has(t.t)?'<span class="flag">Review</span>':""}`;
@@ -516,7 +519,7 @@ document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dat
 function renderMovers(){
   const k=st.metric,mp=st.mp||"recent";
   document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp));
-  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"in the title":"in the title or description"}, `+(mp==="recent"?`${R0} – ${R1} against the ${len} months before (${B0} – ${B1}).`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
+  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against the ${len} months before (${B0} – ${B1}).`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
   const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
   document.querySelectorAll("#dirSeg button").forEach(b=>{const on=(b.dataset.v==="down")===st.falling;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
@@ -611,7 +614,7 @@ function tiltFor(o){
 const ICON={topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
   org:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h3M8 12h3M8 16h3M3 21h18"/></svg>'};
 function renderHot(){
-  document.getElementById("hotSub").textContent=`The three topics and organisations whose share of ReliefWeb posts grew most between the ${len} months before ${R0} and ${R0} – ${R1}. Topics use job titles and need at least 20 posts in each period; organisations need 20 before and 50 since.`;
+  document.getElementById("hotSub").textContent=`The three topics and organisations whose share of ReliefWeb posts grew most between the ${len} months before ${R0} and ${R0} – ${R1}. Topics count core tags and need at least 20 posts in each period; organisations need 20 before and 50 since.`;
   const tr=moverRows("ti","recent").sort((a,b)=>b.r-a.r).slice(0,3);
   const ht=document.getElementById("hotTopics");
   ht.innerHTML=tr.map(r=>`<button type="button" class="card" data-t="${r.t.t}"><span class="ic">${ICON.topic}</span><span class="nm">${r.t.t}</span><span class="big">×${r.r.toFixed(1)}</span><span class="mt">${r.t.g} · ${fmtN(r.nB)} posts since ${MO[rs].slice(0,4)} (${fmtN(r.nA)} before)</span></button>`).join("");
@@ -626,7 +629,7 @@ function renderSoar(){
   const R=D.ort;if(!R||!R.rows.length){sub.textContent="Needs org_topics_recent in data.js: re-run export.py.";host.innerHTML="";return;}
   const n=R.months.length,s6=n-6,b6=n-12;const tot=new Map(D.mo.months.map((m,i)=>[m,D.mo.total[i]]));
   const tR=R.months.slice(s6).reduce((a,m)=>a+(tot.get(m)||0),0),tB=R.months.slice(b6,s6).reduce((a,m)=>a+(tot.get(m)||0),0);
-  sub.textContent=`Organisation and role-type pairs with the biggest rise in posts, ${mLab(R.months[s6])} – ${mLab(R.months[n-1])} against the 6 months before. Role type = topic named in the job title. Rise is adjusted for the change in total ReliefWeb posting; pairs need at least 8 posts in the last 6 months. Small numbers: read as signals.`;
+  sub.textContent=`Organisation and role-type pairs with the biggest rise in posts, ${mLab(R.months[s6])} – ${mLab(R.months[n-1])} against the 6 months before. Role type = the job's core topic. Rise is adjusted for the change in total ReliefWeb posting; pairs need at least 8 posts in the last 6 months. Small numbers: read as signals.`;
   const agg=new Map();R.rows.forEach(([o,t,m,ti])=>{if(m<b6)return;const k=o+"|"+t;const d=agg.get(k)||[0,0];d[m>=s6?1:0]+=ti;agg.set(k,d);});
   const RO=D.rawOrgs,RT=D.rawTopics;
   const list=[...agg].map(([k,[a,b]])=>{const [o,t]=k.split("|").map(Number);return {o:RO[o],t:RT[t],a,b,x:b-a*tR/tB};}).filter(c=>c.b>=8&&c.x>0&&D.topicByName.has(c.t)&&!isWatch(D.topicByName.get(c.t).g)).sort((p,q)=>q.x-p.x).slice(0,6);
