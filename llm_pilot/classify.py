@@ -173,11 +173,11 @@ def http(method, path, payload=None, raw=None, headers=None, timeout=180):
         return r.read()
 
 
-PACE = {"gap": 0.0, "next": 0.0, "lock": threading.Lock()}  # shared by all workers
+PACE = {"gap": 0.0, "next": 0.0, "ok": 0, "lock": threading.Lock()}  # shared by all workers
 
 
 def wait_turn():
-    """Space out request starts so all workers together stay under the tokens-per-minute limit."""
+    """Space out request starts so all workers together stay under the account's rate limit."""
     with PACE["lock"]:
         now = time.time()
         start = max(now, PACE["next"])
@@ -187,22 +187,34 @@ def wait_turn():
 
 
 def slow_down(msg):
-    """After a rate-limit reply, read the account's limit from the message and pace to 85% of it."""
-    m = re.search(r"Limit (\d+)", msg)
-    per_request = 7000  # prompt plus ad plus answer, roughly
-    gap = 60 / (0.85 * int(m.group(1)) / per_request) if m and "TPM" in msg else max(1.0, PACE["gap"] * 1.5)
+    """After a rate-limit reply, widen the gap between requests by a third. speed_up() narrows it again,
+    so the pace settles just under whatever limit OpenAI is really applying."""
     with PACE["lock"]:
-        if gap > PACE["gap"]:
-            PACE["gap"] = gap
-            print(f"  rate limit reached: pacing to one request every {gap:.1f}s "
-                  f"(about {3600 / gap:,.0f} ads an hour)", flush=True)
+        PACE["ok"] = 0
+        first = PACE["gap"] == 0
+        PACE["gap"] = min(5.0, max(0.1, PACE["gap"] * 1.3))
+        if first or time.time() - PACE.get("told", 0) > 300:
+            PACE["told"] = time.time()
+            print(f"  rate limit reached: now one request every {PACE['gap']:.2f}s (about {3600 / PACE['gap']:,.0f} "
+                  f"ads an hour); the pace adjusts itself. OpenAI said: {' '.join(msg.split())[:200]}", flush=True)
+
+
+def speed_up():
+    """After 50 replies in a row with no rate-limit message, close the gap by 15%."""
+    with PACE["lock"]:
+        PACE["ok"] += 1
+        if PACE["ok"] >= 50 and PACE["gap"] > 0:
+            PACE["ok"] = 0
+            PACE["gap"] = PACE["gap"] * 0.85 if PACE["gap"] > 0.05 else 0.0
 
 
 def call(body, tries=12):
     for i in range(tries):
         wait_turn()
         try:
-            return json.loads(http("POST", "/chat/completions", body))
+            reply = json.loads(http("POST", "/chat/completions", body))
+            speed_up()
+            return reply
         except urllib.error.HTTPError as e:
             msg = e.read().decode("utf-8", "replace")[:500]
             if e.code in (429, 500, 502, 503, 504) and "insufficient_quota" not in msg and i < tries - 1:
@@ -226,7 +238,14 @@ def results_path(a):
 
 def done_ids(a):
     p = results_path(a)
-    return {json.loads(l)["id"] for l in open(p, encoding="utf-8")} if p.exists() else set()
+    ids = set()
+    if p.exists():
+        for line in open(p, encoding="utf-8"):
+            try:
+                ids.add(json.loads(line)["id"])
+            except Exception:
+                pass  # a half-written last line, if a run was cut off mid-save
+    return ids
 
 
 def to_record(ad_id, resp, a, via):
