@@ -12,10 +12,10 @@
 <meta property="og:url" content="https://trendlines.curinta.com/">
 <meta property="og:title" content="Humanitarian Trendlines: what the sector hires for">
 <meta property="og:description" content="What the humanitarian sector hires for, year by year: 516,000+ ReliefWeb job posts since 2011, tagged against 65 topics and tracked by organisation.">
-<meta property="og:image" content="https://trendlines.curinta.com/og-image.png">
+<meta property="og:image" content="https://trendlines.curinta.com/og-image.png?v=20261006">
 <meta property="og:image:width" content="1200">
 <meta property="og:image:height" content="627">
-<meta property="og:image:alt" content="Bar chart of ReliefWeb job posts per year, 2012 to 2025, peaking at 53,000 in 2022 and falling to 19,000 in 2025">
+<meta property="og:image:alt" content="Bar chart of ReliefWeb job posts per year, 2012 to 2025, peaking at 53,000 in 2022, with 19,000 in 2025">
 <meta name="twitter:card" content="summary_large_image">
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -215,6 +215,23 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 .method{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:20px}
 .method h3{font-size:15px;margin-bottom:8px}
 .method ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:13.5px;display:grid;gap:6px}
+/* Monthly-update signup (posts to the MailerLite form "Trendlines signup") */
+.signup{margin-top:40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:14px 32px;align-items:center;background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
+.signup h3{font-size:18px;font-weight:600;margin-bottom:4px}
+.signup p{margin:0;color:var(--ink-2);font-size:13.5px}
+.signup form{display:flex;gap:8px}
+.signup input[type=email]{flex:1;min-width:0;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink)}
+.signup button{font-family:var(--font-display);font-weight:600;font-size:14px;padding:9px 16px;border:0;border-radius:var(--r);background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap}
+.signup button:hover{filter:brightness(1.08)}
+.signup button[disabled]{opacity:.6;cursor:wait}
+.signup .msg{font-size:13px;margin-top:8px}
+.signup .msg:empty{display:none}
+.signup .msg.ok{color:var(--good)}
+.signup .msg.err{color:var(--bad)}
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+@media (max-width:760px){.signup{grid-template-columns:minmax(0,1fr)}.signup form{flex-wrap:wrap}.signup button{flex:1 0 100%}}
+
 .colophon{margin-top:44px;padding-top:16px;border-top:1px solid var(--line);display:flex;justify-content:space-between;gap:12px;flex-wrap:wrap;font-size:12.5px;color:var(--muted)}
 .colophon img{height:18px;vertical-align:-4px;margin-right:6px}
 .colophon a{color:var(--accent-ink)}
@@ -284,6 +301,19 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     <div class="hotrow"><span class="hotk">Topics</span><div class="cards" id="hotTopics"></div></div>
     <div class="hotrow"><span class="hotk">Organisations</span><div class="cards" id="hotOrgs"></div></div>
   </section>
+
+  <aside class="signup" aria-labelledby="suTitle1">
+    <div><h3 id="suTitle1">Get the monthly trendline</h3><p>Rising topics, shifting hiring, one email a month. Unsubscribe any time.</p></div>
+    <div>
+      <form class="signup-form" novalidate>
+        <label class="sr-only" for="suEmail1">Email address</label>
+        <input id="suEmail1" type="email" name="email" placeholder="you@organisation.org" autocomplete="email" required>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit">Get the update</button>
+      </form>
+      <p class="msg" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
 
   <section class="block" id="topics">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Topic trends</h2>
@@ -415,6 +445,19 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       </div>
     </div>
   </section>
+
+  <aside class="signup" aria-labelledby="suTitle2">
+    <div><h3 id="suTitle2">Follow the trendlines</h3><p>One email a month when new data lands: what rose, what fell, and who changed course.</p></div>
+    <div>
+      <form class="signup-form" novalidate>
+        <label class="sr-only" for="suEmail2">Email address</label>
+        <input id="suEmail2" type="email" name="email" placeholder="you@organisation.org" autocomplete="email" required>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit">Get the update</button>
+      </form>
+      <p class="msg" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
 
   <footer class="colophon">
     <span><img src="data:image/png;base64,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" alt="">Humanitarian Trendlines · by <a href="https://www.curinta.com/">Curinta</a></span>
@@ -762,6 +805,34 @@ new MutationObserver(renderAll).observe(document.documentElement,{attributes:tru
   ddb.addEventListener("click",function(e){e.stopPropagation();var o=dd.classList.toggle("open");ddb.setAttribute("aria-expanded",o?"true":"false");});
   document.addEventListener("click",function(e){if(!dd.contains(e.target)){dd.classList.remove("open");ddb.setAttribute("aria-expanded","false");}});
   document.addEventListener("keydown",function(e){if(e.key==="Escape"){dd.classList.remove("open");site.classList.remove("open");burger.setAttribute("aria-expanded","false");}});
+})();
+</script>
+<script>
+(function(){
+  var URL="https://assets.mailerlite.com/jsonp/2721455/forms/201630916907369586/subscribe";
+  var OK="Nearly done: check your inbox and click the link to confirm. If it isn't there in a few minutes, look in spam or promotions.";
+  document.querySelectorAll(".signup-form").forEach(function(f){
+    var box=f.parentNode, msg=box.querySelector(".msg"), btn=f.querySelector("button"), em=f.querySelector("input[type=email]");
+    function show(t,ok){msg.textContent=t;msg.className="msg "+(ok?"ok":"err");}
+    f.addEventListener("submit",function(e){
+      e.preventDefault();
+      if(f.website && f.website.value) return;
+      var v=em.value.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){show("Please enter a valid email address.",false);em.focus();return;}
+      var label=btn.textContent; btn.disabled=true; btn.textContent="Sending…"; show("",true);
+      var body=new URLSearchParams();
+      body.append("fields[email]",v); body.append("ml-submit","1"); body.append("anticsrf","true");
+      fetch(URL,{method:"POST",body:body,headers:{"Accept":"application/json"}})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d && d.success){f.hidden=true;show(OK,true);return;}
+          var m=d && d.errors && d.errors.fields && d.errors.fields.email && d.errors.fields.email[0];
+          show(m||"Something went wrong. Please try again.",false);
+        })
+        .catch(function(){show("Couldn't reach the signup service. Please try again, or email contact@curinta.com.",false);})
+        .then(function(){btn.disabled=false;btn.textContent=label;});
+    });
+  });
 })();
 </script>
 </body>
