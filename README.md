@@ -30,10 +30,11 @@ python harvest.py --update    # monthly top-up
 python match.py               # after harvesting or editing topics.csv
 python check.py "Biometrics"  # 20 random matches; aim for 16+ genuine
 python export.py              # refresh dashboard data
+python og_image.py            # rebuild the LinkedIn preview card to match
 python backup.py              # after each harvest
 ```
 
-Then commit and push; GitHub Pages republishes the dashboard from `docs/`.
+Then commit and push; Cloudflare republishes the dashboard from `docs/` at https://trendlines.curinta.com/. If `og_image.py` changed the card, paste the URL into https://www.linkedin.com/post-inspector/ so LinkedIn drops its cached copy.
 
 ## Topics
 
