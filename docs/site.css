@@ -132,3 +132,28 @@ section.block{margin-top:40px}
 @media (max-width:860px){.doc{grid-template-columns:minmax(0,1fr);gap:16px}.toc{position:static}.toc ol{display:flex;flex-wrap:wrap;gap:4px}.toc a{border:1px solid var(--line);border-radius:999px;padding:3px 10px}}
 @media (max-width:560px){.facts{grid-template-columns:minmax(0,1fr) minmax(0,1fr)}.terms th{width:38%}.log li{grid-template-columns:minmax(0,1fr);gap:2px}}
 @media print{.site,.toc,.gsearch,.btn{display:none}.doc{display:block}}
+
+/* Monthly-update signup (posts to the MailerLite form "Trendlines signup") */
+.signup{margin-top:40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:14px 32px;align-items:center;background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
+.signup h3{font-size:18px;font-weight:600;margin-bottom:4px}
+.signup p{margin:0;color:var(--ink-2);font-size:13.5px}
+.signup form{display:flex;gap:8px}
+.signup input[type=email]{flex:1;min-width:0;font:inherit;font-size:14px;padding:9px 12px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);color:var(--ink)}
+.signup button{font-family:var(--font-display);font-weight:600;font-size:14px;padding:9px 16px;border:0;border-radius:var(--r);background:var(--accent);color:#fff;cursor:pointer;white-space:nowrap}
+.signup button:hover{filter:brightness(1.08)}
+.signup button[disabled]{opacity:.6;cursor:wait}
+.signup .fine{font-size:12px;color:var(--muted);margin:8px 0 0}
+.signup .fine a{color:var(--accent-ink)}
+.signup .msg{font-size:13px;margin-top:8px}
+.signup .msg:empty{display:none}
+.signup .msg.ok{color:var(--good)}
+.signup .msg.err{color:var(--bad)}
+.signup .hp{position:absolute;left:-9999px;width:1px;height:1px;opacity:0}
+.sr-only{position:absolute;width:1px;height:1px;padding:0;margin:-1px;overflow:hidden;clip:rect(0,0,0,0);border:0}
+@media (max-width:760px){.signup{grid-template-columns:minmax(0,1fr)}.signup form{flex-wrap:wrap}.signup button{flex:1 0 100%}}
+.about{margin-top:20px;font-size:16px}
+.about h2{font-size:20px;margin:30px 0 8px}
+.about p{line-height:1.65}
+.about .sig{font-family:var(--font-display);font-weight:600;color:var(--ink);margin-top:18px}
+.about .indep{font-size:13px;color:var(--muted);margin-top:24px;padding-top:12px;border-top:1px solid var(--line)}
+.prose ~ .signup{max-width:1180px}

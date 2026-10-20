@@ -1,4 +1,4 @@
-"""Build the Methodology and Glossary pages (docs/methodology.html, docs/glossary.html).
+"""Build the Methodology, Glossary and About pages (docs/methodology.html, glossary.html, about.html).
 
 Run after export.py:  python pages.py
 - Figures (totals, date range, quiet months) come from docs/data/meta.json and totals_by_year.csv.
@@ -44,6 +44,8 @@ banner = banner.replace('href="curinta-logo.png"', 'href="curinta-logo.png"').re
 favicon = re.search(r'<link rel="icon"[^>]*>', index).group(0)
 menu_js = re.search(r'<script>\s*\(function\(\)\{\s*var site=document.getElementById\("site"\).*?</script>', index, re.S).group(0)
 og_image = re.search(r'<meta property="og:image" content="([^"]+)"', index).group(1)
+signup_html = re.search(r'<aside class="signup" aria-labelledby="suTitle2">.*?</aside>', index, re.S).group(0)
+signup_js = re.search(r'<script>\s*\(function\(\)\{\s*var URL="https://assets\.mailerlite\.com.*?</script>', index, re.S).group(0)
 logo_src = re.search(r'<footer class="colophon">\s*<span><img src="([^"]+)"', index).group(1)
 
 total = meta["total_jobs"]; first = meta["first_month"]; last = meta["last_month"]
@@ -56,7 +58,7 @@ def page(slug, title, desc, body, extra_js=""):
     nav = "".join(
         '<a href="%s"%s>%s</a>' % (href, ' aria-current="page"' if s == slug else "", label)
         for s, href, label in [("dash", "index.html", "Dashboard"), ("methodology", "methodology.html", "Methodology"),
-                               ("glossary", "glossary.html", "Glossary")])
+                               ("glossary", "glossary.html", "Glossary"), ("about", "about.html", "About")])
     return f"""<!doctype html>
 <html lang="en">
 <head>
@@ -91,7 +93,7 @@ def page(slug, title, desc, body, extra_js=""):
   </header>
 {body}
   <footer class="colophon">
-    <span><img src="{logo_src}" alt="">Humanitarian Trendlines · by <a href="https://www.curinta.com/">Curinta</a> · <a href="methodology.html">Methodology</a> · <a href="glossary.html">Glossary</a> · <a href="https://www.curinta.com/privacy">Privacy</a></span>
+    <span><img src="{logo_src}" alt="">Humanitarian Trendlines · by <a href="https://www.curinta.com/">Curinta</a> · <a href="methodology.html">Methodology</a> · <a href="glossary.html">Glossary</a> · <a href="about.html">About</a> · <a href="https://www.curinta.com/privacy">Privacy</a></span>
     <span>Source: <a href="https://reliefweb.int/jobs">ReliefWeb</a>, used under ReliefWeb's terms. Data generated {meta['generated']}.</span>
   </footer>
 </div>
@@ -275,4 +277,28 @@ filter_js = """<script>
 (DOCS / "glossary.html").write_text(page("glossary", "Glossary",
     f"Definitions for Humanitarian Trendlines: dashboard terms and the {n_topics} topics used to tag ReliefWeb job adverts.",
     gbody, filter_js), encoding="utf-8")
-print("Wrote docs/methodology.html and docs/glossary.html")
+
+# ---------------- About ----------------
+abody = f"""
+  <div class="page-hero">
+    <h1>Why I built this</h1>
+  </div>
+  <article class="prose about">
+<p>I work on digital technology in the humanitarian sector, and I kept getting a sense of déjà vu. One year everyone was focused on biometrics, the next on interoperability, then blockchain. Themes seemed to come and go. I always felt we were somewhere on a hype cycle, but I couldn't prove it. I wanted data. It would help me decide what to ignore, and when to tell colleagues that something deserves their attention.</p>
+<p>I tried a few ways of measuring this, and in 2022 I came across ReliefWeb's jobs API. I built a basic Power BI dashboard that tracked themes across roles. I was never happy with it. The tagging was crude, it was slow, and like every Power BI dashboard, it looked like Power BI.</p>
+<p>In September 2026 I picked it up again. This time I had AI tools and a much better grasp of Python, APIs and data science.</p>
+<h2>So is this about hiring?</h2>
+<p>Not at all, though it might be for you. I use job adverts because of the kind of data they are. They're sometimes called organic data: records produced by the work itself, not collected afterwards. Data collected afterwards brings biases, gaps and delays. Job adverts aren't written to be studied. They're a by-product of organisations deciding what to spend money on, and in some respects they also show what organisations hope to do. That makes them an honest record. They have limits too, which the <a href="methodology.html">methodology</a> sets out.</p>
+<h2>What did I find?</h2>
+<p>Biometrics had a boom and a bust, though the numbers are small. AI is a recent, rapid rise. And it was great to see localisation and local leadership climbing.</p>
+<p>Sign up below for the monthly trendline. I'll share the latest changes there and dig deeper into the earlier data.</p>
+<p>If you have ideas for new features, questions, or just want to talk, email me at <a href="mailto:rorycrew@curinta.com">rorycrew@curinta.com</a>.</p>
+<p class="sig">Rory</p>
+<p class="indep">Humanitarian Trendlines is an independent project by Curinta. It is not produced or endorsed by ReliefWeb or OCHA.</p>
+  </article>
+  {signup_html}
+"""
+(DOCS / "about.html").write_text(page("about", "About",
+    "Why Humanitarian Trendlines exists: using ReliefWeb job adverts as an honest record of what the humanitarian sector sets out to do.",
+    abody, signup_js), encoding="utf-8")
+print("Wrote docs/methodology.html, docs/glossary.html and docs/about.html")
