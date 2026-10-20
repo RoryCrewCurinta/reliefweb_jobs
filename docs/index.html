@@ -329,7 +329,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <span><span class="ctl-label">Count</span><span class="seg" id="metricSeg">
         <button type="button" data-v="ti">Core</button><button type="button" data-v="an">Core or duty</button></span></span>
     </div>
-    <p class="matchnote"><b>Core</b> means the job is the topic: it is the main subject of the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk.</p>
+    <p class="matchnote"><b>Core</b> means the topic or theme is central to the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk.</p>
     <div class="grid2">
       <div class="panel">
         <h3 id="trendTitle"></h3>
@@ -394,7 +394,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <div class="panel">
         <div class="orgstats" id="orgStats"></div>
         <div style="display:flex;justify-content:space-between;align-items:baseline;gap:10px;flex-wrap:wrap">
-          <h3>Topic tilt, <span class="p2lab">recent</span></h3>
+          <h3>Topic concentration, <span class="p2lab">recent</span></h3>
           <span class="seg" id="tiltSeg"><button type="button" data-v="tt">Core</button><button type="button" data-v="ta">Core or duty</button></span>
         </div>
         <p class="sub">Topic share in this organisation's posts ÷ share across all posts. 2.0× means twice the sector rate. Topics with fewer than 10 of its posts are left out.</p>
@@ -424,7 +424,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <ul>
           <li>Advertised posts on ReliefWeb, including expired ones. Not hires, and not all humanitarian hiring.</li>
           <li>Every ad was read by a language model (OpenAI GPT-6 Luna) and tagged against a list of 65 defined topics, in English, French and Spanish. A topic counts when the job itself involves it, not when the word appears in the organisation's description of itself or in standard recruitment wording.</li>
-          <li>Each tag has a level. Core: the job is the topic. Duty: a substantial part of the job. Skills asked for and passing mentions are not counted.</li>
+          <li>Each tag has a level. Core: the topic or theme is central to the role. Duty: the topic is a substantial part of the work but not its main subject. Skills asked for and passing mentions are not counted.</li>
           <li>A specialist topic also counts under its parent: sexual and reproductive health, epidemics and MHPSS under Health; MPCA, cash coordination and group cash transfers under CVA. Do not add a parent to its specialists.</li>
         </ul>
       </div>
@@ -755,7 +755,7 @@ function openTopic(name){const t=D.topics.find(x=>x.t===name);st.g=GROUPS.indexO
 const ROLE={
   experience:{title:"Experience asked for",sub:"Share of all posts, by the years of experience the poster asked for.",note:"The closest ReliefWeb has to seniority. It is a band of years, not a grade."},
   job_type:{title:"Job type",sub:"Share of all posts, by the kind of contract.",note:"Chosen by the poster. Tenders are a new type and still rare."},
-  org_type:{title:"Organisation type",sub:"Share of all posts, by the kind of organisation hiring. NGOs are split by where they are based.",pref:["International NGO","International Organization","Locally based NGO","Regional NGO (global South base)","Red Cross/Red Crescent Movement","Other"],note:"ReliefWeb's organisation types, with NGOs split in three. Locally based = home in a low- or middle-income country and at least 80% of its posts there; it is a proxy for national NGOs. ReliefWeb is mainly where international organisations advertise, so a small local share does not mean national NGOs hire little. UNICEF stopped posting in mid-2020, which lowers the international-organisation share.",link:["https://github.com/RoryCrewCurinta/reliefweb_jobs/blob/main/docs/data/ORG_CLASSIFICATION.md","How organisations are classified"]},
+  org_type:{title:"Organisation type",sub:"Share of all posts, by the kind of organisation hiring. NGOs are split by where they are based.",pref:["International NGO","International Organization","Locally based NGO","Regional NGO (global South base)","Red Cross/Red Crescent Movement","Other"],note:"ReliefWeb's organisation types, with NGOs split in three. Locally based = home in a low or middle income country and at least 80% of its posts there; it is a proxy for national NGOs. ReliefWeb is mainly where international organisations advertise, so a small local share does not mean national NGOs hire little. UNICEF stopped posting in mid-2020, which lowers the international-organisation share.",link:["https://github.com/RoryCrewCurinta/reliefweb_jobs/blob/main/docs/data/ORG_CLASSIFICATION.md","How organisations are classified"]},
   career_category:{title:"Career category",sub:"Share of posts that carry a category, by job function.",note:"Chosen by the poster. Shown from 2018, when every post began to carry one; earlier years were patchy and not comparable. Program/Project Management is a catch-all (about half of posts), so it is off by default."}};
 let roleTable=false;
 document.querySelectorAll("#roleSeg button").forEach(b=>b.onclick=()=>{st.role=b.dataset.v;save();renderRoles();});

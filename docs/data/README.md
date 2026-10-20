@@ -34,7 +34,7 @@ Regenerate with `python export.py`. Never hand-edit these files.
 | `org_classification.csv` | organisation | ReliefWeb type, home country, share of posts at home, and class (International / Locally based / Regional NGO). Method: [ORG_CLASSIFICATION.md](ORG_CLASSIFICATION.md) |
 | `data.js` | – | all JSON files in one `window.RW_DATA` object, for pages opened from disk |
 
-**Tilt:** `org_share / all_share` for the same period and metric. 2 means the organisation hires for the topic twice as often as the sector. Periods are `2019-2022` and the last four complete years. Only organisations with at least 50 posts in the period are included. Filter on `n_org_topic_posts` too (suggest 10 or more) before showing a tilt: small counts give extreme ratios.
+**Topic concentration** (column `tilt`): `org_share / all_share` for the same period and metric. 2 means the organisation hires for the topic twice as often as the sector. Periods are `2019-2022` and the last four complete years. Only organisations with at least 50 posts in the period are included. Filter on `n_org_topic_posts` too (suggest 10 or more) before showing a tilt: small counts give extreme ratios.
 
 ## Display cautions
 
@@ -48,6 +48,6 @@ Regenerate with `python export.py`. Never hand-edit these files.
 - Colours: blue `#408ADE` (dark mode `#4C95E6`), grey `#4D4D4D`. Fonts: Space Grotesk (headings, numbers), IBM Plex Sans (body).
 - Chart series order, checked for colour-blind safety in light and dark: blue `#408ADE`, orange `#eb6834`, aqua `#1baf7a`, yellow `#eda100`, magenta `#e87ba4`, violet `#4a3aa7`. Six series per chart at most.
 - Part-years (first and last) are drawn dashed. Topic charts default to share of posts and core tags.
-- Current build: https://claude.ai/artifact/AiCisY6vBrRpMc65RxLznq (posts per year, topic trends by group, rising/falling 2015–18 vs 2022–25, organisation explorer with topic tilt, method and cautions).
+- Current build: https://claude.ai/artifact/AiCisY6vBrRpMc65RxLznq (posts per year, topic trends by group, rising/falling 2015–18 vs 2022–25, organisation explorer with topic concentration, method and cautions).
 
 Source attribution: ReliefWeb (reliefweb.int), used under ReliefWeb's terms.

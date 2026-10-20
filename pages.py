@@ -139,8 +139,8 @@ sections = [
 <p>Each advert was read by a language model (OpenAI GPT-6 Luna), given the {n_topics} topic definitions in the <a href="glossary.html">glossary</a>. It reads adverts in English, French and Spanish. A topic counts when the job itself involves it, not when the word appears in the organisation's description of itself or in standard recruitment wording.</p>
 <p>For each relevant topic the model assigns a level:</p>
 <ul>
-<li><b>Core:</b> the job is this topic. This is the default measure.</li>
-<li><b>Duty:</b> the topic is a substantial part of the job. Shown as "core or duty". Broader and noisier.</li>
+<li><b>Core:</b> the topic or theme is central to the role. This is the default measure used on this site.</li>
+<li><b>Duty:</b> the topic is a substantial part of the work but not its main subject. Counted together with core as "core or duty", which is broader and noisier.</li>
 <li>Skills asked for, and passing mentions, are not counted.</li>
 </ul>
 <p><b>Some topics contain others.</b> A few topics are specialisms of a broader one, and every post tagged with a specialism is also counted under the broader topic:</p>
@@ -162,13 +162,13 @@ sections = [
 <p>Job type, experience and career category are ReliefWeb's own fields, filled in by the advertiser. We do not alter them. Career category is patchy before 2018.</p>"""),
  ("orgtypes", "Organisation types", """
 <p>ReliefWeb gives each organisation one type but does not separate national from international NGOs. We split NGOs using their home country and where they advertise.</p>
-<p><b>High or low income.</b> The home country is the one ReliefWeb records for each organisation. We look it up in the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups">World Bank's income classification</a>, which groups countries as high, upper-middle, lower-middle or low income by gross national income per person. "Low- or middle-income" means any of the last three. We use the current classification (October 2026) for every year, so a country that has moved group since 2011 is treated by its current group throughout. An organisation whose home is not a single country, such as "World", counts as international.</p>
+<p><b>High or low income.</b> The home country is the one ReliefWeb records for each organisation. We look it up in the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups">World Bank's income classification</a>, which groups countries as high, upper-middle, lower-middle or low income by gross national income per person. "Low or middle income" means any of the last three. We use the current classification (October 2026) for every year, so a country that has moved group since 2011 is treated by its current group throughout. An organisation whose home is not a single country, such as "World", counts as international.</p>
 <ul>
-<li><b>International NGO:</b> home country is high-income.</li>
-<li><b>Locally based NGO:</b> home country is low- or middle-income and at least 80% of its located adverts are there.</li>
-<li><b>Regional NGO:</b> home country is low- or middle-income but it advertises across several countries.</li>
+<li><b>International NGO:</b> home country is high income.</li>
+<li><b>Locally based NGO:</b> home country is low or middle income and at least 80% of its located adverts are there.</li>
+<li><b>Regional NGO:</b> home country is low or middle income but it advertises across several countries.</li>
 </ul>
-<p>This is a proxy. It counts some local affiliates of international networks as locally based, and counts national NGOs in high-income countries as international. The 45 or so largest organisations in the two smaller classes were checked by hand; the rest follow the rule, and a few known misfits are corrected by hand (for example Oxfam and ActionAid, global confederations whose secretariats sit in Nairobi and Johannesburg). NGOs based in Türkiye or Syria are treated as local to the Syria response, because many Syrian NGOs are registered in Türkiye and work across the border.</p>"""),
+<p>This is a proxy. It counts some local affiliates of international networks as locally based, and counts national NGOs in high income countries as international. The 45 or so largest organisations in the two smaller classes were checked by hand; the rest follow the rule, and a few known misfits are corrected by hand (for example Oxfam and ActionAid, global confederations whose secretariats sit in Nairobi and Johannesburg). NGOs based in Türkiye or Syria are treated as local to the Syria response, because many Syrian NGOs are registered in Türkiye and work across the border.</p>"""),
  ("cite", "How to cite", f"""
 <div class="cite"><span id="citeText">Curinta ({date.fromisoformat(meta['generated']).year}). <i>Humanitarian Trendlines: ReliefWeb job adverts, {first[:4]} to {last[:4]}</i>. Data to {month_name(last)}. trendlines.curinta.com. Accessed <span id="citeDate">[date]</span>.</span><button class="btn" type="button" id="citeCopy">Copy</button></div>"""),
  ("changes", "Corrections and changes", """
@@ -207,18 +207,20 @@ cite_js = """<script>
 terms = [
  ("Advert, or post", "One job advert published on ReliefWeb. Not a hire."),
  ("Share of adverts", "Adverts with a topic, divided by all adverts in the same period. Used for trends so a shrinking market does not look like a shrinking topic."),
- ("Core", "The job is this topic: it is the main subject of the role. The default measure."),
- ("Core or duty", "Also counts adverts where the topic is a substantial part of the work. Broader and noisier."),
+ ("Core", "The topic or theme is central to the role. This is the default measure used on this site."),
+ ("Duty", "The topic is a substantial part of the work but not its main subject."),
+ ("Core or duty", "Counts adverts where the topic is either core or a duty. Broader and noisier than core alone."),
  ("Exploratory themes", "Eight small topics with too few adverts for a reliable trend. Shown as counts only, and left out of rankings."),
  ("Parent topic", "A topic that includes its specialists. Health includes SRH, epidemics and MHPSS. CVA includes MPCA, cash coordination and group cash transfers."),
  ("Job type", "ReliefWeb's own field: job, consultancy, internship or volunteer opportunity."),
  ("Career category", "ReliefWeb's own field for the function of the role, such as programme management or logistics."),
  ("Experience", "ReliefWeb's own field: 0 to 2, 3 to 4, 5 to 9, or 10 or more years."),
- ("International NGO", "An NGO whose home country, as ReliefWeb records it, is high-income."),
- ("Locally based NGO", "An NGO whose home country is low- or middle-income and which places at least 80% of its located adverts there. A proxy for national NGOs."),
- ("Regional NGO", "An NGO based in a low- or middle-income country that advertises across several countries."),
+ ("High income, low or middle income", "Based on the World Bank's income group for the organisation's home country, as ReliefWeb records it. The World Bank groups countries as high, upper middle, lower middle or low income by gross national income per person. Low or middle income means any of the last three. The October 2026 classification is used for every year."),
+ ("International NGO", "An NGO whose home country, as ReliefWeb records it, is high income."),
+ ("Locally based NGO", "An NGO whose home country is low or middle income and which places at least 80% of its located adverts there. A proxy for national NGOs."),
+ ("Regional NGO", "An NGO based in a low or middle income country that advertises across several countries."),
  ("International organisation", "ReliefWeb's type for UN agencies and other intergovernmental bodies."),
- ("Tilt", "How much more often an organisation advertises for a topic than the sector does. 2 means twice as often."),
+ ("Topic concentration", "How much more often an organisation advertises for a topic than the sector does: the topic's share of the organisation's adverts, divided by its share of all adverts. 2× means twice as often."),
 ]
 def topic_card(t):
     name = t["dashboard_name"] or t["topic"]
