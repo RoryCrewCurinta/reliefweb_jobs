@@ -39,7 +39,7 @@ Regenerate with `python export.py`. Never hand-edit these files.
 ## Display cautions
 
 - **Unusual months** are listed in `meta.json` → `possible_gaps`. December 2025 (726 posts, about half the usual) has been checked against the API and is complete: ReliefWeb really did carry that few. The cause (a hiring freeze, or organisations posting elsewhere) can't be told from this data, so show it without explaining it. Shares are less affected than counts.
-- **Minimum volume.** Don't rank or headline a topic on fewer than about 20 posts per period. Watchlist topics (group `Watchlist (small topics)`, eight topics with under about 160 core posts in all) are small: show counts, label them as signals.
+- **Minimum volume.** Don't rank or headline a topic on fewer than about 20 posts per period. Exploratory themes (group `Exploratory themes (small topics)`, eight topics with under about 160 core posts in all) are small: show counts, label them as signals.
 - **How good the tags are.** Checked against a stronger model on 300 ads: 98% of core tags confirmed, and 87% of that model's core topics found, so counts run a little low and trends are safer than levels. About three in four duty tags were confirmed. "Research, studies & evaluation" covers research, studies and evaluation consultancies in general.
 - Counts are **advertised posts on ReliefWeb**, not hires, and not all humanitarian hiring. Some organisations moved recruitment to their own portals; a collapse in one organisation's volume may mean that rather than a hiring freeze.
 

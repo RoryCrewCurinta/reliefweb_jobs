@@ -109,8 +109,8 @@ def h2(t):
     return f'<h2><span class="pix" aria-hidden="true"></span>{t}</h2>'
 
 # ---------------- Methodology ----------------
-gap_items = ""
-for g in meta.get("possible_gaps", []):
+gap_items = ""  # quiet-month notes removed from the page on request (19 Oct 2026)
+for g in []:
     gap_items += (f"<li><b>{month_name(g['month'])} is unusually quiet.</b> It has {g['jobs']:,} posts against a typical "
                   f"{g['neighbour_median']:,} for the months around it. The cause cannot be told from this data, so read "
                   f"that month with care.</li>")
@@ -120,19 +120,17 @@ sections = [
 <div class="facts">
   <div><b>{total:,}</b><span>job posts</span></div>
   <div><b>{short_month(first)} – {short_month(last)}</b><span>period covered</span></div>
-  <div><b>{n_topics}</b><span>topics, {len(THIN_TOPICS)} of them on a watchlist</span></div>
-  <div><b>98%</b><span>of core tags confirmed in checks</span></div>
+  <div><b>{n_topics}</b><span>themes and topics</span></div>
+  <div><b>98%</b><span>of core tags confirmed by a second model</span></div>
 </div>
-<p>We collected every job advert on ReliefWeb from {month_name(first)} to {month_name(last)}: {total:,} adverts. A language model read each one and tagged it against {n_topics} defined topics. Everything shown is a count or a share of adverts. <b>Nothing here measures hires.</b></p>"""),
+<p>We collected every job advert posted on ReliefWeb from {month_name(first)} to date (currently {month_name(last)}): {total:,} adverts. A large language model read each one and reviewed it against a list of {n_topics} humanitarian themes and topics. The results are shown as a <b>post count</b>, or a <b>share of posts</b>.</p>"""),
  ("limits", "What this cannot tell you", f"""
 <p>Read these before citing a number.</p>
 <ul class="limits">
 <li><b>Adverts are not hires.</b> A post may be filled internally, readvertised or never filled.</li>
-<li><b>ReliefWeb is not the whole sector.</b> Large UN agencies recruit mainly through their own portals, and most national NGO hiring happens elsewhere.</li>
-<li><b>An organisation leaving ReliefWeb looks like a hiring freeze.</b> UNICEF posted 3,955 adverts in 2019 and 38 in 2021, because it moved its recruitment off the site. Read falls for a single organisation with care.</li>
+<li><b>ReliefWeb is not the whole sector.</b> Large UN agencies often recruit through their own portals; UNICEF, for example, has posted almost nothing on ReliefWeb since 2021. We also expect that most national NGO hiring happens on country-specific job boards.</li>
 <li><b>Total volume moves a lot.</b> Adverts went from {years[peak_year]:,} in {peak_year} to {years[latest_full]:,} in {latest_full}. Topic trends are therefore shown as a share of all adverts, so a shrinking market does not look like a shrinking topic.</li>
-<li><b>Small topics are noisy.</b> Eight topics have fewer than about 160 core adverts in fifteen years. They sit on a watchlist, shown as counts and left out of rankings.</li>
-{gap_items}
+<li><b>Small themes and topics don't have many hits.</b> Eight topics have fewer than about 160 core adverts in fifteen years. They sit on an <b>Exploratory themes</b> list, shown as counts only and left out of rankings.</li>
 </ul>"""),
  ("source", "Source", f"""
 <p>The <a href="https://apidoc.reliefweb.int/">ReliefWeb API</a>, operated by OCHA, including expired adverts. The current, incomplete month is always left out, so the latest month shown is {month_name(last)}.</p>
@@ -145,38 +143,43 @@ sections = [
 <li><b>Duty:</b> the topic is a substantial part of the job. Shown as "core or duty". Broader and noisier.</li>
 <li>Skills asked for, and passing mentions, are not counted.</li>
 </ul>
-<p><b>Some topics contain others.</b> Health includes sexual and reproductive health, epidemics and MHPSS. Cash and voucher assistance includes multi-purpose cash, cash coordination and group cash transfers. Do not add a parent to its specialists.</p>
+<p><b>Some topics contain others.</b> A few topics are specialisms of a broader one, and every post tagged with a specialism is also counted under the broader topic:</p>
+<ul>
+<li><b>Health</b> includes sexual and reproductive health, epidemics and disease control, and MHPSS.</li>
+<li><b>Cash and voucher assistance</b> includes multi-purpose cash, cash coordination and group cash transfers.</li>
+</ul>
+<p>So an MHPSS post appears under both MHPSS and Health. Adding Health and MHPSS together would count that post twice: the Health figure already includes it.</p>
 <p>Adverts with under 200 characters of text, about 0.3%, were not read and carry no topic.</p>"""),
  ("quality", "How good the tags are", """
-<p>A stronger model tagged 300 adverts independently.</p>
+<p>To check the tagging, a second, stronger model (OpenAI GPT-6.1 Sol) tagged a sample of 300 adverts on its own, without seeing our tags. We then compared the two in both directions.</p>
 <ul>
-<li>It agreed with <b>185 of 188</b> of our core tags (98%).</li>
-<li>It found 249 core topics of its own, of which ours had <b>217</b> (87%). So core counts run a little low, and <b>trends are safer than levels</b>.</li>
-<li>About three in four duty tags were confirmed.</li>
+<li><b>When our model tags a topic, is it right? Almost always.</b> Our model made 188 core tags on the sample. The check model agreed with 185 of them: <b>98%</b>. So a post counted under a topic on the dashboard is very likely to be about that topic.</li>
+<li><b>Does our model find every topic? Not quite.</b> The check model found 249 core topics in the same 300 adverts. Ours had found 217 of them: <b>87%</b>. Our model misses about one in eight, so counts run a little low.</li>
+<li><b>Duty tags are looser.</b> About three in four were confirmed.</li>
 </ul>
-<p>This is one model checking another, not a human gold standard.</p>"""),
+<p>What this means in practice: <b>trends are more reliable than absolute numbers</b>. If the miss rate stays steady over time, a topic's rise or fall is real even when its count is slightly understated. This is one model checking another, not a hand count by people.</p>"""),
  ("fields", "ReliefWeb's own fields", """
 <p>Job type, experience and career category are ReliefWeb's own fields, filled in by the advertiser. We do not alter them. Career category is patchy before 2018.</p>"""),
  ("orgtypes", "Organisation types", """
-<p>ReliefWeb gives each organisation one type but does not separate national from international NGOs. We split NGOs using their home country and where they advertise:</p>
+<p>ReliefWeb gives each organisation one type but does not separate national from international NGOs. We split NGOs using their home country and where they advertise.</p>
+<p><b>High or low income.</b> The home country is the one ReliefWeb records for each organisation. We look it up in the <a href="https://datahelpdesk.worldbank.org/knowledgebase/articles/906519-world-bank-country-and-lending-groups">World Bank's income classification</a>, which groups countries as high, upper-middle, lower-middle or low income by gross national income per person. "Low- or middle-income" means any of the last three. We use the current classification (October 2026) for every year, so a country that has moved group since 2011 is treated by its current group throughout. An organisation whose home is not a single country, such as "World", counts as international.</p>
 <ul>
 <li><b>International NGO:</b> home country is high-income.</li>
 <li><b>Locally based NGO:</b> home country is low- or middle-income and at least 80% of its located adverts are there.</li>
 <li><b>Regional NGO:</b> home country is low- or middle-income but it advertises across several countries.</li>
 </ul>
-<p>This is a proxy. It counts some local affiliates of international networks as locally based, and counts national NGOs in high-income countries as international. The 45 or so largest organisations in the two smaller classes were checked by hand; the rest follow the rule. NGOs based in Türkiye or Syria are treated as local to the Syria response.</p>"""),
+<p>This is a proxy. It counts some local affiliates of international networks as locally based, and counts national NGOs in high-income countries as international. The 45 or so largest organisations in the two smaller classes were checked by hand; the rest follow the rule, and a few known misfits are corrected by hand (for example Oxfam and ActionAid, global confederations whose secretariats sit in Nairobi and Johannesburg). NGOs based in Türkiye or Syria are treated as local to the Syria response, because many Syrian NGOs are registered in Türkiye and work across the border.</p>"""),
  ("cite", "How to cite", f"""
 <div class="cite"><span id="citeText">Curinta ({date.fromisoformat(meta['generated']).year}). <i>Humanitarian Trendlines: ReliefWeb job adverts, {first[:4]} to {last[:4]}</i>. Data to {month_name(last)}. trendlines.curinta.com. Accessed <span id="citeDate">[date]</span>.</span><button class="btn" type="button" id="citeCopy">Copy</button></div>"""),
  ("changes", "Corrections and changes", """
 <p>If a number looks wrong, tell us at <a href="mailto:contact@curinta.com">contact@curinta.com</a>. Changes to the method are logged here.</p>
 <ul class="log">
-<li><time datetime="2026-10-06">6 Oct 2026</time><span>Topics now tagged by a language model reading each advert, replacing keyword matching. Topic list revised to 65 topics in 10 groups, with eight small topics moved to a watchlist.</span></li>
+<li><span></span><span>No changes since launch.</span></li>
 </ul>"""),
 ]
 body = f"""
   <div class="page-hero">
     <h1>How Humanitarian Trendlines is <em>built</em></h1>
-    <p>For anyone deciding whether to cite a number. The limits come second, not last.</p>
   </div>
   <div class="doc">
     {toc([(i, t) for i, t, _ in sections])}
@@ -206,7 +209,7 @@ terms = [
  ("Share of adverts", "Adverts with a topic, divided by all adverts in the same period. Used for trends so a shrinking market does not look like a shrinking topic."),
  ("Core", "The job is this topic: it is the main subject of the role. The default measure."),
  ("Core or duty", "Also counts adverts where the topic is a substantial part of the work. Broader and noisier."),
- ("Watchlist", "Eight small topics with too few adverts for a trend. Shown as counts only, and left out of rankings."),
+ ("Exploratory themes", "Eight small topics with too few adverts for a reliable trend. Shown as counts only, and left out of rankings."),
  ("Parent topic", "A topic that includes its specialists. Health includes SRH, epidemics and MHPSS. CVA includes MPCA, cash coordination and group cash transfers."),
  ("Job type", "ReliefWeb's own field: job, consultancy, internship or volunteer opportunity."),
  ("Career category", "ReliefWeb's own field for the function of the role, such as programme management or logistics."),
@@ -220,7 +223,7 @@ terms = [
 def topic_card(t):
     name = t["dashboard_name"] or t["topic"]
     d = DEF_OVERRIDE.get(t["topic"], t["definition"])
-    wl = '<span class="wl">Watchlist</span>' if t["topic"] in THIN_TOPICS else ""
+    wl = '<span class="wl">Exploratory</span>' if t["topic"] in THIN_TOPICS else ""
     dl = ""
     if t["includes"].strip(): dl += f"<dt>Includes</dt><dd>{E(t['includes'])}</dd>"
     if t["excludes"].strip(): dl += f"<dt>Not here</dt><dd>{E(t['excludes'])}</dd>"
@@ -237,7 +240,7 @@ gsections = [
  ("terms", "Terms used on the dashboard", '<table class="terms"><tbody>' + "".join(
      f"<tr><th scope=\"row\">{E(a)}</th><td>{E(b)}</td></tr>" for a, b in terms) + "</tbody></table>"),
  ("topics", f"The {n_topics} topics", f"""
-<p>These are the definitions the model was given, grouped as on the dashboard. Watchlist topics are marked; on the dashboard they sit in their own group.</p>
+<p>These are the definitions the model was given, grouped as on the dashboard. Exploratory themes are marked; on the dashboard they sit in their own group.</p>
 <div class="gsearch"><input type="search" id="tq" placeholder="Find a topic, e.g. cash, GIS, protection" aria-label="Filter topics"><small id="tcount">{n_topics} topics</small></div>
 <div id="tlist">{topic_html}</div>
 <p class="noresult" id="tnone" hidden>No topic matches. Try a broader word.</p>"""),

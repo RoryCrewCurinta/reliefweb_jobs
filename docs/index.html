@@ -443,7 +443,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
           <li><b>Core or duty</b> is noisier: about three in four duty tags were confirmed.</li>
           <li><b>Research, studies &amp; evaluation</b> covers research and study roles and evaluation consultancies in general, not only rigorous impact evaluations.</li>
           <li>Ads with almost no text (about 0.3%) were not read and carry no topics.</li>
-          <li><b>Watchlist</b> topics are small. They are shown as counts and should be read as signals.</li>
+          <li><b>Exploratory themes</b> are small topics. They are shown as counts and should be read as signals.</li>
           <li>Rankings need at least 20 matching posts in each period compared.</li>
         </ul>
       </div>
@@ -497,8 +497,8 @@ document.getElementById("mpLong").textContent="Long view";
 function topicRecent(t,k){const a=sumM(t[k==="ti"?"mti":"man"],bs,rs),b=sumM(t[k==="ti"?"mti":"man"],rs,MO.length);return {nA:a,nB:b,a:100*a/totBase,b:100*b/totRecent};}
 const GROUPS=[];const byG={};
 D.topics.forEach(t=>{if(!byG[t.g]){byG[t.g]=[];GROUPS.push(t.g);}byG[t.g].push(t);});
-GROUPS.sort((a,b)=>(a.startsWith("Watch")?1:0)-(b.startsWith("Watch")?1:0));
-const isWatch=g=>g.startsWith("Watch");
+const isWatch=g=>g.startsWith("Exploratory")||g.startsWith("Watch");
+GROUPS.sort((a,b)=>(isWatch(a)?1:0)-(isWatch(b)?1:0));
 const css=v=>getComputedStyle(document.documentElement).getPropertyValue(v).trim();
 const SLOTS=["--s1","--s2","--s3","--s4","--s5","--s6"];
 const fmtN=v=>Math.round(v).toLocaleString("en-GB");
