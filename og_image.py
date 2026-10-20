@@ -12,6 +12,7 @@ Reads docs/data/data.js and docs/data/meta.json, then
 Use --no-html to draw the image only.
 """
 import argparse
+import hashlib
 import io
 import json
 import re
@@ -71,8 +72,8 @@ def draw(v, out):
     fig = plt.figure(figsize=(W / 100, H / 100), dpi=100)
     fig.patch.set_facecolor(BG)
     t = lambda x, y, s, **kw: fig.text(x / W, 1 - y / H, s, va="baseline", **kw)
-    t(64, 150, "What the humanitarian sector", fontsize=40, weight="bold", color=INK)
-    t(64, 205, "hires for, year by year", fontsize=40, weight="bold", color=ACCENT)
+    t(64, 150, "A lens on the", fontsize=40, weight="bold", color=INK)
+    t(64, 205, "humanitarian sector", fontsize=40, weight="bold", color=ACCENT)
     t(64, 252, f"{v['total']:,} ReliefWeb job posts since {v['first_year']}, "
                f"tagged against {v['n_topics']} topics", fontsize=17, color=MUTED)
     t(64, 300, f"Job posts per year, {years[0]}–{latest}", fontsize=13, color=MUTED, weight="medium")
@@ -117,12 +118,12 @@ def update_html(v, peak, latest):
         html = f.read()
     posts = dict(zip(v["years"], v["posts"]))
     total_floor = f"{v['total'] // 1000:,},000+"
-    desc = (f"What the humanitarian sector hires for, year by year: {total_floor} ReliefWeb job posts "
-            f"since {v['first_year']}, tagged against {v['n_topics']} topics and tracked by organisation.")
+    desc = (f"A lens on the humanitarian sector: how its priorities shift over time, read from {total_floor} "
+            f"ReliefWeb job posts since {v['first_year']}, tagged against {v['n_topics']} topics and tracked by organisation.")
     alt = (f"Bar chart of ReliefWeb job posts per year, {v['years'][0]} to {latest}, "
            f"peaking at {round(posts[peak], -3):,} in {peak}"
            + (f", with {round(posts[latest], -3):,} in {latest}" if latest != peak else ""))
-    image = f"{URL}og-image.png?v={v['generated'].replace('-', '')}"
+    image = f"{URL}og-image.png?v={v['generated'].replace('-', '')}-{hashlib.sha1((DOCS / 'og-image.png').read_bytes()).hexdigest()[:6]}"
     swaps = [
         (r'(<meta name="description" content=")[^"]*', desc),
         (r'(<meta property="og:description" content=")[^"]*', desc),
