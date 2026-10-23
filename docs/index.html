@@ -248,6 +248,9 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
   .movers .hide-sm{display:none}
 }
 .nn{font-size:11px;color:var(--muted);font-weight:400}
+.copylink{margin-top:6px;display:inline-flex;align-items:center;gap:6px}
+.copylink::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat}
+.copylink.done{text-decoration:none;color:var(--up,#1a7f37)}
 .beta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;padding:2px 7px;border-radius:999px;border:1px solid var(--accent);color:var(--accent-ink,var(--accent));margin-left:6px}
 </style>
 </head>
@@ -554,7 +557,66 @@ function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti
 let st={g:GROUPS.indexOf("Cash, markets & social protection"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
 try{const s=JSON.parse(localStorage.getItem("tv3")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,ctySel:st.ctySel,ctyM:st.ctyM,ctyP:st.ctyP,ctyDown:st.ctyDown}}));}catch(e){}}
+/* shareable links: every setting can live in the address bar, with readable names rather than positions */
+const slug=s=>String(s).normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase().replace(/&/g," and ").replace(/[^a-z0-9]+/g,"-").replace(/^-+|-+$/g,"");
+const bySlug=list=>{const m=new Map();list.forEach(x=>{const k=slug(x);if(!m.has(k))m.set(k,x);});return m;};
+const LINK_SECTIONS=["hot","topics","roles","countries","orgs"];
+function readURL(){
+  const q=new URLSearchParams(location.search);if(![...q.keys()].length)return false;
+  const one=(k,ok)=>{const v=q.get(k);return v!=null&&ok.includes(v)?v:null;},list=k=>(q.get(k)||"").split(",").filter(Boolean);
+  // topic trends
+  const gi=GROUPS.findIndex(g=>slug(g)===q.get("group"));if(gi>=0)st.g=gi;
+  if(q.has("topics")){const all=bySlug(D.topics.map(t=>t.t));let names=list("topics").map(s=>all.get(s)).filter(Boolean);
+    if(names.length){const g=gi>=0?GROUPS[gi]:D.topics.find(t=>t.t===names[0]).g;st.g=GROUPS.indexOf(g);
+      names=names.filter(n=>D.topics.find(t=>t.t===n).g===g).slice(0,6);st.sel[g]=[0,1,2,3,4,5].map(i=>names[i]||null);}}
+  const ms=one("measure",["share","count"]);if(ms)st.measure=ms;
+  const tg=one("tags",["core","core-or-duty"]);if(tg)st.metric=tg==="core"?"ti":"an";
+  const mv=one("movers",["recent","long"]);if(mv)st.mp=mv;
+  const dr=one("dir",["rising","falling"]);if(dr)st.falling=dr==="falling";
+  const sn=one("since",["2025","2026"]);if(sn)st.rec=sn+"-01";
+  // roles
+  const rk=one("role",["experience","job-type","org-type","career-category"]);
+  if(rk){const k=rk.replace(/-/g,"_");st.role=k;
+    if(q.has("items")){const m=bySlug((D.roles.dims[k]||[]).map(v=>v.name)),names=list("items").map(s=>m.get(s)).filter(Boolean).slice(0,6);
+      if(names.length){st.rsel=st.rsel||{};if(k==="org_type")st.rselV=2;st.rsel[k]=[0,1,2,3,4,5].map(i=>names[i]||null);}}}
+  // countries
+  if(q.has("countries")&&RD.countries){const m=bySlug(RD.countries.countries.map(c=>c.c)),names=list("countries").map(s=>m.get(s)).filter(Boolean).slice(0,6);if(names.length)st.ctySel=names;}
+  const cm=one("cmeasure",["share","count"]);if(cm)st.ctyM=cm;
+  const cp=one("cperiod",["2025","2026","long"]);if(cp)st.ctyP=cp==="long"?"long":cp+"-01";
+  const cd=one("cdir",["rising","falling"]);if(cd)st.ctyDown=cd==="falling";
+  // organisations
+  if(q.has("org")){const i=D.orgs.findIndex(o=>slug(o.n)===q.get("org"));if(i>=0){st.org=i;st.orgSet=1;}}
+  const ov=one("orgview",["top","rising","falling"]);if(ov)st.omMode=ov==="rising"?"up":ov==="falling"?"down":"top";
+  const cc=one("concentration",["core","core-or-duty"]);if(cc)st.tilt=cc==="core"?"tt":"ta";
+  return true;
+}
+function linkQuery(sec){
+  const p=[],add=(k,v)=>{if(v!=null&&v!=="")p.push(k+"="+String(v).split(",").map(encodeURIComponent).join(","));},all=!sec;
+  if(all||sec==="hot"||sec==="topics"||sec==="orgs")add("since",(st.rec||"2025-01").slice(0,4));
+  if(all||sec==="topics"){const g=GROUPS[st.g];add("group",slug(g));add("topics",slotsOf(g).filter(Boolean).map(slug).join(","));
+    add("measure",st.measure||"share");add("tags",st.metric==="an"?"core-or-duty":"core");add("movers",st.mp==="long"?"long":"recent");add("dir",st.falling?"falling":"rising");}
+  if(all||sec==="roles"){const k=D.roles.dims[st.role]?st.role:"experience";add("role",k.replace(/_/g,"-"));add("items",roleSlots(k).filter(Boolean).map(slug).join(","));}
+  if(all||sec==="countries"){if(Array.isArray(st.ctySel))add("countries",st.ctySel.map(slug).join(","));add("cmeasure",st.ctyM==="count"?"count":"share");
+    const P=st.ctyP||"2025-01";add("cperiod",P==="long"?"long":P.slice(0,4));add("cdir",st.ctyDown?"falling":"rising");}
+  if(all||sec==="orgs"){const o=D.orgs[st.org];if(o)add("org",slug(o.n));const om=st.omMode||"top";add("orgview",om==="up"?"rising":om==="down"?"falling":"top");add("concentration",st.tilt==="ta"?"core-or-duty":"core");}
+  return p.join("&");
+}
+function linkTo(sec){return location.origin+location.pathname+"?"+linkQuery(sec)+(sec?"#"+sec:location.hash);}
+function writeURL(){try{history.replaceState(null,"",location.pathname+"?"+linkQuery()+location.hash);}catch(e){}}
+function addLinkButtons(){
+  LINK_SECTIONS.forEach(id=>{const head=document.querySelector(`#${id} .sec-head`);if(!head||head.querySelector(".copylink"))return;
+    const b=document.createElement("button");b.type="button";b.className="linkbtn copylink";b.textContent="Copy link to this view";
+    b.setAttribute("aria-label","Copy a link to this view of the "+(head.querySelector("h2")||{}).textContent+" section");
+    b.onclick=async()=>{const url=linkTo(id);let ok=false;
+      try{await navigator.clipboard.writeText(url);ok=true;}catch(e){}
+      if(!ok){const t=document.createElement("textarea");t.value=url;t.setAttribute("readonly","");t.style.position="fixed";t.style.opacity="0";document.body.appendChild(t);t.select();
+        try{ok=document.execCommand("copy");}catch(e){}t.remove();}
+      if(!ok){window.prompt("Copy this link:",url);return;}
+      b.textContent="Link copied";b.classList.add("done");setTimeout(()=>{b.textContent="Copy link to this view";b.classList.remove("done");},2000);};
+    head.appendChild(b);});
+}
+const FROM_URL=readURL();
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,ctySel:st.ctySel,ctyM:st.ctyM,ctyP:st.ctyP,ctyDown:st.ctyDown,falling:st.falling}}));}catch(e){}writeURL();}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -638,7 +700,7 @@ GROUPS.forEach((g,i)=>{const b=document.createElement("button");b.type="button";
 document.querySelectorAll("#measureSeg button").forEach(b=>b.onclick=()=>{st.measure=b.dataset.v;save();renderTopics();});
 document.querySelectorAll("#metricSeg button").forEach(b=>b.onclick=()=>{st.metric=b.dataset.v;save();renderTopics();renderMovers();});
 document.getElementById("tableToggle").onclick=()=>{st.table=!st.table;renderTopics();};
-document.querySelectorAll("#dirSeg button").forEach(b=>b.onclick=()=>{st.falling=b.dataset.v==="down";renderMovers();});
+document.querySelectorAll("#dirSeg button").forEach(b=>b.onclick=()=>{st.falling=b.dataset.v==="down";save();renderMovers();});
 
 function renderTopics(){
   const g=GROUPS[st.g],watch=isWatch(g),measure=st.measure,k=st.metric;
@@ -896,6 +958,8 @@ function renderCountries(){
 }
 function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderRoles();renderOrgMovers();renderOrg();renderCountries();}
 renderAll();
+addLinkButtons();
+if(FROM_URL&&location.hash){const el=document.getElementById(location.hash.slice(1));if(el)setTimeout(()=>el.scrollIntoView({block:"start"}),60);}
 let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(renderAll,120);});
 const mq=matchMedia("(prefers-color-scheme: dark)");mq.addEventListener&&mq.addEventListener("change",renderAll);
 new MutationObserver(renderAll).observe(document.documentElement,{attributes:true,attributeFilter:["data-theme"]});

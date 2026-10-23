@@ -181,7 +181,8 @@ sections = [
 <p><b>Shares and movers.</b> A country's share is its adverts divided by all ReliefWeb adverts that year, the same denominator as topics. Biggest movers compares a country's share in a recent period with a baseline, as for topics: since January 2025 against all of 2024, since January 2026 against all of 2025, and a long view comparing the latest four complete years with four years a decade earlier. Countries need at least 100 adverts in each period, and the post count (n) is shown beside every share.</p>
 <p>This section is in beta. Breakdowns by topic and organisation for each country will follow.</p>"""),
  ("cite", "How to cite", f"""
-<div class="cite"><span id="citeText">Curinta ({date.fromisoformat(meta['generated']).year}). <i>Humanitarian Trendlines: ReliefWeb job adverts, {first[:4]} to {last[:4]}</i>. Data to {month_name(last)}. trendlines.curinta.com. Accessed <span id="citeDate">[date]</span>.</span><button class="btn" type="button" id="citeCopy">Copy</button></div>"""),
+<div class="cite"><span id="citeText">Curinta ({date.fromisoformat(meta['generated']).year}). <i>Humanitarian Trendlines: ReliefWeb job adverts, {first[:4]} to {last[:4]}</i>. Data to {month_name(last)}. trendlines.curinta.com. Accessed <span id="citeDate">[date]</span>.</span><button class="btn" type="button" id="citeCopy">Copy</button></div>
+<p>To point to a particular chart, use <b>Copy link to this view</b> in its section of the dashboard. The link reopens the dashboard with the same topics, countries, organisation and settings, so a reader sees what you saw. Add it after the citation, with the date you accessed it: figures change as new months are added.</p>"""),
  ("changes", "Corrections and changes", """
 <p>If a number looks wrong, tell us at <a href="mailto:rorycrew@curinta.com">rorycrew@curinta.com</a>. Changes to the method are logged here.</p>
 <ul class="log">
