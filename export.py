@@ -61,6 +61,7 @@ LOC_GROUPS = ["National NGO", "Other global-South NGO", "International NGO",
               "UN & international organisations", "Red Cross / Red Crescent", "Other"]
 LOC_MIN_COUNTRY_POSTS = 300   # countries with fewer posts across all years are left out
 ORG_HOMES = {}                # org_id -> set of home countries, filled by classify_orgs
+COUNTRY_INCOME = {}           # ReliefWeb country name -> World Bank income level, via organisations' home iso3
 
 
 BUNDLE = {}
@@ -107,6 +108,11 @@ def classify_orgs(con):
             GROUP BY jo.org_id, g.org_name, g.org_type, g.home_country, g.home_iso3""").fetchall():
         isos = [x for x in (iso3 or "").split(";") if x]
         homes = {x.strip() for x in (home or "").split(";") if x.strip()}
+        names = [x.strip() for x in (home or "").split(";")]
+        if len(names) == len(isos):
+            for nm_, i_ in zip(names, isos):
+                if nm_ and i_ in income:
+                    COUNTRY_INCOME.setdefault(nm_, income[i_])
         for pair in HOME_PAIRS:
             if homes & pair:
                 homes |= pair
@@ -161,22 +167,33 @@ def write_loc_country(con, months):
         FROM jo JOIN job_countries c ON c.job_id = jo.job_id
                 JOIN org_class k ON k.org_id = jo.org_id
                 LEFT JOIN org_home h ON h.org_id = jo.org_id AND h.home = c.country""")
-    ALL = "(All countries)"
+    con.execute("CREATE TEMP TABLE country_inc (country VARCHAR, inc VARCHAR)")
+    con.executemany("INSERT INTO country_inc VALUES (?, ?)", list(COUNTRY_INCOME.items()))
+    ALL = "(All low- and middle-income countries)"
+    LMIC = "SELECT country FROM country_inc WHERE inc <> 'High income'"
     data = {}
     for c, y, n in con.execute(f"""
             SELECT c.country, year(j.m), count(DISTINCT j.id) FROM j JOIN job_countries c ON c.job_id = j.id GROUP BY 1, 2
             UNION ALL
-            SELECT '{ALL}', year(j.m), count(DISTINCT j.id) FROM j JOIN job_countries c ON c.job_id = j.id GROUP BY 2
+            SELECT '{ALL}', year(j.m), count(DISTINCT j.id) FROM j JOIN job_countries c ON c.job_id = j.id
+            WHERE c.country IN ({LMIC}) GROUP BY 2
             """).fetchall():
         if c and y in yi:
             data.setdefault(c, {"n": [0] * len(years), "g": {}})["n"][yi[y]] = int(n)
     for c, y, g, n in con.execute(f"""
             SELECT country, y, g, count(*) FROM locx GROUP BY 1, 2, 3
             UNION ALL
-            SELECT '{ALL}', y, g, count(DISTINCT job_id) FROM locx GROUP BY 2, 3""").fetchall():
+            SELECT '{ALL}', y, g, count(DISTINCT job_id) FROM locx WHERE country IN ({LMIC}) GROUP BY 2, 3""").fetchall():
         if c in data and y in yi:
             data[c]["g"].setdefault(g, [0] * len(years))[yi[y]] = int(n)
-    keep = [c for c in data if c == ALL or sum(data[c]["n"]) >= LOC_MIN_COUNTRY_POSTS]
+    # The national-NGO rule only applies where NGOs can be national: low- and middle-income countries.
+    # High-income countries, countries with no income match, and "World" are left out.
+    keep = [c for c in data if c == ALL or (sum(data[c]["n"]) >= LOC_MIN_COUNTRY_POSTS
+                                            and COUNTRY_INCOME.get(c, "High income") != "High income")]
+    dropped = sorted(c for c in data if c != ALL and sum(data[c]["n"]) >= LOC_MIN_COUNTRY_POSTS
+                     and c not in COUNTRY_INCOME)
+    if dropped:
+        print("  loc_country: no income match, left out:", dropped)
     keep.sort(key=lambda c: (c != ALL, -sum(data[c]["n"])))
     write("loc_country.json", {"years": years, "groups": LOC_GROUPS,
                                "countries": [{"c": c, "n": data[c]["n"],

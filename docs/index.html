@@ -380,7 +380,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 
   <section class="block" id="loc">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Localisation by country (proxy)</h2>
-      <p>Who advertises the jobs in each country? A post counts as from a <b>national NGO</b> when an NGO based in a low- or middle-income country advertises in its own home country. This is a proxy for hiring by national actors, not a measure of funding, and ReliefWeb carries only part of national NGO hiring. See the <a href="methodology.html#orgtypes">methodology</a>.</p></div>
+      <p>Who advertises the jobs in each country? A post counts as from a <b>national NGO</b> when an NGO based in a low- or middle-income country advertises in its own home country. Only low- and middle-income countries are shown, since NGOs based in high-income countries are counted as international. This is a proxy for hiring by national actors, not a measure of funding, and ReliefWeb carries only part of national NGO hiring. See the <a href="methodology.html#orgtypes">methodology</a>.</p></div>
     <div class="controls"><label><span class="ctl-label">Country</span> <select id="locCountry"></select></label></div>
     <div class="grid2">
       <div class="panel">
@@ -825,14 +825,14 @@ function renderRoles(){
 const LOC_MIN=50;   // a country-year needs this many posts to be shown
 function renderLoc(){
   const sec=document.getElementById("loc"),L=RD.loc_country;if(!L||!L.countries.length){sec.hidden=true;return;}
-  const sel=document.getElementById("locCountry"),nm=c=>c==="(All countries)"?"All countries":c;
+  const sel=document.getElementById("locCountry"),nm=c=>c==="(All low- and middle-income countries)"?"All low- and middle-income countries":c;
   if(!sel.options.length){sel.innerHTML=L.countries.map((c,i)=>`<option value="${i}">${nm(c.c)}</option>`).join("");
     sel.onchange=()=>{st.loc=L.countries[+sel.value].c;save();renderLoc();};}
   let ci=L.countries.findIndex(c=>c.c===st.loc);if(ci<0)ci=0;sel.value=String(ci);const C=L.countries[ci];
   const at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
   const series=L.groups.filter(g=>C.g[g]).map((g,si)=>({name:g,color:css(SLOTS[si]),t:{n:Y.map(y=>at(C.g[g],y))},
     v:Y.map(y=>{const n=at(C.n,y);return n<LOC_MIN?null:100*at(C.g[g],y)/n;})}));
-  document.getElementById("locTitle").textContent=`Who advertises jobs in ${C.c==="(All countries)"?"all countries":C.c}`;
+  document.getElementById("locTitle").textContent=`Who advertises jobs in ${C.c===L.countries[0].c?"low- and middle-income countries":C.c}`;
   document.getElementById("locSub").textContent=`Share of posts in ${nm(C.c)} by the kind of organisation advertising. A post with several organisations counts once for each kind. Years with fewer than ${LOC_MIN} posts are left blank.`;
   lines(document.getElementById("locChart"),series,{aria:"Share of posts by organisation type, "+nm(C.c),
     fmtAxis:v=>v===0?"0":String(+v.toFixed(1))+"%",
@@ -840,7 +840,7 @@ function renderLoc(){
   document.getElementById("locNote").textContent=`${fmtN(C.n.reduce((a,b)=>a+b,0))} posts in ${nm(C.c)} since ${L.years[0]}.`;
   // ranking: national NGO share, latest complete year against five years earlier
   const y1=LAST,y0=LAST-5,MINR=100;
-  const rows=L.countries.filter(c=>c.c!=="(All countries)"&&at(c.n,y1)>=MINR&&at(c.n,y0)>=MINR).map(c=>{const g=c.g["National NGO"]||[];
+  const rows=L.countries.filter(c=>c.c!==L.countries[0].c&&at(c.n,y1)>=MINR&&at(c.n,y0)>=MINR).map(c=>{const g=c.g["National NGO"]||[];
     return {c,a:100*at(g,y0)/at(c.n,y0),b:100*at(g,y1)/at(c.n,y1),nA:at(c.n,y0),nB:at(c.n,y1)};}).sort((p,q)=>q.b-p.b);
   document.getElementById("locRankTitle").textContent=`National NGO share, ${y0} and ${y1}`;
   document.getElementById("locRankSub").textContent=`Countries with at least ${MINR} posts in both years, highest ${y1} share first. n = all posts in the country that year. Select a row to chart it.`;
