@@ -283,7 +283,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     <div>
       <p class="eyebrow">A lens on the humanitarian sector</p>
       <h1>What the humanitarian sector <em>hires for</em>, year by year</h1>
-      <p>Every job post on ReliefWeb since <span id="hStart">2011</span>, read by a language model and tagged against <span id="hTopics">65</span> topics. Topic trends are shown as a share of all posts in each year, so the overall rise and fall in posting does not read as a rise or fall in a topic.</p>
+      <p>Every job post on ReliefWeb since <span id="hStart">2011</span>, read by a language model and tagged against <span id="hTopics">65</span> topics. Topic trends are shown as a share of all posts in each year, so the overall rise and fall in the number of job posts does not read as a rise or fall in a topic.</p>
     </div>
     <div class="facts" aria-label="Dataset summary">
       <div><b id="fJobs">–</b><span>job posts</span></div>
@@ -303,6 +303,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
   <section class="block" id="hot">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Hot <span class="recLab">since Jan 2025</span></h2>
       <p id="hotSub"></p></div>
+    <div class="controls"><span class="seg" id="recSeg" aria-label="Period"><button type="button" data-r="2025-01">Since Jan 2025</button><button type="button" data-r="2026-01">Since Jan 2026</button></span></div>
     <div class="hotrow"><span class="hotk">Topics</span><div class="cards" id="hotTopics"></div></div>
     <div class="hotrow"><span class="hotk">Organisations</span><div class="cards" id="hotOrgs"></div></div>
   </section>
@@ -314,9 +315,9 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <label class="sr-only" for="suEmail1">Email address</label>
         <input id="suEmail1" type="email" name="email" placeholder="you@organisation.org" autocomplete="email" required>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <button type="submit">Get the update</button>
+        <button type="submit">Get the updates</button>
       </form>
-      <p class="fine">Double opt-in, unsubscribe any time. <a href="https://www.curinta.com/privacy">Privacy notice</a></p>
+      <p class="fine">Double opt-in required. Unsubscribe any time. <a href="https://www.curinta.com/privacy">Privacy notice</a></p>
       <p class="msg" role="status" aria-live="polite"></p>
     </div>
   </aside>
@@ -331,7 +332,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <span><span class="ctl-label">Count</span><span class="seg" id="metricSeg">
         <button type="button" data-v="ti">Core</button><button type="button" data-v="an">Core or duty</button></span></span>
     </div>
-    <p class="matchnote"><b>Core</b> means the topic or theme is central to the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk. Interoperability &amp; data sharing is mostly a duty rather than a job in itself, so read it as <b>core or duty</b>.</p>
+    <p class="matchnote"><b>Core</b> means the topic or theme is central to the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk. They are part of so many roles that counting them as a duty would add noise. Interoperability &amp; data sharing is mostly a duty rather than a job in itself, so read it as <b>core or duty</b>.</p>
     <div class="grid2">
       <div class="panel">
         <h3 id="trendTitle"></h3>
@@ -343,7 +344,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       </div>
       <div class="panel">
         <div class="mvhead"><h3>Biggest movers</h3>
-          <span class="seg" id="mpSeg" aria-label="Period"><button type="button" data-v="recent" class="recLab">Since Jan 2025</button><button type="button" data-v="long" id="mpLong">Long view</button></span>
+          <span class="seg" id="mpSeg" aria-label="Period"><button type="button" data-v="recent" data-r="2025-01">Since Jan 2025</button><button type="button" data-v="recent" data-r="2026-01">Since Jan 2026</button><button type="button" data-v="long" id="mpLong">Long view</button></span>
           <div class="dirseg" id="dirSeg" role="tablist" aria-label="Direction">
             <button type="button" role="tab" data-v="up" class="up"><span aria-hidden="true">▲</span> Rising</button><button type="button" role="tab" data-v="down" class="down"><span aria-hidden="true">▼</span> Falling</button>
           </div></div>
@@ -356,7 +357,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 
   <section class="block" id="roles">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Four ways to slice the jobs</h2>
-      <p>Junior or senior? Staff or consultant? UN or NGO? Experience, job type and career category are what the poster chose on ReliefWeb's form. Organisation type starts from ReliefWeb's label for each organisation and splits the NGOs into international, locally based and regional, using each NGO's home country and where it hires.</p></div>
+      <p>Junior or senior? Staff or consultant? UN or NGO? Experience, job type and career category are what the advertiser chose on ReliefWeb's posting form. Organisation type starts from ReliefWeb's label for each organisation and splits NGOs into international, locally based and regional, using each NGO's home country and where it hires.</p></div>
     <div class="controls">
       <span class="seg" id="roleSeg" aria-label="Field">
         <button type="button" data-v="experience">Experience</button><button type="button" data-v="job_type">Job type</button><button type="button" data-v="org_type">Organisation type</button><button type="button" data-v="career_category">Career category</button></span>
@@ -459,9 +460,9 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <label class="sr-only" for="suEmail2">Email address</label>
         <input id="suEmail2" type="email" name="email" placeholder="you@organisation.org" autocomplete="email" required>
         <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
-        <button type="submit">Get the update</button>
+        <button type="submit">Get the updates</button>
       </form>
-      <p class="fine">Double opt-in, unsubscribe any time. <a href="https://www.curinta.com/privacy">Privacy notice</a></p>
+      <p class="fine">Double opt-in required. Unsubscribe any time. <a href="https://www.curinta.com/privacy">Privacy notice</a></p>
       <p class="msg" role="status" aria-live="polite"></p>
     </div>
   </aside>
@@ -486,14 +487,17 @@ const LAST=Y.filter((y,i)=>M[i]===12).pop();
 const P2=[LAST-3,LAST],P1=[LAST-10,LAST-7];
 const pLab=p=>p[0]+"–"+String(p[1]).slice(2), pShort=p=>String(p[0]).slice(2)+"–"+String(p[1]).slice(2);
 document.querySelectorAll(".p2lab").forEach(e=>e.textContent=pLab(P2));
-const RECENT_START="2025-01";
-const MO=D.mo.months, rs=Math.max(0,MO.indexOf(RECENT_START)), len=MO.length-rs, bs=Math.max(0,rs-len);
+let RECENT_START="2025-01";
+const MO=D.mo.months;let rs,len,bs,totRecent,totBase,R0,R1,B0,B1;
 const mLab=m=>MON[+m.slice(5)-1]+" "+m.slice(0,4);
 const sumM=(a,i,j)=>{let s=0;for(let k=i;k<j;k++)s+=a[k];return s;};
-const totRecent=sumM(D.mo.total,rs,MO.length), totBase=sumM(D.mo.total,bs,rs);
-const R0=mLab(MO[rs]),R1=mLab(MO[MO.length-1]),B0=mLab(MO[bs]),B1=mLab(MO[rs-1]);
-document.querySelectorAll(".recLab").forEach(e=>e.textContent="Since "+R0);
-document.querySelectorAll("h2 .recLab").forEach(e=>e.textContent="since "+R0);
+/* recent window: RECENT_START to the latest month, against the same number of months just before */
+function setWindow(start){RECENT_START=start;rs=Math.max(0,MO.indexOf(start));len=MO.length-rs;bs=Math.max(0,rs-len);
+  totRecent=sumM(D.mo.total,rs,MO.length);totBase=sumM(D.mo.total,bs,rs);
+  R0=mLab(MO[rs]);R1=mLab(MO[MO.length-1]);B0=mLab(MO[bs]);B1=mLab(MO[rs-1]);
+  document.querySelectorAll("h2 .recLab").forEach(e=>e.textContent="since "+R0);
+  for(const o of D.orgs){o.rec=sumM(o.m,rs,MO.length);o.base=sumM(o.m,bs,rs);o.shR=100*o.rec/totRecent;o.shB=100*o.base/totBase;o.ratio=o.base?o.shR/o.shB:Infinity;}
+  document.querySelectorAll("#recSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.r===start));}
 document.getElementById("mpLong").textContent="Long view";
 /* topic change since the recent start: share of posts, recent window vs same length before */
 function topicRecent(t,k){const a=sumM(t[k==="ti"?"mti":"man"],bs,rs),b=sumM(t[k==="ti"?"mti":"man"],rs,MO.length);return {nA:a,nB:b,a:100*a/totBase,b:100*b/totRecent};}
@@ -519,7 +523,7 @@ function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti
 let st={g:GROUPS.indexOf("Cash, markets & social protection"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
 try{const s=JSON.parse(localStorage.getItem("tv3")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt}}));}catch(e){}}
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec}}));}catch(e){}}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -632,10 +636,10 @@ function spark(t,k,color){const v=t[k].map((c,i)=>c/T[i]).slice(1,-1);const w=64
 function moverRows(k,mp){
   if(mp==="recent")return D.topics.filter(t=>!isWatch(t.g)).map(t=>({t,...topicRecent(t,k)})).filter(r=>r.nA>=20&&r.nB>=20).map(r=>(r.r=r.b/r.a,r));
   return D.topics.filter(t=>!isWatch(t.g)&&sumR(t[k],P1)>=20&&sumR(t[k],P2)>=20).map(t=>({t,a:share(t,k,P1),b:share(t,k,P2)})).map(r=>(r.r=r.b/r.a,r));}
-document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dataset.v;save();renderMovers();});
+document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dataset.v;if(b.dataset.r&&b.dataset.r!==RECENT_START){setRecent(b.dataset.r);return;}save();renderMovers();});
 function renderMovers(){
   const k=st.metric,mp=st.mp||"recent";
-  document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp));
+  document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp&&(!b.dataset.r||b.dataset.r===RECENT_START)));
   document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against the ${len} months before (${B0} – ${B1}).`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
   const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
@@ -648,15 +652,17 @@ function renderMovers(){
 
 /* organisations */
 /* recent-hiring window: Jan 2025 to latest month, against the same number of months just before */
-D.orgs.forEach(o=>{o.rec=sumM(o.m,rs,MO.length);o.base=sumM(o.m,bs,rs);o.shR=100*o.rec/totRecent;o.shB=100*o.base/totBase;o.ratio=o.base?o.shR/o.shB:Infinity;});
+setWindow(st.rec==="2026-01"?"2026-01":"2025-01");
+function setRecent(r){st.rec=r;save();setWindow(r);renderHot();renderMovers();renderOrgMovers();}
+document.querySelectorAll("#recSeg button").forEach(b=>b.onclick=()=>setRecent(b.dataset.r));
 const rec=o=>o.rec;
-if(!D.orgs[st.org]||st.orgSet!==1){st.org=D.orgs.reduce((a,o,i)=>rec(o)>rec(D.orgs[a])?i:a,0);}
+if(!D.orgs[st.org]||st.orgSet!==1){const top=D.orgs.map((o,i)=>i).sort((a,b)=>rec(D.orgs[b])-rec(D.orgs[a])).slice(0,20);st.org=top[Math.floor(Math.random()*top.length)];}
 /* searchable, alphabetical organisation picker */
 const ALPHA=D.orgs.map((o,i)=>i).sort((a,b)=>D.orgs[a].n.localeCompare(D.orgs[b].n,"en",{sensitivity:"base"}));
 const inp=document.getElementById("orgSearch"),lst=document.getElementById("orgList");let act=-1,shown=[];
 const norm=t=>t.normalize("NFD").replace(/[̀-ͯ]/g,"").toLowerCase();
 function openList(q){const nq=norm(q.trim());shown=ALPHA.filter(i=>!nq||norm(D.orgs[i].n).includes(nq)||norm(D.orgs[i].short||"").includes(nq));act=shown.indexOf(st.org);
-  lst.innerHTML=shown.length?shown.map((i,k)=>{const o=D.orgs[i];return `<li role="option" id="opt${i}" data-i="${i}" aria-selected="${k===act}">${o.n}${o.short&&o.short!==o.n?` <span style="color:var(--muted)">(${o.short})</span>`:""}<small>${fmtN(o.rec)} since ${RECENT_START.slice(0,4)}</small></li>`;}).join(""):'<li class="none">No organisation matches</li>';
+  lst.innerHTML=shown.length?shown.map((i,k)=>{const o=D.orgs[i];return `<li role="option" id="opt${i}" data-i="${i}" aria-selected="${k===act}">${o.n}${o.short&&o.short!==o.n?` <span style="color:var(--muted)">(${o.short})</span>`:""}<small>${fmtN(o.rec)} since ${MO[rs].slice(0,4)}</small></li>`;}).join(""):'<li class="none">No organisation matches</li>';
   lst.hidden=false;inp.setAttribute("aria-expanded","true");const a=lst.querySelector('[aria-selected="true"]');if(a)a.scrollIntoView({block:"nearest"});}
 function closeList(){lst.hidden=true;inp.setAttribute("aria-expanded","false");inp.value=D.orgs[st.org].n;}
 function pickOrg(i,scroll){st.org=i;st.orgSet=1;save();closeList();renderOrg();if(scroll)document.getElementById("orgTitle").scrollIntoView({behavior:"smooth",block:"start"});}
