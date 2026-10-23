@@ -641,7 +641,7 @@ document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dat
 function renderMovers(){
   const k=st.metric,mp=st.mp||"recent";
   document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp&&(!b.dataset.r||b.dataset.r===RECENT_START)));
-  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against all of ${BY}.`:`${pLab(P1)} against ${pLab(P2)}.`)+` n = number of posts. Topics need at least 20 in each period. Watchlist excluded.`;
+  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"} (set by the Count toggle above), `+(mp==="recent"?`${R0} – ${R1} against all of ${BY}.`:`${pLab(P1)} against ${pLab(P2)}.`)+` n = number of posts. Topics need at least 20 in each period. Watchlist excluded.`;
   const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
   document.querySelectorAll("#dirSeg button").forEach(b=>{const on=(b.dataset.v==="down")===st.falling;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
