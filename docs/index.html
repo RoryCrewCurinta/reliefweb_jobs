@@ -383,19 +383,23 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Countries <span class="beta">Beta</span></h2>
       <p>Where jobs are advertised, and how that has shifted. An advert listing several countries counts in each. This is a first version: breakdowns by topic and organisation for each country will be added.</p></div>
     <div class="controls">
-      <label><span class="ctl-label">Country</span> <select id="ctySel"></select></label>
+      <label><span class="ctl-label">Add a country</span> <select id="ctySel"></select></label>
       <span><span class="ctl-label">Measure</span><span class="seg" id="ctyMeasure"><button type="button" data-v="share">Share of posts</button><button type="button" data-v="count">Post count</button></span></span>
     </div>
     <div class="grid2">
       <div class="panel">
         <h3 id="ctyTitle"></h3>
         <p class="sub" id="ctySub"></p>
+        <div class="tchips" id="ctyChips" role="group" aria-label="Countries shown"></div>
         <div class="chart" id="ctyChart"></div>
         <div class="foot"><span id="ctyNote"></span></div>
       </div>
       <div class="panel">
-        <div class="mvhead"><h3 id="ctyRankTitle"></h3>
-          <span class="seg" id="ctyDir"><button type="button" data-v="up">Rising</button><button type="button" data-v="down">Falling</button></span></div>
+        <div class="mvhead"><h3>Biggest movers</h3>
+          <span class="seg" id="ctyPer" aria-label="Period"><button type="button" data-v="2025-01">Since Jan 2025</button><button type="button" data-v="2026-01">Since Jan 2026</button><button type="button" data-v="long">Long view</button></span>
+          <div class="dirseg" id="ctyDir" role="tablist" aria-label="Direction">
+            <button type="button" role="tab" data-v="up" class="up"><span aria-hidden="true">▲</span> Rising</button><button type="button" role="tab" data-v="down" class="down"><span aria-hidden="true">▼</span> Falling</button>
+          </div></div>
         <p class="sub" id="ctyRankSub"></p>
         <div class="tablewrap"><table class="movers" id="ctyRank"></table></div>
       </div>
@@ -548,7 +552,7 @@ function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti
 let st={g:GROUPS.indexOf("Cash, markets & social protection"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
 try{const s=JSON.parse(localStorage.getItem("tv3")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,cty:st.cty,ctyM:st.ctyM,ctyDown:st.ctyDown}}));}catch(e){}}
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,ctySel:st.ctySel,ctyM:st.ctyM,ctyP:st.ctyP,ctyDown:st.ctyDown}}));}catch(e){}}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -826,35 +830,51 @@ function renderRoles(){
   const tb=document.getElementById("roleTable");tb.hidden=!roleTable;document.getElementById("roleTableToggle").textContent=roleTable?"Hide table":"Show as table";
   if(roleTable)tb.innerHTML=`<table class="datatable"><thead><tr><th>${cfg.title}</th>${Y.map((y,i)=>`<th>${y}${PART[i]?"*":""}</th>`).join("")}</tr></thead><tbody>${series.map(s=>`<tr><td>${s.name}</td>${s.v.map(v=>`<td>${v==null?"–":v.toFixed(1)+"%"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
-/* countries (beta): posts per year and share of all posts */
+/* countries (beta): posts per year and share of all posts; up to six countries at once */
 function renderCountries(){
   const sec=document.getElementById("countries"),L=RD.countries;if(!L||!L.countries.length){sec.hidden=true;return;}
+  const names=L.countries.map(c=>c.c),byName=new Map(L.countries.map(c=>[c.c,c]));
+  const at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
+  let sl=(st.ctySel||[]).filter(n=>byName.has(n)).slice(0,6);
+  if(!sl.length){const top=names.slice(0,15);sl=[top[Math.floor(Math.random()*top.length)]];}
+  st.ctySel=sl;
   const sel=document.getElementById("ctySel");
-  if(!sel.options.length){const alpha=L.countries.map((c,i)=>i).sort((a,b)=>L.countries[a].c.localeCompare(L.countries[b].c,"en",{sensitivity:"base"}));
-    sel.innerHTML=alpha.map(i=>`<option value="${i}">${L.countries[i].c}</option>`).join("");
-    sel.onchange=()=>{st.cty=L.countries[+sel.value].c;save();renderCountries();};
+  if(!sel.dataset.wired){sel.dataset.wired=1;
+    sel.onchange=()=>{const v=sel.value;if(v&&!st.ctySel.includes(v)&&st.ctySel.length<6){st.ctySel.push(v);save();}renderCountries();};
     document.querySelectorAll("#ctyMeasure button").forEach(b=>b.onclick=()=>{st.ctyM=b.dataset.v;save();renderCountries();});
+    document.querySelectorAll("#ctyPer button").forEach(b=>b.onclick=()=>{st.ctyP=b.dataset.v;save();renderCountries();});
     document.querySelectorAll("#ctyDir button").forEach(b=>b.onclick=()=>{st.ctyDown=b.dataset.v==="down";save();renderCountries();});}
-  let ci=L.countries.findIndex(c=>c.c===st.cty);if(ci<0){ci=Math.floor(Math.random()*Math.min(15,L.countries.length));st.cty=L.countries[ci].c;}sel.value=String(ci);const C=L.countries[ci];
-  const share=st.ctyM!=="count",at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
+  const alpha=[...names].sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base"}));
+  sel.innerHTML=`<option value="">${sl.length>=6?"Six at most: remove one first":"Choose…"}</option>`+alpha.filter(n=>!sl.includes(n)).map(n=>`<option value="${n.replace(/"/g,"&quot;")}">${n}</option>`).join("");
+  sel.disabled=sl.length>=6;
+  const chips=document.getElementById("ctyChips");chips.innerHTML="";
+  sl.forEach((n,si)=>{const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed","true");
+    b.innerHTML=`<i style="background:${css(SLOTS[si])}"></i>${n}${sl.length>1?' <span aria-hidden="true">×</span>':""}`;b.title=sl.length>1?"Remove":"";
+    b.onclick=()=>{if(st.ctySel.length>1){st.ctySel=st.ctySel.filter(x=>x!==n);save();renderCountries();}};chips.appendChild(b);});
+  const share=st.ctyM!=="count";
   document.querySelectorAll("#ctyMeasure button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="share")===share));
-  const n=Y.map(y=>at(C.n,y));
-  document.getElementById("ctyTitle").textContent=C.c;
-  document.getElementById("ctySub").textContent=share?`Share of all ReliefWeb posts advertised in ${C.c}, by year.`:`Posts advertised in ${C.c}, by year.`;
-  lines(document.getElementById("ctyChart"),[{name:C.c,color:css(SLOTS[0]),t:{n},v:share?n.map((v,i)=>T[i]?100*v/T[i]:0):n}],{aria:(share?"Share of posts":"Posts")+" in "+C.c+" by year",
+  const series=sl.map((n,si)=>{const C=byName.get(n),cnt=Y.map(y=>at(C.n,y));return {name:n,color:css(SLOTS[si]),t:{n:cnt},v:share?cnt.map((v,i)=>T[i]?100*v/T[i]:0):cnt};});
+  document.getElementById("ctyTitle").textContent=sl.length===1?sl[0]:"Countries compared";
+  document.getElementById("ctySub").textContent=share?"Share of all ReliefWeb posts advertised in the country, by year. Add up to six countries.":"Posts advertised in the country, by year. Add up to six countries.";
+  lines(document.getElementById("ctyChart"),series,{aria:(share?"Share of posts":"Posts")+" by year: "+sl.join(", "),
     fmtAxis:share?(v=>v===0?"0":String(+v.toFixed(2))+"%"):(v=>fmtN(v)),
-    fmtTip:(s,i)=>share?`${s.v[i].toFixed(2)}% <span style="color:var(--muted)">· ${fmtN(n[i])}</span>`:fmtN(n[i])});
-  document.getElementById("ctyNote").textContent=`${fmtN(C.n.reduce((a,b)=>a+b,0))} posts since ${L.years[0]}. Dashed: part-year.`;
-  // risers and fallers: share of all posts, latest complete year against the year before
-  const y1=LAST,y0=LAST-1,MINR=100,i0=Y.indexOf(y0),i1=Y.indexOf(y1);
-  const rows=L.countries.filter(c=>at(c.n,y0)>=MINR&&at(c.n,y1)>=MINR).map(c=>{const a=100*at(c.n,y0)/T[i0],b=100*at(c.n,y1)/T[i1];return {c,a,b,nA:at(c.n,y0),nB:at(c.n,y1),r:b/a};})
-    .sort((p,q)=>st.ctyDown?p.r-q.r:q.r-p.r);
-  document.querySelectorAll("#ctyDir button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="down")===!!st.ctyDown));
-  document.getElementById("ctyRankTitle").textContent=`${st.ctyDown?"Falling":"Rising"} share, ${y0} to ${y1}`;
-  document.getElementById("ctyRankSub").textContent=`Each country's share of all ReliefWeb posts in ${y1} against ${y0}. Shares, not counts, because total posting fell sharply. n = posts in the country. Countries need at least ${MINR} posts in both years. Select a row to chart it.`;
-  document.getElementById("ctyRank").innerHTML=`<thead><tr><th>Country</th><th class="n">${y0}</th><th class="n">${y1}</th><th class="n">Change</th></tr></thead><tbody>`+
+    fmtTip:(s,i)=>share?`${s.v[i].toFixed(2)}% <span style="color:var(--muted)">· ${fmtN(s.t.n[i])}</span>`:fmtN(s.t.n[i])});
+  document.getElementById("ctyNote").textContent="Dashed: part-year.";
+  // biggest movers: share of all posts in the period against the baseline
+  const per=st.ctyP||"2025-01",down=!!st.ctyDown,MINR=100,yr=a=>{const o=[];for(let y=a[0];y<=a[1];y++)o.push(y);return o;};
+  const lastY=Y[Y.length-1];
+  const P=per==="long"?{a:yr(P1),b:yr(P2),la:pLab(P1),lb:pLab(P2)}
+        :{a:[+per.slice(0,4)-1],b:yr([+per.slice(0,4),lastY]),la:String(+per.slice(0,4)-1),lb:`${mLab(per)} – ${mLab(MO[MO.length-1])}`};
+  const tot=ys=>ys.reduce((s,y)=>s+(T[Y.indexOf(y)]||0),0),cnt=(c,ys)=>ys.reduce((s,y)=>s+at(c.n,y),0);
+  const tA=tot(P.a),tB=tot(P.b);
+  const rows=L.countries.map(c=>({c,nA:cnt(c,P.a),nB:cnt(c,P.b)})).filter(r=>r.nA>=MINR&&r.nB>=MINR)
+    .map(r=>(r.a=100*r.nA/tA,r.b=100*r.nB/tB,r.r=r.b/r.a,r)).sort((p,q)=>down?p.r-q.r:q.r-p.r);
+  document.querySelectorAll("#ctyPer button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===per));
+  document.querySelectorAll("#ctyDir button").forEach(b=>{const on=(b.dataset.v==="down")===down;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
+  document.getElementById("ctyRankSub").textContent=`Each country's share of all ReliefWeb posts, ${P.lb} against ${per==="long"?P.la:"all of "+P.la}. Shares, not counts, because total posting fell sharply. n = posts in the country. Countries need at least ${MINR} posts in each period. Select a row to add it to the chart.`;
+  document.getElementById("ctyRank").innerHTML=`<thead><tr><th>Country</th><th class="n">${per==="long"?pShort(P1):P.la}</th><th class="n">${per==="long"?pShort(P2):"Since "+per.slice(0,4)}</th><th class="n">Change</th></tr></thead><tbody>`+
     rows.slice(0,10).map(r=>{const up=r.r>=1;return `<tr tabindex="0" data-c="${r.c.c.replace(/"/g,"&quot;")}"><td>${r.c.c}</td><td class="n">${r.a.toFixed(2)}%<div class="nn">n=${fmtN(r.nA)}</div></td><td class="n">${r.b.toFixed(2)}%<div class="nn">n=${fmtN(r.nB)}</div></td><td class="n"><span class="pill ${up?"up":"down"}"><span aria-hidden="true">${up?"▲":"▼"}</span>${up?"×"+r.r.toFixed(1):"−"+Math.round(100*(1-r.r))+"%"}</span></td></tr>`;}).join("")+"</tbody>";
-  document.querySelectorAll("#ctyRank tbody tr").forEach(tr=>{const go=()=>{st.cty=tr.dataset.c;save();renderCountries();};tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go();};});
+  document.querySelectorAll("#ctyRank tbody tr").forEach(tr=>{const go=()=>{const n=tr.dataset.c;if(!st.ctySel.includes(n)){if(st.ctySel.length>=6)st.ctySel.pop();st.ctySel.push(n);}save();renderCountries();document.getElementById("countries").scrollIntoView({behavior:"smooth",block:"start"});};tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go();};});
 }
 function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderRoles();renderOrgMovers();renderOrg();renderCountries();}
 renderAll();
