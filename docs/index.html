@@ -836,7 +836,7 @@ function renderCountries(){
   const names=L.countries.map(c=>c.c),byName=new Map(L.countries.map(c=>[c.c,c]));
   const at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
   let sl=(st.ctySel||[]).filter(n=>byName.has(n)).slice(0,6);
-  if(!sl.length){const top=names.slice(0,15);sl=[top[Math.floor(Math.random()*top.length)]];}
+  if(!Array.isArray(st.ctySel)){const top=names.slice(0,15);sl=[top[Math.floor(Math.random()*top.length)]];}
   st.ctySel=sl;
   const sel=document.getElementById("ctySel");
   if(!sel.dataset.wired){sel.dataset.wired=1;
@@ -849,14 +849,17 @@ function renderCountries(){
   sel.disabled=sl.length>=6;
   const chips=document.getElementById("ctyChips");chips.innerHTML="";
   sl.forEach((n,si)=>{const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed","true");
-    b.innerHTML=`<i style="background:${css(SLOTS[si])}"></i>${n}${sl.length>1?' <span aria-hidden="true">×</span>':""}`;b.title=sl.length>1?"Remove":"";
-    b.onclick=()=>{if(st.ctySel.length>1){st.ctySel=st.ctySel.filter(x=>x!==n);save();renderCountries();}};chips.appendChild(b);});
+    b.innerHTML=`<i style="background:${css(SLOTS[si])}"></i>${n} <span aria-hidden="true">×</span>`;b.title="Remove";b.setAttribute("aria-label","Remove "+n);
+    b.onclick=()=>{st.ctySel=st.ctySel.filter(x=>x!==n);save();renderCountries();};chips.appendChild(b);});
+  if(sl.length){const c=document.createElement("button");c.type="button";c.className="linkbtn";c.textContent="Clear all";
+    c.onclick=()=>{st.ctySel=[];save();renderCountries();};chips.appendChild(c);}
   const share=st.ctyM!=="count";
   document.querySelectorAll("#ctyMeasure button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="share")===share));
   const series=sl.map((n,si)=>{const C=byName.get(n),cnt=Y.map(y=>at(C.n,y));return {name:n,color:css(SLOTS[si]),t:{n:cnt},v:share?cnt.map((v,i)=>T[i]?100*v/T[i]:0):cnt};});
-  document.getElementById("ctyTitle").textContent=sl.length===1?sl[0]:"Countries compared";
+  document.getElementById("ctyTitle").textContent=!sl.length?"No countries selected":sl.length===1?sl[0]:"Countries compared";
   document.getElementById("ctySub").textContent=share?"Share of all ReliefWeb posts advertised in the country, by year. Add up to six countries.":"Posts advertised in the country, by year. Add up to six countries.";
-  lines(document.getElementById("ctyChart"),series,{aria:(share?"Share of posts":"Posts")+" by year: "+sl.join(", "),
+  if(!sl.length)document.getElementById("ctyChart").innerHTML='<p class="sub" style="padding:40px 0;text-align:center">Add a country above, or select one from Biggest movers.</p>';
+  else lines(document.getElementById("ctyChart"),series,{aria:(share?"Share of posts":"Posts")+" by year: "+sl.join(", "),
     fmtAxis:share?(v=>v===0?"0":String(+v.toFixed(2))+"%"):(v=>fmtN(v)),
     fmtTip:(s,i)=>share?`${s.v[i].toFixed(2)}% <span style="color:var(--muted)">· ${fmtN(s.t.n[i])}</span>`:fmtN(s.t.n[i])});
   document.getElementById("ctyNote").textContent="Dashed: part-year.";
