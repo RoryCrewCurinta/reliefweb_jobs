@@ -1,4 +1,4 @@
-topic,group,year,n_core,n_duty,n_core_or_duty
+﻿topic,group,year,n_core,n_duty,n_core_or_duty
 AI & machine learning,Digital & data,2013,0,1,1
 AI & machine learning,Digital & data,2014,1,2,3
 AI & machine learning,Digital & data,2015,0,2,2
@@ -576,22 +576,22 @@ Internal displacement,People & displacement,2023,86,283,369
 Internal displacement,People & displacement,2024,114,194,308
 Internal displacement,People & displacement,2025,39,94,133
 Internal displacement,People & displacement,2026,23,65,88
-Interoperability & data sharing,Exploratory themes (small topics),2011,1,34,35
-Interoperability & data sharing,Exploratory themes (small topics),2012,10,60,70
-Interoperability & data sharing,Exploratory themes (small topics),2013,3,83,86
-Interoperability & data sharing,Exploratory themes (small topics),2014,2,68,70
-Interoperability & data sharing,Exploratory themes (small topics),2015,2,96,98
-Interoperability & data sharing,Exploratory themes (small topics),2016,6,133,139
-Interoperability & data sharing,Exploratory themes (small topics),2017,11,166,177
-Interoperability & data sharing,Exploratory themes (small topics),2018,16,225,241
-Interoperability & data sharing,Exploratory themes (small topics),2019,15,229,244
-Interoperability & data sharing,Exploratory themes (small topics),2020,10,248,258
-Interoperability & data sharing,Exploratory themes (small topics),2021,14,257,271
-Interoperability & data sharing,Exploratory themes (small topics),2022,14,260,274
-Interoperability & data sharing,Exploratory themes (small topics),2023,16,217,233
-Interoperability & data sharing,Exploratory themes (small topics),2024,14,214,228
-Interoperability & data sharing,Exploratory themes (small topics),2025,18,172,190
-Interoperability & data sharing,Exploratory themes (small topics),2026,7,126,133
+Interoperability & data sharing,Digital & data,2011,1,34,35
+Interoperability & data sharing,Digital & data,2012,10,60,70
+Interoperability & data sharing,Digital & data,2013,3,83,86
+Interoperability & data sharing,Digital & data,2014,2,68,70
+Interoperability & data sharing,Digital & data,2015,2,96,98
+Interoperability & data sharing,Digital & data,2016,6,133,139
+Interoperability & data sharing,Digital & data,2017,11,166,177
+Interoperability & data sharing,Digital & data,2018,16,225,241
+Interoperability & data sharing,Digital & data,2019,15,229,244
+Interoperability & data sharing,Digital & data,2020,10,248,258
+Interoperability & data sharing,Digital & data,2021,14,257,271
+Interoperability & data sharing,Digital & data,2022,14,260,274
+Interoperability & data sharing,Digital & data,2023,16,217,233
+Interoperability & data sharing,Digital & data,2024,14,214,228
+Interoperability & data sharing,Digital & data,2025,18,172,190
+Interoperability & data sharing,Digital & data,2026,7,126,133
 "Legal aid, documentation & HLP",Protection,2011,70,41,111
 "Legal aid, documentation & HLP",Protection,2012,116,66,182
 "Legal aid, documentation & HLP",Protection,2013,115,108,223

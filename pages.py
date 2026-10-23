@@ -132,7 +132,7 @@ sections = [
 <li><b>Adverts are not hires.</b> A post may be filled internally, readvertised or never filled.</li>
 <li><b>ReliefWeb is not the whole sector.</b> Large UN agencies often recruit through their own portals; UNICEF, for example, has posted almost nothing on ReliefWeb since 2021. We also expect that most national NGO hiring happens on country-specific job boards.</li>
 <li><b>Total volume moves a lot.</b> Adverts went from {years[peak_year]:,} in {peak_year} to {years[latest_full]:,} in {latest_full}. Topic trends are therefore shown as a share of all adverts, so a shrinking market does not look like a shrinking topic.</li>
-<li><b>Small themes and topics don't have many hits.</b> Eight topics have fewer than about 160 core adverts in fifteen years. They sit on an <b>Exploratory themes</b> list, shown as counts only and left out of rankings.</li>
+<li><b>Small themes and topics don't have many hits.</b> Seven topics have fewer than about 160 core adverts in fifteen years. They sit on an <b>Exploratory themes</b> list, shown to two decimal places and left out of rankings. Interoperability &amp; data sharing also has few core adverts, but it is a duty in about 200 jobs a year, so it sits with the main Digital &amp; data topics, read as core or duty.</li>
 </ul>"""),
  ("source", "Source", f"""
 <p>The <a href="https://apidoc.reliefweb.int/">ReliefWeb API</a>, operated by OCHA, including expired adverts. The current, incomplete month is always left out, so the latest month shown is {month_name(last)}.</p>
@@ -212,7 +212,7 @@ terms = [
  ("Core", "The topic or theme is central to the role. This is the default measure used on this site."),
  ("Duty", "The topic is a substantial part of the work but not its main subject."),
  ("Core or duty", "Counts adverts where the topic is either core or a duty. Broader and noisier than core alone."),
- ("Exploratory themes", "Eight small topics with too few adverts for a reliable trend. Shown as counts only, and left out of rankings."),
+ ("Exploratory themes", "Seven small topics with too few adverts for a reliable trend. Shown to two decimal places, and left out of rankings."),
  ("Parent topic", "A topic that includes its specialists. Health includes SRH, epidemics and MHPSS. CVA includes MPCA, cash coordination and group cash transfers."),
  ("Job type", "ReliefWeb's own field: job, consultancy, internship or volunteer opportunity."),
  ("Career category", "ReliefWeb's own field for the function of the role, such as programme management or logistics."),

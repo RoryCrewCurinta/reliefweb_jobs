@@ -331,7 +331,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <span><span class="ctl-label">Count</span><span class="seg" id="metricSeg">
         <button type="button" data-v="ti">Core</button><button type="button" data-v="an">Core or duty</button></span></span>
     </div>
-    <p class="matchnote"><b>Core</b> means the topic or theme is central to the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk.</p>
+    <p class="matchnote"><b>Core</b> means the topic or theme is central to the role, usually named in the title or purpose. <b>Core or duty</b> adds jobs where the topic is a substantial part of the work but not its main subject: broader, and less reliable. Core is the safer default. Four topics are counted as core only: Partnerships &amp; partner capacity, Needs assessment &amp; analysis, Safety &amp; security management, and Compliance, audit &amp; risk. Interoperability &amp; data sharing is mostly a duty rather than a job in itself, so read it as <b>core or duty</b>.</p>
     <div class="grid2">
       <div class="panel">
         <h3 id="trendTitle"></h3>
@@ -445,7 +445,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
           <li><b>Core or duty</b> is noisier: about three in four duty tags were confirmed.</li>
           <li><b>Research, studies &amp; evaluation</b> covers research and study roles and evaluation consultancies in general, not only rigorous impact evaluations.</li>
           <li>Ads with almost no text (about 0.3%) were not read and carry no topics.</li>
-          <li><b>Exploratory themes</b> are small topics. They are shown as counts and should be read as signals.</li>
+          <li><b>Exploratory themes</b> are small topics. They are shown to two decimal places, left out of rankings, and should be read as signals.</li>
           <li>Rankings need at least 20 matching posts in each period compared.</li>
         </ul>
       </div>
@@ -606,14 +606,14 @@ document.getElementById("tableToggle").onclick=()=>{st.table=!st.table;renderTop
 document.querySelectorAll("#dirSeg button").forEach(b=>b.onclick=()=>{st.falling=b.dataset.v==="down";renderMovers();});
 
 function renderTopics(){
-  const g=GROUPS[st.g],watch=isWatch(g),measure=watch?"count":st.measure,k=st.metric;
+  const g=GROUPS[st.g],watch=isWatch(g),measure=st.measure,k=st.metric;
   [...chipBox.children].forEach((b,i)=>b.setAttribute("aria-pressed",i===st.g));
-  document.querySelectorAll("#measureSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.v===measure);b.disabled=watch&&b.dataset.v==="share";});
+  document.querySelectorAll("#measureSeg button").forEach(b=>{b.setAttribute("aria-pressed",b.dataset.v===measure);b.disabled=false;});
   document.querySelectorAll("#metricSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===k));
   const slots=slotsOf(g);
   document.getElementById("trendTitle").textContent=g;
   const what=k==="ti"?"as a core topic":"as a core topic or a duty";
-  document.getElementById("trendSub").textContent=watch?`Small topics, too rare for shares: posts per year with the topic ${what}. Read as signals.`:measure==="share"?`Share of all ReliefWeb posts with the topic ${what}`:`Posts per year with the topic ${what}`;
+  document.getElementById("trendSub").textContent=watch?(measure==="share"?`Small topics: share of all ReliefWeb posts with the topic ${what}. Few posts, so read as signals.`:`Small topics: posts per year with the topic ${what}. Few posts, so read as signals.`):measure==="share"?`Share of all ReliefWeb posts with the topic ${what}`:`Posts per year with the topic ${what}`;
   const tc=document.getElementById("topicChips");tc.innerHTML="";const nSel=slots.filter(Boolean).length;
   byG[g].slice().sort((a,b)=>sumR(b[k],P2)-sumR(a[k],P2)).forEach(t=>{const si=slots.indexOf(t.t);const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed",si>=0);
     b.innerHTML=`<i style="background:${si>=0?css(SLOTS[si]):"transparent"}"></i>${t.t}${k==="an"&&REVIEW.has(t.t)?'<span class="flag">Review</span>':""}`;
@@ -621,10 +621,10 @@ function renderTopics(){
     b.onclick=()=>{if(si>=0){if(nSel>1)slots[si]=null;}else{const f=slots.indexOf(null);if(f>=0)slots[f]=t.t;}save();renderTopics();};tc.appendChild(b);});
   const series=slots.map((name,si)=>{if(!name)return null;const t=byG[g].find(x=>x.t===name);if(!t)return null;return{name,color:css(SLOTS[si]),t,v:measure==="share"?t[k].map((c,i)=>100*c/T[i]):t[k]};}).filter(Boolean);
   lines(document.getElementById("trendChart"),series,{aria:g+" topic trends",marker:watch?null:EVENTS[g],
-    fmtAxis:measure==="share"?(v=>v===0?"0":(v<1?String(+v.toFixed(3)):String(+v.toFixed(2)))+"%"):(v=>fmtN(v)),
-    fmtTip:(s,i)=>measure==="share"?`${fmtS(s.v[i])} <span style="color:var(--muted)">· ${fmtN(s.t[k][i])}</span>`:fmtN(s.v[i])});
+    fmtAxis:measure==="share"?(v=>v===0?"0":(v<1&&!watch?String(+v.toFixed(3)):String(+v.toFixed(2)))+"%"):(v=>fmtN(v)),
+    fmtTip:(s,i)=>measure==="share"?`${watch?s.v[i].toFixed(2)+"%":fmtS(s.v[i])} <span style="color:var(--muted)">· ${fmtN(s.t[k][i])}</span>`:fmtN(s.v[i])});
   const tb=document.getElementById("trendTable");tb.hidden=!st.table;document.getElementById("tableToggle").textContent=st.table?"Hide table":"Show as table";
-  if(st.table)tb.innerHTML=`<table class="datatable"><thead><tr><th>Topic</th>${Y.map((y,i)=>`<th>${y}${PART[i]?"*":""}</th>`).join("")}</tr></thead><tbody>${series.map(s=>`<tr><td>${s.name}</td>${s.v.map(v=>`<td>${measure==="share"?fmtS(v):fmtN(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
+  if(st.table)tb.innerHTML=`<table class="datatable"><thead><tr><th>Topic</th>${Y.map((y,i)=>`<th>${y}${PART[i]?"*":""}</th>`).join("")}</tr></thead><tbody>${series.map(s=>`<tr><td>${s.name}</td>${s.v.map(v=>`<td>${measure==="share"?(watch?v.toFixed(2)+"%":fmtS(v)):fmtN(v)}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 
 function spark(t,k,color){const v=t[k].map((c,i)=>c/T[i]).slice(1,-1);const w=64,h=20,mx=Math.max(...v)||1;const pts=v.map((a,i)=>`${(i*w/(v.length-1)).toFixed(1)},${(h-2-(h-4)*a/mx).toFixed(1)}`);const l=pts[pts.length-1].split(",");

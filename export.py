@@ -13,7 +13,7 @@ Rules (also written into meta.json so the dashboard can state them):
   In the JSON files the series are still called 'title' (= core) and 'any' (= core or duty), the names
   the dashboard page reads. The CSV files use n_core, n_duty and n_core_or_duty.
 - The dashboard_name column of the topic list replaces the topic name where it is filled in.
-- Small topics (THIN_TOPICS below) are put in the Exploratory themes group, which the page shows as counts only.
+- Small topics (THIN_TOPICS below) are put in the Exploratory themes group, which the page shows as shares to two decimal places and leaves out of rankings.
 - A job with several organisations counts once for each of them.
 - Months far below their neighbours are flagged as possible data gaps.
 """
@@ -31,10 +31,12 @@ OUT = Path(os.environ.get("EXPORT_OUT", "docs/data"))   # EXPORT_OUT lets a test
 TOPICS_FILE = Path("review/topics_v2_definitions.csv")  # the topic list the model was given
 LLM_MODEL = "gpt-6-luna"                                 # which model's tags to chart
 WATCH_GROUP = "Exploratory themes (small topics)"
-# Too few core posts for a trend line (under about 160 across all years): shown as counts only
+# Too few core posts for a reliable trend (under about 160 across all years): own group, left out of rankings
 THIN_TOPICS = {"Stablecoins & digital assets", "Group cash transfers", "Blockchain & crypto", "Biometrics",
                "Humanitarian reset & reform", "Digital payments & financial service providers",
-               "Cash coordination", "Interoperability & data sharing"}
+               "Cash coordination"}
+# Interoperability & data sharing left the list on 22 Oct 2026: few core posts, but about 2,600 core-or-duty
+# (about 200 a year), so it is charted with the main Digital & data topics.
 TOP_ORGS = 150          # orgs that get their own monthly series
 TOP_ORGS_TOPICS = 100   # orgs in the org x topic x year table
 MIN_ORG_POSTS = 50      # tilt rows need this many org posts in the period
