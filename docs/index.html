@@ -383,7 +383,9 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Countries <span class="beta">Beta</span></h2>
       <p>Where jobs are advertised, and how that has shifted. An advert listing several countries counts in each. This is a first version: breakdowns by topic and organisation for each country will be added.</p></div>
     <div class="controls">
-      <label><span class="ctl-label">Add a country</span> <select id="ctySel"></select></label>
+      <div class="combo" style="width:min(320px,100%)"><label class="sr-only" for="ctySearch">Add a country</label>
+        <input id="ctySearch" type="search" autocomplete="off" spellcheck="false" placeholder="Search and add a country" role="combobox" aria-expanded="false" aria-controls="ctyList" aria-autocomplete="list">
+        <ul id="ctyList" role="listbox" hidden></ul></div>
       <span><span class="ctl-label">Measure</span><span class="seg" id="ctyMeasure"><button type="button" data-v="share">Share of posts</button><button type="button" data-v="count">Post count</button></span></span>
     </div>
     <div class="grid2">
@@ -838,15 +840,28 @@ function renderCountries(){
   let sl=(st.ctySel||[]).filter(n=>byName.has(n)).slice(0,6);
   if(!Array.isArray(st.ctySel)){const top=names.slice(0,15);sl=[top[Math.floor(Math.random()*top.length)]];}
   st.ctySel=sl;
-  const sel=document.getElementById("ctySel");
-  if(!sel.dataset.wired){sel.dataset.wired=1;
-    sel.onchange=()=>{const v=sel.value;if(v&&!st.ctySel.includes(v)&&st.ctySel.length<6){st.ctySel.push(v);save();}renderCountries();};
+  const inp=document.getElementById("ctySearch"),lst=document.getElementById("ctyList");
+  if(!inp.dataset.wired){inp.dataset.wired=1;
+    const norm=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
+    let act=-1,shown=[];
+    const close=()=>{lst.hidden=true;inp.setAttribute("aria-expanded","false");};
+    const add=n=>{if(n&&!st.ctySel.includes(n)&&st.ctySel.length<6){st.ctySel.push(n);save();}inp.value="";close();renderCountries();};
+    const open=()=>{const q=norm(inp.value.trim()),full=st.ctySel.length>=6;
+      shown=full?[]:[...names].sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base"})).filter(n=>!st.ctySel.includes(n)&&(!q||norm(n).includes(q)));act=shown.length?0:-1;
+      const tot=c=>byName.get(c).n.reduce((a,b)=>a+b,0);
+      lst.innerHTML=full?'<li class="none">Six at most: remove one first</li>':shown.length?shown.map((n,k)=>`<li role="option" data-n="${n.replace(/"/g,"&quot;")}" aria-selected="${k===act}">${n}<small>${fmtN(tot(n))} posts</small></li>`).join(""):'<li class="none">No country matches</li>';
+      lst.hidden=false;inp.setAttribute("aria-expanded","true");};
+    inp.addEventListener("focus",open);inp.addEventListener("input",open);
+    inp.addEventListener("keydown",e=>{if(lst.hidden&&e.key==="ArrowDown"){open();return;}
+      if(e.key==="ArrowDown"||e.key==="ArrowUp"){e.preventDefault();if(!shown.length)return;act=Math.max(0,Math.min(shown.length-1,act+(e.key==="ArrowDown"?1:-1)));lst.querySelectorAll("li").forEach((li,k)=>li.setAttribute("aria-selected",k===act));const a=lst.children[act];a&&a.scrollIntoView({block:"nearest"});}
+      else if(e.key==="Enter"){e.preventDefault();if(shown[act]!=null)add(shown[act]);}
+      else if(e.key==="Escape"){close();inp.blur();}});
+    lst.addEventListener("mousedown",e=>{const li=e.target.closest("li[data-n]");if(li){e.preventDefault();add(li.dataset.n);}});
+    inp.addEventListener("blur",()=>setTimeout(close,120));
     document.querySelectorAll("#ctyMeasure button").forEach(b=>b.onclick=()=>{st.ctyM=b.dataset.v;save();renderCountries();});
     document.querySelectorAll("#ctyPer button").forEach(b=>b.onclick=()=>{st.ctyP=b.dataset.v;save();renderCountries();});
     document.querySelectorAll("#ctyDir button").forEach(b=>b.onclick=()=>{st.ctyDown=b.dataset.v==="down";save();renderCountries();});}
-  const alpha=[...names].sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base"}));
-  sel.innerHTML=`<option value="">${sl.length>=6?"Six at most: remove one first":"Choose…"}</option>`+alpha.filter(n=>!sl.includes(n)).map(n=>`<option value="${n.replace(/"/g,"&quot;")}">${n}</option>`).join("");
-  sel.disabled=sl.length>=6;
+  inp.placeholder=sl.length>=6?"Six at most: remove one first":"Search and add a country";
   const chips=document.getElementById("ctyChips");chips.innerHTML="";
   sl.forEach((n,si)=>{const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed","true");
     b.innerHTML=`<i style="background:${css(SLOTS[si])}"></i>${n} <span aria-hidden="true">×</span>`;b.title="Remove";b.setAttribute("aria-label","Remove "+n);
