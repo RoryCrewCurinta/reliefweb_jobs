@@ -55,6 +55,12 @@ ALWAYS_LOCAL_HOMES = {"Türkiye", "Syrian Arab Republic"}
 NGO = "Non-governmental Organization"
 CLS_INTL, CLS_LOCAL, CLS_REGIONAL, CLS_UNKNOWN = ("International NGO", "Locally based NGO",
                                                   "Regional NGO (global South base)", "NGO (home country unknown)")
+# Localisation by country (labelled proxy). A post counts as from a "National NGO" when an NGO based in a
+# low/middle-income country (locally based or regional class) advertises in its own home country.
+LOC_GROUPS = ["National NGO", "Other global-South NGO", "International NGO",
+              "UN & international organisations", "Red Cross / Red Crescent", "Other"]
+LOC_MIN_COUNTRY_POSTS = 300   # countries with fewer posts across all years are left out
+ORG_HOMES = {}                # org_id -> set of home countries, filled by classify_orgs
 
 
 BUNDLE = {}
@@ -126,6 +132,7 @@ def classify_orgs(con):
                                        f"{share:.0%} of located posts are there" if share is not None
                                        else "home country is low/middle-income; no posts carry a country")
         cls[oid] = c
+        ORG_HOMES[oid] = homes
         rows.append((oid, name, otype, home, "; ".join(levels), int(n), n_loc,
                      "" if share is None else round(share, 3), c, basis, reason))
     rows.sort(key=lambda r: (-r[5], r[1] or ""))
@@ -133,6 +140,57 @@ def classify_orgs(con):
               "home_income_level", "posts", "posts_with_country", "share_of_posts_in_home_country",
               "class", "basis", "reason"], rows)
     return cls
+
+
+def write_loc_country(con, months):
+    """Share of each country's posts, by year, from national NGOs and other organisation groups.
+    Needs the org_class temp table. A post with several organisations counts once in each group it touches;
+    a post listing several countries counts in each country."""
+    years = sorted({int(m[:4]) for m in months})
+    yi = {y: i for i, y in enumerate(years)}
+    con.execute("CREATE TEMP TABLE org_home (org_id BIGINT, home VARCHAR)")
+    con.executemany("INSERT INTO org_home VALUES (?, ?)", [(o, h) for o, hs in ORG_HOMES.items() for h in hs])
+    con.execute(f"""CREATE TEMP TABLE locx AS
+        SELECT DISTINCT c.country, year(jo.m) AS y, jo.job_id,
+          CASE WHEN k.cls IN ('{CLS_LOCAL}', '{CLS_REGIONAL}') AND h.org_id IS NOT NULL THEN 'National NGO'
+               WHEN k.cls IN ('{CLS_LOCAL}', '{CLS_REGIONAL}') THEN 'Other global-South NGO'
+               WHEN k.cls = '{CLS_INTL}' THEN 'International NGO'
+               WHEN k.cls = 'International Organization' THEN 'UN & international organisations'
+               WHEN k.cls = 'Red Cross/Red Crescent Movement' THEN 'Red Cross / Red Crescent'
+               ELSE 'Other' END AS g
+        FROM jo JOIN job_countries c ON c.job_id = jo.job_id
+                JOIN org_class k ON k.org_id = jo.org_id
+                LEFT JOIN org_home h ON h.org_id = jo.org_id AND h.home = c.country""")
+    ALL = "(All countries)"
+    data = {}
+    for c, y, n in con.execute(f"""
+            SELECT c.country, year(j.m), count(DISTINCT j.id) FROM j JOIN job_countries c ON c.job_id = j.id GROUP BY 1, 2
+            UNION ALL
+            SELECT '{ALL}', year(j.m), count(DISTINCT j.id) FROM j JOIN job_countries c ON c.job_id = j.id GROUP BY 2
+            """).fetchall():
+        if c and y in yi:
+            data.setdefault(c, {"n": [0] * len(years), "g": {}})["n"][yi[y]] = int(n)
+    for c, y, g, n in con.execute(f"""
+            SELECT country, y, g, count(*) FROM locx GROUP BY 1, 2, 3
+            UNION ALL
+            SELECT '{ALL}', y, g, count(DISTINCT job_id) FROM locx GROUP BY 2, 3""").fetchall():
+        if c in data and y in yi:
+            data[c]["g"].setdefault(g, [0] * len(years))[yi[y]] = int(n)
+    keep = [c for c in data if c == ALL or sum(data[c]["n"]) >= LOC_MIN_COUNTRY_POSTS]
+    keep.sort(key=lambda c: (c != ALL, -sum(data[c]["n"])))
+    write("loc_country.json", {"years": years, "groups": LOC_GROUPS,
+                               "countries": [{"c": c, "n": data[c]["n"],
+                                              "g": {g: data[c]["g"][g] for g in LOC_GROUPS if g in data[c]["g"]}}
+                                             for c in keep]})
+    rows = []
+    for c in keep:
+        for y in years:
+            n = data[c]["n"][yi[y]]
+            for g in LOC_GROUPS:
+                k = data[c]["g"].get(g, [0] * len(years))[yi[y]]
+                if n:
+                    rows.append((c, y, n, g, k, round(k / n, 4)))
+    write_csv("loc_country.csv", ["country", "year", "posts_in_country", "group", "group_posts", "share"], rows)
 
 
 def main():
@@ -287,6 +345,9 @@ def main():
         con.executemany("INSERT INTO org_class VALUES (?, ?)", list(classify_orgs(con).items()))
         dim("org_type", """SELECT k.cls, strftime(jo.m, '%Y-%m'), count(DISTINCT jo.job_id)
                            FROM jo JOIN org_class k ON k.org_id = jo.org_id GROUP BY 1, 2""")
+        # 4d. Localisation by country (labelled proxy, see write_loc_country)
+        if "job_countries" in have:
+            write_loc_country(con, months)
     elif "org_types" in have:
         dim("org_type", """SELECT t.org_type, strftime(jo.m, '%Y-%m'), count(DISTINCT jo.job_id)
                            FROM jo JOIN org_types t ON t.org_id = jo.org_id GROUP BY 1, 2""")

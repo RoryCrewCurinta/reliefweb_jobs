@@ -276,7 +276,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 <div class="wrap">
   <header class="brand">
     <a class="prod" href="#"><span class="pix" aria-hidden="true"></span>Humanitarian Trendlines</a>
-    <nav aria-label="Sections"><a href="#volume">Volume</a><a href="#topics">Topics</a><a href="#roles">Roles</a><a href="#orgs">Organisations</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
+    <nav aria-label="Sections"><a href="#volume">Volume</a><a href="#topics">Topics</a><a href="#roles">Roles</a><a href="#loc">Localisation</a><a href="#orgs">Organisations</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
     <span class="stamp" id="stamp">Data to Sep 2026</span>
   </header>
 
@@ -374,6 +374,25 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <h3 id="roleSumTitle"></h3>
         <p class="sub" id="roleSumSub"></p>
         <div class="tablewrap"><table class="movers" id="roleSum"></table></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="block" id="loc">
+    <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Localisation by country (proxy)</h2>
+      <p>Who advertises the jobs in each country? A post counts as from a <b>national NGO</b> when an NGO based in a low- or middle-income country advertises in its own home country. This is a proxy for hiring by national actors, not a measure of funding, and ReliefWeb carries only part of national NGO hiring. See the <a href="methodology.html#orgtypes">methodology</a>.</p></div>
+    <div class="controls"><label><span class="ctl-label">Country</span> <select id="locCountry"></select></label></div>
+    <div class="grid2">
+      <div class="panel">
+        <h3 id="locTitle"></h3>
+        <p class="sub" id="locSub"></p>
+        <div class="chart" id="locChart"></div>
+        <div class="foot"><span id="locNote"></span></div>
+      </div>
+      <div class="panel">
+        <h3 id="locRankTitle"></h3>
+        <p class="sub" id="locRankSub"></p>
+        <div class="tablewrap"><table class="movers" id="locRank"></table></div>
       </div>
     </div>
   </section>
@@ -524,7 +543,7 @@ function defaultSel(g){return byG[g].slice().sort((a,b)=>sumR(b.ti,P2)-sumR(a.ti
 let st={g:GROUPS.indexOf("Cash, markets & social protection"),measure:"share",metric:"ti",sel:{},table:false,falling:false,org:0,tilt:"tt"};
 if(st.g<0)st.g=0;
 try{const s=JSON.parse(localStorage.getItem("tv3")||"{}");Object.assign(st,s.st||{});st.table=false;}catch(e){}
-function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec}}));}catch(e){}}
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,loc:st.loc}}));}catch(e){}}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -802,7 +821,36 @@ function renderRoles(){
   const tb=document.getElementById("roleTable");tb.hidden=!roleTable;document.getElementById("roleTableToggle").textContent=roleTable?"Hide table":"Show as table";
   if(roleTable)tb.innerHTML=`<table class="datatable"><thead><tr><th>${cfg.title}</th>${Y.map((y,i)=>`<th>${y}${PART[i]?"*":""}</th>`).join("")}</tr></thead><tbody>${series.map(s=>`<tr><td>${s.name}</td>${s.v.map(v=>`<td>${v==null?"–":v.toFixed(1)+"%"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
-function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderRoles();renderOrgMovers();renderOrg();}
+/* localisation by country (proxy) */
+const LOC_MIN=50;   // a country-year needs this many posts to be shown
+function renderLoc(){
+  const sec=document.getElementById("loc"),L=RD.loc_country;if(!L||!L.countries.length){sec.hidden=true;return;}
+  const sel=document.getElementById("locCountry"),nm=c=>c==="(All countries)"?"All countries":c;
+  if(!sel.options.length){sel.innerHTML=L.countries.map((c,i)=>`<option value="${i}">${nm(c.c)}</option>`).join("");
+    sel.onchange=()=>{st.loc=L.countries[+sel.value].c;save();renderLoc();};}
+  let ci=L.countries.findIndex(c=>c.c===st.loc);if(ci<0)ci=0;sel.value=String(ci);const C=L.countries[ci];
+  const at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
+  const series=L.groups.filter(g=>C.g[g]).map((g,si)=>({name:g,color:css(SLOTS[si]),t:{n:Y.map(y=>at(C.g[g],y))},
+    v:Y.map(y=>{const n=at(C.n,y);return n<LOC_MIN?null:100*at(C.g[g],y)/n;})}));
+  document.getElementById("locTitle").textContent=`Who advertises jobs in ${C.c==="(All countries)"?"all countries":C.c}`;
+  document.getElementById("locSub").textContent=`Share of posts in ${nm(C.c)} by the kind of organisation advertising. A post with several organisations counts once for each kind. Years with fewer than ${LOC_MIN} posts are left blank.`;
+  lines(document.getElementById("locChart"),series,{aria:"Share of posts by organisation type, "+nm(C.c),
+    fmtAxis:v=>v===0?"0":String(+v.toFixed(1))+"%",
+    fmtTip:(s,i)=>s.v[i]==null?`<span style="color:var(--muted)">too few posts</span>`:`${s.v[i].toFixed(1)}% <span style="color:var(--muted)">· ${fmtN(s.t.n[i])}</span>`});
+  document.getElementById("locNote").textContent=`${fmtN(C.n.reduce((a,b)=>a+b,0))} posts in ${nm(C.c)} since ${L.years[0]}.`;
+  // ranking: national NGO share, latest complete year against five years earlier
+  const y1=LAST,y0=LAST-5,MINR=100;
+  const rows=L.countries.filter(c=>c.c!=="(All countries)"&&at(c.n,y1)>=MINR&&at(c.n,y0)>=MINR).map(c=>{const g=c.g["National NGO"]||[];
+    return {c,a:100*at(g,y0)/at(c.n,y0),b:100*at(g,y1)/at(c.n,y1),nA:at(c.n,y0),nB:at(c.n,y1)};}).sort((p,q)=>q.b-p.b);
+  document.getElementById("locRankTitle").textContent=`National NGO share, ${y0} and ${y1}`;
+  document.getElementById("locRankSub").textContent=`Countries with at least ${MINR} posts in both years, highest ${y1} share first. n = all posts in the country that year. Select a row to chart it.`;
+  document.getElementById("locRank").innerHTML=`<thead><tr><th>Country</th><th class="n">${y0}</th><th class="n">${y1}</th><th class="n">Change</th></tr></thead><tbody>`+
+    rows.map(r=>{const d=r.b-r.a,flat=Math.abs(d)<0.5,up=d>0;
+      return `<tr tabindex="0" data-c="${r.c.c.replace(/"/g,"&quot;")}"><td>${r.c.c}</td><td class="n">${r.a.toFixed(1)}%<div class="nn">n=${fmtN(r.nA)}</div></td><td class="n">${r.b.toFixed(1)}%<div class="nn">n=${fmtN(r.nB)}</div></td><td class="n"><span class="pill ${flat?"flat":up?"up":"down"}"><span aria-hidden="true">${flat?"■":up?"▲":"▼"}</span>${flat?"0.0":(up?"+":"−")+Math.abs(d).toFixed(1)} pts</span></td></tr>`;}).join("")+"</tbody>";
+  document.querySelectorAll("#locRank tbody tr").forEach(tr=>{const go=()=>{st.loc=tr.dataset.c;save();renderLoc();document.getElementById("loc").scrollIntoView({behavior:"smooth",block:"start"});};
+    tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go();};});
+}
+function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderRoles();renderOrgMovers();renderOrg();renderLoc();}
 renderAll();
 let rt;window.addEventListener("resize",()=>{clearTimeout(rt);rt=setTimeout(renderAll,120);});
 const mq=matchMedia("(prefers-color-scheme: dark)");mq.addEventListener&&mq.addEventListener("change",renderAll);
