@@ -209,6 +209,7 @@ cite_js = """<script>
 terms = [
  ("Advert, or post", "One job advert published on ReliefWeb. Not a hire."),
  ("Share of adverts", "Adverts with a topic, divided by all adverts in the same period. Used for trends so a shrinking market does not look like a shrinking topic."),
+ ("Hot and Biggest movers", "Change in a topic's or organisation's share of adverts: the latest period (since January 2025 or since January 2026, to the last full month) against the whole previous calendar year. ×2.0 means the share has doubled. Comparing shares means periods of different lengths can be compared fairly."),
  ("Core", "The topic or theme is central to the role. This is the default measure used on this site."),
  ("Duty", "The topic is a substantial part of the work but not its main subject."),
  ("Core or duty", "Counts adverts where the topic is either core or a duty. Broader and noisier than core alone."),

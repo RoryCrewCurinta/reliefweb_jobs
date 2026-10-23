@@ -488,11 +488,11 @@ const P2=[LAST-3,LAST],P1=[LAST-10,LAST-7];
 const pLab=p=>p[0]+"–"+String(p[1]).slice(2), pShort=p=>String(p[0]).slice(2)+"–"+String(p[1]).slice(2);
 document.querySelectorAll(".p2lab").forEach(e=>e.textContent=pLab(P2));
 let RECENT_START="2025-01";
-const MO=D.mo.months;let rs,len,bs,totRecent,totBase,R0,R1,B0,B1;
+const MO=D.mo.months;let rs,len,bs,BY,totRecent,totBase,R0,R1,B0,B1;
 const mLab=m=>MON[+m.slice(5)-1]+" "+m.slice(0,4);
 const sumM=(a,i,j)=>{let s=0;for(let k=i;k<j;k++)s+=a[k];return s;};
-/* recent window: RECENT_START to the latest month, against the same number of months just before */
-function setWindow(start){RECENT_START=start;rs=Math.max(0,MO.indexOf(start));len=MO.length-rs;bs=Math.max(0,rs-len);
+/* recent window: RECENT_START (a January) to the latest month, against the whole previous calendar year */
+function setWindow(start){RECENT_START=start;rs=Math.max(0,MO.indexOf(start));len=MO.length-rs;bs=Math.max(0,rs-12);BY=MO[bs].slice(0,4);
   totRecent=sumM(D.mo.total,rs,MO.length);totBase=sumM(D.mo.total,bs,rs);
   R0=mLab(MO[rs]);R1=mLab(MO[MO.length-1]);B0=mLab(MO[bs]);B1=mLab(MO[rs-1]);
   document.querySelectorAll("h2 .recLab").forEach(e=>e.textContent="since "+R0);
@@ -640,12 +640,12 @@ document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dat
 function renderMovers(){
   const k=st.metric,mp=st.mp||"recent";
   document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp&&(!b.dataset.r||b.dataset.r===RECENT_START)));
-  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against the ${len} months before (${B0} – ${B1}).`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
+  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against all of ${BY}.`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
   const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
   document.querySelectorAll("#dirSeg button").forEach(b=>{const on=(b.dataset.v==="down")===st.falling;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
   document.getElementById("moverNote").textContent=`${st.falling?"Largest relative falls":"Largest relative rises"} of ${rows.length} topics`;
-  document.getElementById("movers").innerHTML=`<thead><tr><th>Topic</th><th class="hide-sm">${Y[0]}–${String(Y[Y.length-1]).slice(2)}</th><th class="n">${mp==="recent"?"Before":pShort(P1)}</th><th class="n">${mp==="recent"?"Since "+MO[rs].slice(0,4):pShort(P2)}</th><th class="n">Change</th></tr></thead><tbody>`+
+  document.getElementById("movers").innerHTML=`<thead><tr><th>Topic</th><th class="hide-sm">${Y[0]}–${String(Y[Y.length-1]).slice(2)}</th><th class="n">${mp==="recent"?BY:pShort(P1)}</th><th class="n">${mp==="recent"?"Since "+MO[rs].slice(0,4):pShort(P2)}</th><th class="n">Change</th></tr></thead><tbody>`+
    rows.slice(0,8).map(r=>{const up=r.r>=1;const cls=up?"up":"down";const lab=up?"×"+r.r.toFixed(1):"−"+Math.round(100*(1-r.r))+"%";
      return `<tr><td>${r.t.t}${k==="an"&&REVIEW.has(r.t.t)?'<span class="flag">Review</span>':""}<div style="font-size:11.5px;color:var(--muted)">${r.t.g}</div></td><td class="hide-sm">${spark(r.t,k,css(up?"--accent":"--bad"))}</td><td class="n">${fmtS(r.a)}</td><td class="n">${fmtS(r.b)}</td><td class="n"><span class="pill ${cls}"><span aria-hidden="true">${up?"▲":"▼"}</span>${lab}</span></td></tr>`;}).join("")+"</tbody>";
 }
@@ -682,14 +682,14 @@ document.querySelectorAll("#orgDirSeg button").forEach(b=>b.onclick=()=>{omMode=
 function renderOrgMovers(){
   document.getElementById("omRecentLab").textContent="since "+R0;
   document.querySelectorAll("#orgDirSeg button").forEach(b=>{const on=b.dataset.v===omMode;b.setAttribute("aria-pressed",on);b.setAttribute("aria-selected",on);});
-  document.getElementById("omSub").textContent=omMode==="top"?`Most job posts ${R0} – ${R1} (${len} months). Change compares each organisation's share of all ReliefWeb posts with the ${len} months before (${B0} – ${B1}).`
-    :`Share of all ReliefWeb posts, ${R0} – ${R1} against the ${len} months before (${B0} – ${B1}). Shares, not counts, because total posting fell sharply over this time. Needs at least 10 posts in each period and 30 in one of them.`;
+  document.getElementById("omSub").textContent=omMode==="top"?`Most job posts ${R0} – ${R1} (${len} months). Change compares each organisation's share of all ReliefWeb posts with its share in ${BY}.`
+    :`Share of all ReliefWeb posts, ${R0} – ${R1} against all of ${BY}. Shares, not counts, because the two periods differ in length and total posting has fallen sharply. Needs at least 10 posts in each period and 30 in one of them.`;
   let rows=D.orgs.map((o,i)=>({o,i}));
   if(omMode==="top")rows.sort((a,b)=>b.o.rec-a.o.rec);
   else{rows=rows.filter(r=>r.o.base>=10&&r.o.rec>=10&&Math.max(r.o.base,r.o.rec)>=30);rows.sort((a,b)=>omMode==="up"?b.o.ratio-a.o.ratio:a.o.ratio-b.o.ratio);}
   document.getElementById("omNote").textContent=omMode==="top"?`Top 10 of ${D.orgs.length} organisations`:`${omMode==="up"?"Largest relative rises":"Largest relative falls"} of ${rows.length} organisations with enough posts`;
   const pill=o=>{if(!isFinite(o.ratio))return'<span class="pill up">New</span>';const up=o.ratio>=1;return `<span class="pill ${up?"up":"down"}"><span aria-hidden="true">${up?"▲":"▼"}</span>${up?"×"+o.ratio.toFixed(1):"−"+Math.round(100*(1-o.ratio))+"%"}</span>`;};
-  document.getElementById("orgMovers").innerHTML=`<thead><tr><th></th><th>Organisation</th><th class="n">Posts since ${MO[rs].slice(0,4)}</th><th class="n hide-sm">Share before</th><th class="n hide-sm">Share since</th><th class="n">Change</th></tr></thead><tbody>`+
+  document.getElementById("orgMovers").innerHTML=`<thead><tr><th></th><th>Organisation</th><th class="n">Posts since ${MO[rs].slice(0,4)}</th><th class="n hide-sm">Share ${BY}</th><th class="n hide-sm">Share since</th><th class="n">Change</th></tr></thead><tbody>`+
     rows.slice(0,10).map((r,k)=>`<tr tabindex="0" data-i="${r.i}"><td class="rank">${k+1}</td><td>${r.o.n}</td><td class="n">${fmtN(r.o.rec)}</td><td class="n hide-sm">${r.o.shB.toFixed(2)}%</td><td class="n hide-sm">${r.o.shR.toFixed(2)}%</td><td class="n">${pill(r.o)}</td></tr>`).join("")+"</tbody>";
   document.querySelectorAll("#orgMovers tbody tr").forEach(tr=>{const go=()=>pickOrg(+tr.dataset.i,true);tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter"||e.key===" "){e.preventDefault();go();}};});
 }
@@ -737,14 +737,14 @@ function tiltFor(o){
 const ICON={topic:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M3 17l6-6 4 4 8-8"/><path d="M15 7h6v6"/></svg>',
   org:'<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M4 21V5a1 1 0 0 1 1-1h9a1 1 0 0 1 1 1v16"/><path d="M15 9h4a1 1 0 0 1 1 1v11"/><path d="M8 8h3M8 12h3M8 16h3M3 21h18"/></svg>'};
 function renderHot(){
-  document.getElementById("hotSub").textContent=`The three topics and organisations whose share of ReliefWeb posts grew most between the ${len} months before ${R0} and ${R0} – ${R1}. Topics count core tags and need at least 20 posts in each period; organisations need 20 before and 50 since.`;
+  document.getElementById("hotSub").textContent=`The three topics and organisations whose share of all ReliefWeb posts grew most, ${R0} – ${R1} against all of ${BY}. Topics count core tags and need at least 20 posts in each period; organisations need 20 in ${BY} and 50 since.`;
   const tr=moverRows("ti","recent").sort((a,b)=>b.r-a.r).slice(0,3);
   const ht=document.getElementById("hotTopics");
-  ht.innerHTML=tr.map(r=>`<button type="button" class="card" data-t="${r.t.t}"><span class="ic">${ICON.topic}</span><span class="nm">${r.t.t}</span><span class="big">×${r.r.toFixed(1)}</span><span class="mt">${r.t.g} · ${fmtN(r.nB)} posts since ${MO[rs].slice(0,4)} (${fmtN(r.nA)} before)</span></button>`).join("");
+  ht.innerHTML=tr.map(r=>`<button type="button" class="card" data-t="${r.t.t}"><span class="ic">${ICON.topic}</span><span class="nm">${r.t.t}</span><span class="big">×${r.r.toFixed(1)}</span><span class="mt">${r.t.g} · ${fmtN(r.nB)} posts since ${MO[rs].slice(0,4)} (${fmtN(r.nA)} in ${BY})</span></button>`).join("");
   ht.querySelectorAll(".card").forEach(c=>c.onclick=()=>{const t=D.topics.find(x=>x.t===c.dataset.t);st.g=GROUPS.indexOf(t.g);st.metric="ti";const sl=slotsOf(t.g);if(!sl.includes(t.t)){const f=sl.indexOf(null);sl[f>=0?f:5]=t.t;}save();renderTopics();renderMovers();document.getElementById("topics").scrollIntoView({behavior:"smooth"});});
   const orr=D.orgs.map((o,i)=>({o,i})).filter(x=>x.o.base>=20&&x.o.rec>=50).sort((a,b)=>b.o.ratio-a.o.ratio).slice(0,3);
   const ho=document.getElementById("hotOrgs");
-  ho.innerHTML=orr.map(x=>{const nm=x.o.n.length>34&&x.o.short?x.o.short:x.o.n;return `<button type="button" class="card" data-i="${x.i}" title="${x.o.n}"><span class="ic">${ICON.org}</span><span class="nm">${nm}</span><span class="big">×${x.o.ratio.toFixed(1)}</span><span class="mt">${fmtN(x.o.rec)} posts since ${MO[rs].slice(0,4)} (${fmtN(x.o.base)} before)</span></button>`;}).join("");
+  ho.innerHTML=orr.map(x=>{const nm=x.o.n.length>34&&x.o.short?x.o.short:x.o.n;return `<button type="button" class="card" data-i="${x.i}" title="${x.o.n}"><span class="ic">${ICON.org}</span><span class="nm">${nm}</span><span class="big">×${x.o.ratio.toFixed(1)}</span><span class="mt">${fmtN(x.o.rec)} posts since ${MO[rs].slice(0,4)} (${fmtN(x.o.base)} in ${BY})</span></button>`;}).join("");
   ho.querySelectorAll(".card").forEach(c=>c.onclick=()=>pickOrg(+c.dataset.i,true));
 }
 function renderSoar(){
