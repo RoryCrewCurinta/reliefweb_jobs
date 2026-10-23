@@ -171,10 +171,19 @@ sections = [
 <li><b>Regional NGO:</b> home country is low or middle income but it advertises across several countries.</li>
 </ul>
 <p>This is a proxy. It counts some local affiliates of international networks as locally based, and counts national NGOs in high income countries as international. The 45 or so largest organisations in the two smaller classes were checked by hand; the rest follow the rule, and a few known misfits are corrected by hand (for example Oxfam and ActionAid, global confederations whose secretariats sit in Nairobi and Johannesburg). NGOs based in Türkiye or Syria are treated as local to the Syria response, because many Syrian NGOs are registered in Türkiye and work across the border.</p>"""),
+ ("countries", "Countries (beta)", """
+<p>The Countries section counts adverts by the country the advertiser listed. This is where the job is based, not where the organisation is, so headquarters posts in Geneva, New York or London appear under Switzerland, the United States and the United Kingdom.</p>
+<ul>
+<li><b>Several countries:</b> an advert listing several countries counts once in each, so country totals add up to more than the number of adverts.</li>
+<li><b>Left out:</b> ReliefWeb's "World" entry, used for some global roles until 2015, and countries with fewer than 300 adverts across all years.</li>
+<li><b>Names:</b> ReliefWeb's country names are used, with two tidied for display: Occupied Palestinian territory is capitalised, and "(the)" is dropped from Lao People's Democratic Republic.</li>
+</ul>
+<p><b>Shares and movers.</b> A country's share is its adverts divided by all ReliefWeb adverts that year, the same denominator as topics. Biggest movers compares a country's share in a recent period with a baseline, as for topics: since January 2025 against all of 2024, since January 2026 against all of 2025, and a long view comparing the latest four complete years with four years a decade earlier. Countries need at least 100 adverts in each period, and the post count (n) is shown beside every share.</p>
+<p>This section is in beta. Breakdowns by topic and organisation for each country will follow.</p>"""),
  ("cite", "How to cite", f"""
 <div class="cite"><span id="citeText">Curinta ({date.fromisoformat(meta['generated']).year}). <i>Humanitarian Trendlines: ReliefWeb job adverts, {first[:4]} to {last[:4]}</i>. Data to {month_name(last)}. trendlines.curinta.com. Accessed <span id="citeDate">[date]</span>.</span><button class="btn" type="button" id="citeCopy">Copy</button></div>"""),
  ("changes", "Corrections and changes", """
-<p>If a number looks wrong, tell us at <a href="mailto:contact@curinta.com">contact@curinta.com</a>. Changes to the method are logged here.</p>
+<p>If a number looks wrong, tell us at <a href="mailto:rorycrew@curinta.com">rorycrew@curinta.com</a>. Changes to the method are logged here.</p>
 <ul class="log">
 <li><span></span><span>No changes since launch.</span></li>
 </ul>"""),
