@@ -247,6 +247,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
   .tilt li{grid-template-columns:minmax(0,1fr) 64px 48px}
   .movers .hide-sm{display:none}
 }
+.nn{font-size:11px;color:var(--muted);font-weight:400}
 </style>
 </head>
 <body>
@@ -635,19 +636,19 @@ function spark(t,k,color){const v=t[k].map((c,i)=>c/T[i]).slice(1,-1);const w=64
   return `<svg class="spark" width="${w}" height="${h}" viewBox="0 0 ${w} ${h}" aria-hidden="true"><polyline points="${pts.join(" ")}" fill="none" stroke="${color}" stroke-width="1.5" stroke-linejoin="round"/><circle cx="${l[0]}" cy="${l[1]}" r="2.5" fill="${color}"/></svg>`;}
 function moverRows(k,mp){
   if(mp==="recent")return D.topics.filter(t=>!isWatch(t.g)).map(t=>({t,...topicRecent(t,k)})).filter(r=>r.nA>=20&&r.nB>=20).map(r=>(r.r=r.b/r.a,r));
-  return D.topics.filter(t=>!isWatch(t.g)&&sumR(t[k],P1)>=20&&sumR(t[k],P2)>=20).map(t=>({t,a:share(t,k,P1),b:share(t,k,P2)})).map(r=>(r.r=r.b/r.a,r));}
+  return D.topics.filter(t=>!isWatch(t.g)&&sumR(t[k],P1)>=20&&sumR(t[k],P2)>=20).map(t=>({t,a:share(t,k,P1),b:share(t,k,P2),nA:sumR(t[k],P1),nB:sumR(t[k],P2)})).map(r=>(r.r=r.b/r.a,r));}
 document.querySelectorAll("#mpSeg button").forEach(b=>b.onclick=()=>{st.mp=b.dataset.v;if(b.dataset.r&&b.dataset.r!==RECENT_START){setRecent(b.dataset.r);return;}save();renderMovers();});
 function renderMovers(){
   const k=st.metric,mp=st.mp||"recent";
   document.querySelectorAll("#mpSeg button").forEach(b=>b.setAttribute("aria-pressed",b.dataset.v===mp&&(!b.dataset.r||b.dataset.r===RECENT_START)));
-  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against all of ${BY}.`:`${pLab(P1)} against ${pLab(P2)}.`)+` Topics need at least 20 matching posts in each period. Watchlist excluded.`;
+  document.getElementById("moverSub").textContent=`Share of all posts with the topic ${k==="ti"?"as a core topic":"as a core topic or a duty"}, `+(mp==="recent"?`${R0} – ${R1} against all of ${BY}.`:`${pLab(P1)} against ${pLab(P2)}.`)+` n = number of posts. Topics need at least 20 in each period. Watchlist excluded.`;
   const rows=moverRows(k,mp);
   rows.sort((x,y)=>st.falling?x.r-y.r:y.r-x.r);
   document.querySelectorAll("#dirSeg button").forEach(b=>{const on=(b.dataset.v==="down")===st.falling;b.setAttribute("aria-selected",on);b.setAttribute("aria-pressed",on);});
   document.getElementById("moverNote").textContent=`${st.falling?"Largest relative falls":"Largest relative rises"} of ${rows.length} topics`;
   document.getElementById("movers").innerHTML=`<thead><tr><th>Topic</th><th class="hide-sm">${Y[0]}–${String(Y[Y.length-1]).slice(2)}</th><th class="n">${mp==="recent"?BY:pShort(P1)}</th><th class="n">${mp==="recent"?"Since "+MO[rs].slice(0,4):pShort(P2)}</th><th class="n">Change</th></tr></thead><tbody>`+
    rows.slice(0,8).map(r=>{const up=r.r>=1;const cls=up?"up":"down";const lab=up?"×"+r.r.toFixed(1):"−"+Math.round(100*(1-r.r))+"%";
-     return `<tr><td>${r.t.t}${k==="an"&&REVIEW.has(r.t.t)?'<span class="flag">Review</span>':""}<div style="font-size:11.5px;color:var(--muted)">${r.t.g}</div></td><td class="hide-sm">${spark(r.t,k,css(up?"--accent":"--bad"))}</td><td class="n">${fmtS(r.a)}</td><td class="n">${fmtS(r.b)}</td><td class="n"><span class="pill ${cls}"><span aria-hidden="true">${up?"▲":"▼"}</span>${lab}</span></td></tr>`;}).join("")+"</tbody>";
+     return `<tr><td>${r.t.t}${k==="an"&&REVIEW.has(r.t.t)?'<span class="flag">Review</span>':""}<div style="font-size:11.5px;color:var(--muted)">${r.t.g}</div></td><td class="hide-sm">${spark(r.t,k,css(up?"--accent":"--bad"))}</td><td class="n">${fmtS(r.a)}<div class="nn">n=${fmtN(r.nA)}</div></td><td class="n">${fmtS(r.b)}<div class="nn">n=${fmtN(r.nB)}</div></td><td class="n"><span class="pill ${cls}"><span aria-hidden="true">${up?"▲":"▼"}</span>${lab}</span></td></tr>`;}).join("")+"</tbody>";
 }
 
 /* organisations */
