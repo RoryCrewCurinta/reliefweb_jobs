@@ -56,6 +56,7 @@ NGO = "Non-governmental Organization"
 CLS_INTL, CLS_LOCAL, CLS_REGIONAL, CLS_UNKNOWN = ("International NGO", "Locally based NGO",
                                                   "Regional NGO (global South base)", "NGO (home country unknown)")
 COUNTRY_MIN_POSTS = 300      # countries with fewer posts across all years are left out
+COUNTRY_DISPLAY = {"occupied Palestinian territory": "Occupied Palestinian territory"}  # names tidied for display
 
 
 BUNDLE = {}
@@ -144,6 +145,7 @@ def write_countries(con, months):
     for c, y, n in con.execute("""SELECT c.country, year(j.m), count(DISTINCT j.id)
                                   FROM j JOIN job_countries c ON c.job_id = j.id GROUP BY 1, 2""").fetchall():
         if c and c != "World" and y in yi:
+            c = COUNTRY_DISPLAY.get(c, c)
             data.setdefault(c, [0] * len(years))[yi[y]] = int(n)
     keep = sorted((c for c in data if sum(data[c]) >= COUNTRY_MIN_POSTS), key=lambda c: -sum(data[c]))
     write("countries.json", {"years": years, "countries": [{"c": c, "n": data[c]} for c in keep]})
