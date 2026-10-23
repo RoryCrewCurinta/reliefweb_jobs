@@ -56,7 +56,8 @@ NGO = "Non-governmental Organization"
 CLS_INTL, CLS_LOCAL, CLS_REGIONAL, CLS_UNKNOWN = ("International NGO", "Locally based NGO",
                                                   "Regional NGO (global South base)", "NGO (home country unknown)")
 COUNTRY_MIN_POSTS = 300      # countries with fewer posts across all years are left out
-COUNTRY_DISPLAY = {"occupied Palestinian territory": "Occupied Palestinian territory"}  # names tidied for display
+COUNTRY_DISPLAY = {"occupied Palestinian territory": "Occupied Palestinian territory",
+                   "Lao People's Democratic Republic (the)": "Lao People's Democratic Republic"}  # names tidied for display
 
 
 BUNDLE = {}
