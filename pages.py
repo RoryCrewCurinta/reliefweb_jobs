@@ -136,7 +136,8 @@ sections = [
 </ul>"""),
  ("source", "Source", f"""
 <p>The <a href="https://apidoc.reliefweb.int/">ReliefWeb API</a>, operated by OCHA, including expired adverts. The current, incomplete month is always left out, so the latest month shown is {month_name(last)}.</p>
-<p>An advert posted jointly by several organisations counts once for each of them. ReliefWeb, OCHA and the advertisers did not produce and do not endorse these figures.</p>"""),
+<p>An advert posted jointly by several organisations counts once for each of them. ReliefWeb, OCHA and the advertisers did not produce and do not endorse these figures.</p>
+<p><b>December 2025.</b> ReliefWeb itself carried unusually few job adverts that month: about 40% fewer than in neighbouring months, against a usual December dip of 0 to 20%. Our copy matches ReliefWeb's week by week, so this is not a gap in our data, and it was not confined to a few organisations. The month is shown as published; treat month-on-month changes around it with caution. Comparisons against the whole of 2025 are only slightly affected.</p>"""),
  ("tagging", "How topics are tagged", f"""
 <p>Each advert was read by a language model (OpenAI GPT-6 Luna), given the {n_topics} topic definitions in the <a href="glossary.html">glossary</a>. It reads adverts in English, French and Spanish. A topic counts when the job itself involves it, not when the word appears in the organisation's description of itself or in standard recruitment wording.</p>
 <p>For each relevant topic the model assigns a level:</p>
