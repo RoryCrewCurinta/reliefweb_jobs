@@ -281,7 +281,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
   <header class="brand">
     <a class="prod" href="#"><span class="pix" aria-hidden="true"></span>Humanitarian Trendlines</a>
     <nav aria-label="Sections"><a href="#volume">Volume</a><a href="#topics">Topics</a><a href="#roles">Roles</a><a href="#countries">Countries</a><a href="#orgs">Organisations</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
-    <span class="stamp" id="stamp">Data to Sep 2026</span>
+    <span class="stamp" id="stamp">Data to end Oct 2026</span>
   </header>
 
   <div class="hero">
@@ -631,7 +631,7 @@ const fm=D.meta.first_month.split("-");document.getElementById("hStart").textCon
 document.getElementById("partNote").textContent=Y.map((y,i)=>PART[i]?`${y} (${M[i]} months)`:null).filter(Boolean).join(" and ")+" "+(PART.filter(Boolean).length>1?"are part-years":"is a part-year")+", drawn dashed.";
 const gaps=D.meta.possible_gaps||[];if(gaps.length)document.getElementById("gapNote").textContent=gaps.map(g=>`${MON[+g.month.slice(5)-1]} ${g.month.slice(0,4)} carried ${fmtN(g.jobs)} posts against a usual ${fmtN(g.neighbour_median)}.`).join(" ")+" Shares are less affected than counts; the cause cannot be told from this data.";
 const lm=D.meta.last_month.split("-");
-document.getElementById("stamp").textContent="Data to "+MON[+lm[1]-1]+" "+lm[0];
+document.getElementById("stamp").textContent="Data to end "+MON[+lm[1]-1]+" "+lm[0];
 document.getElementById("genDate").textContent="Data generated "+D.meta.generated+".";
 
 /* generic tooltip placement */
