@@ -21,7 +21,7 @@ CREATE TABLE IF NOT EXISTS org_types       (org_id BIGINT, org_type VARCHAR);
 -- ReliefWeb's organisation list: type and home country (refreshed by every harvest, or: python harvest.py --orgs)
 CREATE TABLE IF NOT EXISTS orgs            (org_id BIGINT, org_name VARCHAR, org_shortname VARCHAR, org_type VARCHAR, home_country VARCHAR, home_iso3 VARCHAR, status VARCHAR);
 
--- Topic taxonomy: concept -> regex patterns (edit freely, then re-run matching)
+-- LEGACY (retired Nov 2026): regex topics from legacy/match.py. Kept for the pilot review; not used by export.py
 CREATE TABLE IF NOT EXISTS concepts (concept VARCHAR PRIMARY KEY, grp VARCHAR, description VARCHAR);
 CREATE TABLE IF NOT EXISTS concept_patterns (concept VARCHAR, pattern VARCHAR);
 

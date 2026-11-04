@@ -20,7 +20,7 @@ E = html.escape
 # Keep in step with export.py
 THIN_TOPICS = {"Stablecoins & digital assets", "Group cash transfers", "Blockchain & crypto", "Biometrics",
                "Humanitarian reset & reform", "Digital payments & financial service providers",
-               "Cash coordination", "Interoperability & data sharing"}
+               "Cash coordination"}
 # Display-only wording fixes (the CSV is the model's prompt, so it is left as tagged)
 DEF_OVERRIDE = {
     "Impact evaluation & research": "Research and study roles and evaluation consultancies in general, "

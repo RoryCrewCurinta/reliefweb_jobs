@@ -10,11 +10,11 @@ Usage:
   python strip.py --update     # monthly, after harvest.py --update: cleans new/changed jobs
                                # with the existing template list (fast)
   python strip.py              # full run: re-learn templates from the whole archive and
-                               # re-clean everything (slow; do quarterly). Then run a FULL match.py.
+                               # re-clean everything (slow; do quarterly). Cleaned text changes, so tagged results go out of date.
   python strip.py --min-titles 15 --min-share 0.05    # full run, removing less
 
 Writes:
-  jobs_clean   (id, date_changed, body_clean) - what match.py reads
+  jobs_clean   (id, date_changed, body_clean) - what llm_pilot/build_all.py reads
   boilerplate  (org_key, sentence, n_jobs, n_titles) - everything treated as template, for inspection
 
 Trade-offs: an org that adds the same topical sentence to most of its posts loses it;
@@ -71,7 +71,7 @@ def main():
     n_todo = con.execute("SELECT count(*) FROM todo").fetchone()[0]
     print(f"{'Update' if a.update else 'Full run'}: {n_todo:,} jobs to clean")
     if n_todo == 0:
-        print("Nothing new. Next: python match.py --update")
+        print("Nothing new. Next: python llm_pilot/build_all.py")
         return
 
     con.execute("SET preserve_insertion_order = false")   # lets DuckDB use less memory
@@ -156,7 +156,7 @@ def main():
             print(f"  {w:<20} {n:>10,}")
 
     con.close()
-    nxt = "python match.py --update" if a.update else "python match.py   (full rescore needed)"
+    nxt = "python llm_pilot/build_all.py"
     print(f"\nDone in {(time.time() - t0) / 60:.1f} min. Next: {nxt}")
 
 

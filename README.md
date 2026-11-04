@@ -1,15 +1,15 @@
 # ReliefWeb hiring trends
 
-What the humanitarian sector hires for, year by year: every job post on ReliefWeb since June 2011, matched against 94 topics in 9 groups, plus hiring by organisation. A Curinta project.
+What the humanitarian sector hires for, year by year: every job post on ReliefWeb since June 2011, tagged against 65 topics in 9 groups, plus hiring by organisation and country. A Curinta project.
 
-**Dashboard:** https://rorycrewcurinta.github.io/reliefweb_jobs/
+**Dashboard:** https://trendlines.curinta.com/
 
 ## How it works
 
 1. `harvest.py` pulls job posts from the ReliefWeb API v2 into a local DuckDB database (`reliefweb_jobs.duckdb`, not in Git).
 2. `strip.py` removes template text organisations repeat across their ads (equal-opportunity statements, benefits, legal clauses).
-3. `match.py` applies the topic list in `topics.csv` to job titles and descriptions.
-4. `export.py` writes small summary files to `docs/data/`, which the dashboard (`docs/index.html`) reads.
+3. `llm_pilot/` has a language model (GPT-6 Luna) read each ad and tag it against the topic list in `review/topics_v2_definitions.csv` (see `llm_pilot/README.md`).
+4. `export.py` writes small summary files to `docs/data/`, which the dashboard (`docs/index.html`) reads; `pages.py` rebuilds the Methodology, Glossary and About pages.
 
 Data files, counting rules and display cautions: [`docs/data/README.md`](docs/data/README.md).
 
@@ -26,19 +26,22 @@ Put your ReliefWeb appname in `.env` as `RELIEFWEB_APPNAME=...`. It is git-ignor
 ## Routine
 
 ```
-python harvest.py --update    # monthly top-up
-python match.py               # after harvesting or editing topics.csv
-python check.py "Biometrics"  # 20 random matches; aim for 16+ genuine
-python export.py              # refresh dashboard data
-python og_image.py            # rebuild the LinkedIn preview card to match
-python backup.py              # after each harvest
+python harvest.py --update                 # monthly top-up
+python strip.py --update                   # clean new and changed ads
+python llm_pilot/build_all.py              # write all ads for tagging (a few minutes)
+python llm_pilot/classify.py run --model gpt-6-luna --source all --workers 20 --max-usd 5   # tags only ads not yet done
+python llm_pilot/classify.py load --model gpt-6-luna --source all
+python export.py                           # refresh dashboard data
+python pages.py                            # refresh Methodology, Glossary and About
+python og_image.py                         # rebuild the LinkedIn preview card to match
+python backup.py                           # after each harvest
 ```
 
 Then commit and push; Cloudflare republishes the dashboard from `docs/` at https://trendlines.curinta.com/. If `og_image.py` changed the card, paste the URL into https://www.linkedin.com/post-inspector/ so LinkedIn drops its cached copy.
 
 ## Topics
 
-`topics.csv` has one row per pattern: `topic, group, pattern, case_sensitive, scope, exclude, note`. A job counts for a topic if any of its patterns match. Patterns are regular expressions; `exclude` phrases are removed before matching. Renamed terms are merged (CTP→CVA, OFDA/FFP→BHA, DFID→FCDO).
+The topic list, with definitions, is `review/topics_v2_definitions.csv`; the model is given it word for word. Changing a definition puts earlier tags out of date. The older regex matching (`match.py`, `topics.csv`) is retired and kept in `legacy/`.
 
 ## Caveats
 

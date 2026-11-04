@@ -159,7 +159,7 @@ def main():
     try:
         con = duckdb.connect(DB, read_only=True)
     except duckdb.IOException as e:
-        raise SystemExit(f"Database is in use (is match.py or harvest.py running?)\n{e}")
+        raise SystemExit(f"Database is in use (is harvest.py, strip.py or classify.py load running?)\n{e}")
     have_tables = {t for (t,) in con.execute("SELECT table_name FROM information_schema.tables").fetchall()}
     if "llm_topics" not in have_tables or con.execute(
             "SELECT count(*) FROM llm_topics WHERE model = ?", [LLM_MODEL]).fetchone()[0] == 0:
