@@ -251,6 +251,15 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 .copylink{margin-top:6px;display:inline-flex;align-items:center;gap:6px}
 .copylink::before{content:"";width:12px;height:12px;background:currentColor;-webkit-mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat;mask:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='none' stroke='black' stroke-width='2.4' stroke-linecap='round'%3E%3Cpath d='M10 13a5 5 0 0 0 7.5.5l3-3a5 5 0 0 0-7-7l-1.7 1.7'/%3E%3Cpath d='M14 11a5 5 0 0 0-7.5-.5l-3 3a5 5 0 0 0 7 7l1.7-1.7'/%3E%3C/svg%3E") center/contain no-repeat}
 .copylink.done{text-decoration:none;color:var(--up,#1a7f37)}
+.ctymap{position:relative;margin-top:16px;border-top:1px solid var(--line);padding-top:14px}
+.ctymap svg{display:block;width:100%;height:auto}
+.ctymap path,.ctymap circle{stroke:var(--surface);stroke-width:.6;vector-effect:non-scaling-stroke}
+.ctymap .nd{fill:var(--grid)}
+.ctymap .has{fill:var(--accent);cursor:pointer}
+.ctymap .has:hover{stroke:var(--ink);stroke-width:1.3}
+.ctymap .on{stroke:var(--ink);stroke-width:1.1;fill-opacity:1}
+.ctymap-key{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin:8px 0 0;font-size:12px;color:var(--muted)}
+.ctymap-key .ramp{display:inline-flex}.ctymap-key .ramp i{width:14px;height:8px;background:var(--accent)}
 .beta{font-size:11px;font-weight:600;letter-spacing:.06em;text-transform:uppercase;vertical-align:middle;padding:2px 7px;border-radius:999px;border:1px solid var(--accent);color:var(--accent-ink,var(--accent));margin-left:6px}
 </style>
 <script type="application/ld+json">
@@ -412,6 +421,8 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
         <div class="tchips" id="ctyChips" role="group" aria-label="Countries shown"></div>
         <div class="chart" id="ctyChart"></div>
         <div class="foot"><span id="ctyNote"></span></div>
+        <div class="ctymap" id="ctyMap" hidden></div>
+        <p class="ctymap-key" id="ctyMapKey" hidden></p>
       </div>
       <div class="panel">
         <div class="mvhead"><h3>Biggest movers</h3>
@@ -522,6 +533,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 </div>
 
 <script src="data/data.js"></script>
+<script src="world_map.js"></script>
 <script>
 (function(){
 const RD=window.RW_DATA;
@@ -594,7 +606,7 @@ function readURL(){
     if(q.has("items")){const m=bySlug((D.roles.dims[k]||[]).map(v=>v.name)),names=list("items").map(s=>m.get(s)).filter(Boolean).slice(0,6);
       if(names.length){st.rsel=st.rsel||{};if(k==="org_type")st.rselV=2;st.rsel[k]=[0,1,2,3,4,5].map(i=>names[i]||null);}}}
   // countries
-  if(q.has("countries")&&RD.countries){const m=bySlug(RD.countries.countries.map(c=>c.c)),names=list("countries").map(s=>m.get(s)).filter(Boolean).slice(0,6);if(names.length)st.ctySel=names;}
+  if(q.has("countries")&&RD.countries){const m=bySlug(RD.countries.countries.map(c=>c.c)),names=list("countries").map(s=>m.get(s)).filter(Boolean).slice(0,6);if(names.length){st.ctySel=names;st.ctySet=1;}}
   const cm=one("cmeasure",["share","count"]);if(cm)st.ctyM=cm;
   const cp=one("cperiod",["2025","2026","long"]);if(cp)st.ctyP=cp==="long"?"long":cp+"-01";
   const cd=one("cdir",["rising","falling"]);if(cd)st.ctyDown=cd==="falling";
@@ -630,7 +642,7 @@ function addLinkButtons(){
     head.appendChild(b);});
 }
 const FROM_URL=readURL();
-function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,ctySel:st.ctySel,ctyM:st.ctyM,ctyP:st.ctyP,ctyDown:st.ctyDown,falling:st.falling}}));}catch(e){}writeURL();}
+function save(){try{localStorage.setItem("tv3",JSON.stringify({st:{g:st.g,measure:st.measure,metric:st.metric,sel:st.sel,org:st.org,orgSet:st.orgSet,role:st.role,rsel:st.rsel,rselV:st.rselV,mp:st.mp,omMode:st.omMode,tilt:st.tilt,rec:st.rec,ctySel:st.ctySel,ctySet:st.ctySet,ctyM:st.ctyM,ctyP:st.ctyP,ctyDown:st.ctyDown,falling:st.falling}}));}catch(e){}writeURL();}
 function selOf(g){let s=st.sel[g];if(!s||!s.length||s.some(x=>!x||!byG[g].some(t=>t.t===x)&&x!==null))s=st.sel[g]=defaultSel(g).map(x=>x);return s;}
 /* selection stored as slot array: index = colour slot */
 function slotsOf(g){let s=st.sel[g];if(!Array.isArray(s)||s.length!==6){const d=defaultSel(g);s=st.sel[g]=[0,1,2,3,4,5].map(i=>d[i]||null);}return s;}
@@ -871,7 +883,7 @@ const ROLE={
   experience:{title:"Experience asked for",sub:"Share of all posts, by the years of experience the poster asked for.",note:"The closest ReliefWeb has to seniority. It is a band of years, not a grade."},
   job_type:{title:"Job type",sub:"Share of all posts, by the kind of contract.",note:"Chosen by the poster. Tenders are a new type and still rare."},
   org_type:{title:"Organisation type",sub:"Share of all posts, by the kind of organisation hiring. NGOs are split by where they are based.",pref:["International NGO","International Organization","Locally based NGO","Regional NGO (global South base)","Red Cross/Red Crescent Movement","Other"],note:"ReliefWeb's organisation types, with NGOs split in three. Locally based = home in a low or middle income country and at least 80% of its posts there; it is a proxy for national NGOs. ReliefWeb is mainly where international organisations advertise, so a small local share does not mean national NGOs hire little. UNICEF stopped posting in mid-2020, which lowers the international-organisation share.",link:["https://github.com/RoryCrewCurinta/reliefweb_jobs/blob/main/docs/data/ORG_CLASSIFICATION.md","How organisations are classified"]},
-  career_category:{title:"Career category",sub:"Share of posts that carry a category, by job function.",note:"Chosen by the poster. Shown from 2018, when every post began to carry one; earlier years were patchy and not comparable. Program/Project Management is a catch-all (about half of posts), so it is off by default."}};
+  career_category:{title:"Career category",sub:"Share of posts that carry a category, by job function.",note:"Chosen by the poster. Shown from 2018, when every post began to carry one; earlier years were patchy and not comparable. Program/Project Management is a catch-all (about half of posts), so it is off by default. ‘Other’ first appears as a category in May 2026 (marked) and takes about 4% of posts since, so the 2026 shares of the other categories run slightly low against earlier years."}};
 let roleTable=false;
 document.querySelectorAll("#roleSeg button").forEach(b=>b.onclick=()=>{st.role=b.dataset.v;save();renderRoles();});
 document.getElementById("roleTableToggle").onclick=()=>{roleTable=!roleTable;renderRoles();};
@@ -893,7 +905,7 @@ function renderRoles(){
     if(si<0&&nSel>=6){b.disabled=true;b.title="Six at most: turn one off first";}
     b.onclick=()=>{if(si>=0){if(nSel>1)slots[si]=null;}else{const f=slots.indexOf(null);if(f>=0)slots[f]=v.name;}save();renderRoles();};rc.appendChild(b);});
   const series=slots.map((name,si)=>{if(!name)return null;const v=list.find(x=>x.name===name);if(!v)return null;return{name,color:css(SLOTS[si]),t:{n:v.y},v:v.y.map((c,i)=>(k==="career_category"&&Y[i]<2018)?null:(den[i]?100*c/den[i]:0))};}).filter(Boolean);
-  lines(document.getElementById("roleChart"),series,{aria:cfg.title+" by year",
+  lines(document.getElementById("roleChart"),series,{aria:cfg.title+" by year",marker:k==="career_category"?{year:2026,label:"May 2026 · ‘Other’ added"}:null,
     fmtAxis:v=>v===0?"0":String(+v.toFixed(1))+"%",fmtTip:(s,i)=>`${s.v[i].toFixed(1)}% <span style="color:var(--muted)">· ${fmtN(s.t.n[i])}</span>`});
   // change over the period: first complete year shown to last complete year, every value of this field
   const full=Y.map((y,i)=>i).filter(i=>!PART[i]&&!(k==="career_category"&&Y[i]<2018));const i0=full[0],i1=full[full.length-1];
@@ -909,19 +921,21 @@ function renderRoles(){
   if(roleTable)tb.innerHTML=`<table class="datatable"><thead><tr><th>${cfg.title}</th>${Y.map((y,i)=>`<th>${y}${PART[i]?"*":""}</th>`).join("")}</tr></thead><tbody>${series.map(s=>`<tr><td>${s.name}</td>${s.v.map(v=>`<td>${v==null?"–":v.toFixed(1)+"%"}</td>`).join("")}</tr>`).join("")}</tbody></table>`;
 }
 /* countries (beta): posts per year and share of all posts; up to six countries at once */
+let ctyInit=false;
 function renderCountries(){
   const sec=document.getElementById("countries"),L=RD.countries;if(!L||!L.countries.length){sec.hidden=true;return;}
   const names=L.countries.map(c=>c.c),byName=new Map(L.countries.map(c=>[c.c,c]));
   const at=(arr,y)=>{const k=L.years.indexOf(y);return k<0?0:arr[k];};
+  const ctyTot=n=>byName.get(n).n.reduce((a,b)=>a+b,0);
+  if(!ctyInit){ctyInit=true;if(!Array.isArray(st.ctySel)||st.ctySet!==1){const top=[...names].sort((a,b)=>ctyTot(b)-ctyTot(a)).slice(0,20);st.ctySel=[top[Math.floor(Math.random()*top.length)]];}}
   let sl=(st.ctySel||[]).filter(n=>byName.has(n)).slice(0,6);
-  if(!Array.isArray(st.ctySel)){const top=names.slice(0,15);sl=[top[Math.floor(Math.random()*top.length)]];}
   st.ctySel=sl;
   const inp=document.getElementById("ctySearch"),lst=document.getElementById("ctyList");
   if(!inp.dataset.wired){inp.dataset.wired=1;
     const norm=t=>t.normalize("NFD").replace(/[\u0300-\u036f]/g,"").toLowerCase();
     let act=-1,shown=[];
     const close=()=>{lst.hidden=true;inp.setAttribute("aria-expanded","false");};
-    const add=n=>{if(n&&!st.ctySel.includes(n)&&st.ctySel.length<6){st.ctySel.push(n);save();}inp.value="";close();renderCountries();};
+    const add=n=>{if(n&&!st.ctySel.includes(n)&&st.ctySel.length<6){st.ctySel.push(n);st.ctySet=1;save();}inp.value="";close();renderCountries();};
     const open=()=>{const q=norm(inp.value.trim()),full=st.ctySel.length>=6;
       shown=full?[]:[...names].sort((a,b)=>a.localeCompare(b,"en",{sensitivity:"base"})).filter(n=>!st.ctySel.includes(n)&&(!q||norm(n).includes(q)));act=shown.length?0:-1;
       const tot=c=>byName.get(c).n.reduce((a,b)=>a+b,0);
@@ -941,9 +955,9 @@ function renderCountries(){
   const chips=document.getElementById("ctyChips");chips.innerHTML="";
   sl.forEach((n,si)=>{const b=document.createElement("button");b.type="button";b.className="tchip";b.setAttribute("aria-pressed","true");
     b.innerHTML=`<i style="background:${css(SLOTS[si])}"></i>${n} <span aria-hidden="true">×</span>`;b.title="Remove";b.setAttribute("aria-label","Remove "+n);
-    b.onclick=()=>{st.ctySel=st.ctySel.filter(x=>x!==n);save();renderCountries();};chips.appendChild(b);});
+    b.onclick=()=>{st.ctySel=st.ctySel.filter(x=>x!==n);st.ctySet=1;save();renderCountries();};chips.appendChild(b);});
   if(sl.length){const c=document.createElement("button");c.type="button";c.className="linkbtn";c.textContent="Clear all";
-    c.onclick=()=>{st.ctySel=[];save();renderCountries();};chips.appendChild(c);}
+    c.onclick=()=>{st.ctySel=[];st.ctySet=1;save();renderCountries();};chips.appendChild(c);}
   const share=st.ctyM!=="count";
   document.querySelectorAll("#ctyMeasure button").forEach(b=>b.setAttribute("aria-pressed",(b.dataset.v==="share")===share));
   const series=sl.map((n,si)=>{const C=byName.get(n),cnt=Y.map(y=>at(C.n,y));return {name:n,color:css(SLOTS[si]),t:{n:cnt},v:share?cnt.map((v,i)=>T[i]?100*v/T[i]:0):cnt};});
@@ -954,6 +968,30 @@ function renderCountries(){
     fmtAxis:share?(v=>v===0?"0":String(+v.toFixed(2))+"%"):(v=>fmtN(v)),
     fmtTip:(s,i)=>share?`${s.v[i].toFixed(2)}% <span style="color:var(--muted)">· ${fmtN(s.t.n[i])}</span>`:fmtN(s.t.n[i])});
   document.getElementById("ctyNote").textContent="Dashed: part-year.";
+  // picker map: shaded by posts since the start of the data (log scale); select a country to add or remove it
+  const MP=window.RW_MAP,mh=document.getElementById("ctyMap"),mk=document.getElementById("ctyMapKey");
+  if(MP&&mh){mh.hidden=false;mk.hidden=false;mh.innerHTML="";
+    const OP=[.16,.32,.5,.7,.92],tots=names.map(ctyTot),lo=Math.log(Math.min(...tots)),hi=Math.log(Math.max(...tots));
+    const lvl=n=>Math.min(4,Math.floor(5*(Math.log(ctyTot(n))-lo)/((hi-lo)||1)));
+    const svg=el("svg",{viewBox:`0 0 ${MP.w} ${MP.h}`,role:"img","aria-label":"World map shaded by posts advertised in each country. Use the search box above to add a country by name."},mh);
+    const tip=document.createElement("div");tip.className="tip";tip.hidden=true;mh.appendChild(tip);
+    const draw=(sh,has)=>{const si=sl.indexOf(sh.n),a=sh.c?{cx:sh.c[0],cy:sh.c[1],r:2.6}:{d:sh.d};
+      const e=el(sh.c?"circle":"path",a,svg);
+      if(!has){e.setAttribute("class","nd");return;}
+      e.setAttribute("class",si>=0?"has on":"has");e.dataset.n=sh.n;
+      if(si>=0)e.style.fill=css(SLOTS[si]);else e.setAttribute("fill-opacity",OP[lvl(sh.n)]);};
+    MP.shapes.filter(sh=>!byName.has(sh.n)&&!sh.c).forEach(sh=>draw(sh,false));
+    MP.shapes.filter(sh=>byName.has(sh.n)&&!sl.includes(sh.n)).forEach(sh=>draw(sh,true));
+    MP.shapes.filter(sh=>sl.includes(sh.n)).forEach(sh=>draw(sh,true));
+    const show=(ev,html)=>{const r=mh.getBoundingClientRect();tip.innerHTML=html;tip.hidden=false;const tw=tip.offsetWidth,px=ev.clientX-r.left;
+      tip.style.left=Math.max(0,Math.min(px+14+tw>r.width?px-tw-14:px+14,r.width-tw))+"px";tip.style.top=Math.max(0,ev.clientY-r.top-tip.offsetHeight-10)+"px";};
+    svg.addEventListener("pointermove",ev=>{const n=ev.target.dataset&&ev.target.dataset.n;if(!n){tip.hidden=true;return;}
+      const on=sl.includes(n);show(ev,`<b>${n}</b><div class="row"><span>Posts since ${Y[0]}</span><span>${fmtN(ctyTot(n))}</span></div><div style="color:var(--muted)">${on?"Select to remove":sl.length>=6?"Six at most: remove one first":"Select to add"}</div>`);});
+    svg.addEventListener("pointerleave",()=>{tip.hidden=true;});
+    svg.addEventListener("click",ev=>{const n=ev.target.dataset&&ev.target.dataset.n;if(!n)return;const i=st.ctySel.indexOf(n);
+      if(i>=0)st.ctySel.splice(i,1);else if(st.ctySel.length<6)st.ctySel.push(n);else return;
+      st.ctySet=1;save();renderCountries();});
+    mk.innerHTML=`<span>Fewer posts</span><span class="ramp" aria-hidden="true">${OP.map(o=>`<i style="opacity:${o}"></i>`).join("")}</span><span>More posts, ${Y[0]} to ${Y[Y.length-1]}. Select a country on the map to add or remove it. Grey: too few posts to show.</span>`;}
   // biggest movers: share of all posts in the period against the baseline
   const per=st.ctyP||"2025-01",down=!!st.ctyDown,MINR=100,yr=a=>{const o=[];for(let y=a[0];y<=a[1];y++)o.push(y);return o;};
   const lastY=Y[Y.length-1];
@@ -968,7 +1006,7 @@ function renderCountries(){
   document.getElementById("ctyRankSub").textContent=`Each country's share of all ReliefWeb posts, ${P.lb} against ${per==="long"?P.la:"all of "+P.la}. Shares, not counts, because total posting fell sharply. n = posts in the country. Countries need at least ${MINR} posts in each period. Select a row to add it to the chart.`;
   document.getElementById("ctyRank").innerHTML=`<thead><tr><th>Country</th><th class="n">${per==="long"?pShort(P1):P.la}</th><th class="n">${per==="long"?pShort(P2):"Since "+per.slice(0,4)}</th><th class="n">Change</th></tr></thead><tbody>`+
     rows.slice(0,10).map(r=>{const up=r.r>=1;return `<tr tabindex="0" data-c="${r.c.c.replace(/"/g,"&quot;")}"><td>${r.c.c}</td><td class="n">${r.a.toFixed(2)}%<div class="nn">n=${fmtN(r.nA)}</div></td><td class="n">${r.b.toFixed(2)}%<div class="nn">n=${fmtN(r.nB)}</div></td><td class="n"><span class="pill ${up?"up":"down"}"><span aria-hidden="true">${up?"▲":"▼"}</span>${up?"×"+r.r.toFixed(1):"−"+Math.round(100*(1-r.r))+"%"}</span></td></tr>`;}).join("")+"</tbody>";
-  document.querySelectorAll("#ctyRank tbody tr").forEach(tr=>{const go=()=>{const n=tr.dataset.c;if(!st.ctySel.includes(n)){if(st.ctySel.length>=6)st.ctySel.pop();st.ctySel.push(n);}save();renderCountries();document.getElementById("countries").scrollIntoView({behavior:"smooth",block:"start"});};tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go();};});
+  document.querySelectorAll("#ctyRank tbody tr").forEach(tr=>{const go=()=>{const n=tr.dataset.c;if(!st.ctySel.includes(n)){if(st.ctySel.length>=6)st.ctySel.pop();st.ctySel.push(n);}st.ctySet=1;save();renderCountries();document.getElementById("countries").scrollIntoView({behavior:"smooth",block:"start"});};tr.onclick=go;tr.onkeydown=e=>{if(e.key==="Enter")go();};});
 }
 function renderAll(){renderVol();renderHot();renderSoar();renderTopics();renderMovers();renderRoles();renderOrgMovers();renderOrg();renderCountries();}
 renderAll();
