@@ -81,6 +81,9 @@ section.block{margin-top:40px}
 
 /* ---- Sub-page layout ---- */
 .brand nav a[aria-current="page"]{background:var(--accent-soft);color:var(--accent-ink)}
+/* Stories link: filled so it stands out in the strip */
+.brand nav a.nav-hl,.brand nav a.nav-hl:hover{background:var(--accent-soft);color:var(--accent-ink)}
+.brand nav a.nav-hl:hover{filter:brightness(.96)}
 .page-hero{padding-block:36px 8px;max-width:78ch}
 .page-hero h1{font-size:clamp(28px,4vw,40px);line-height:1.08;font-weight:700}
 .page-hero h1 em{font-style:normal;color:var(--accent)}

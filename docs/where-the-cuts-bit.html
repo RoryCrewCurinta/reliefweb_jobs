@@ -1,0 +1,641 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover">
+<link rel="icon" type="image/png" href="data:image/png;base64,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">
+<title>Where the cuts bit · Humanitarian Trendlines</title>
+<meta name="description" content="Humanitarian funding fell 30% between 2022 and 2025. Job adverts fell 64%. A scrolling story on when the fall came, and which jobs, places and organisations it hit hardest.">
+<link rel="canonical" href="https://trendlines.curinta.com/where-the-cuts-bit">
+<meta property="og:type" content="article">
+<meta property="og:site_name" content="Curinta">
+<meta property="og:url" content="https://trendlines.curinta.com/where-the-cuts-bit">
+<meta property="og:title" content="Where the cuts bit · Humanitarian Trendlines">
+<meta property="og:description" content="Humanitarian funding fell 30% between 2022 and 2025. Job adverts fell 64%.">
+<meta property="og:image" content="https://trendlines.curinta.com/og-image.png?v=20261103-97c16b">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="627">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=IBM+Plex+Sans:wght@400;500;600&family=Poppins:wght@300;400&display=swap">
+<link rel="stylesheet" href="site.css">
+<style>
+/* Story page. A fixed snapshot: the figures are set when the page is built and do not follow the monthly data refresh. */
+.sr-only{position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0 0 0 0);white-space:nowrap}
+.signup .hp{position:absolute;left:-9999px}
+.s-hero{padding-block:clamp(36px,7vw,84px) clamp(20px,4vw,44px);max-width:900px}
+.kick{font-family:var(--font-display);font-size:12.5px;font-weight:600;letter-spacing:.09em;text-transform:uppercase;color:var(--accent-ink);margin:0 0 14px;display:flex;gap:10px;align-items:center}
+.s-hero h1{font-size:clamp(40px,8vw,84px);line-height:.98;font-weight:700;letter-spacing:-.03em}
+.s-hero h1 em{font-style:normal;color:var(--accent)}
+.dek{font-size:clamp(17px,2.1vw,21px);line-height:1.45;color:var(--ink-2);max-width:56ch;margin:22px 0 0}
+.dek b{color:var(--ink);font-weight:600}
+.byline{font-size:13px;color:var(--muted);margin:18px 0 0}
+.cue{font-family:var(--font-display);font-size:13px;color:var(--muted);margin:30px 0 0}
+
+.scrolly{display:grid;grid-template-columns:minmax(0,36fr) minmax(0,64fr);gap:clamp(24px,4vw,60px);align-items:start;border-top:1px solid var(--line)}
+.fig{--fh:min(76vh,640px);order:2;position:sticky;top:calc((100vh - var(--fh))/2);height:var(--fh);display:flex;flex-direction:column;background:var(--surface);border:1px solid var(--line);border-radius:var(--r);padding:18px 18px 12px;min-width:0}
+.fig h2{font-size:clamp(17px,1.9vw,22px);font-weight:600;line-height:1.2}
+.fig .sub{font-size:13px;color:var(--muted);margin:5px 0 0}
+.legend{display:flex;flex-wrap:wrap;gap:4px 16px;margin:10px 0 0;padding:0;list-style:none;font-size:12.5px;color:var(--ink-2);min-height:18px}
+.legend li{display:flex;align-items:center;gap:6px}
+.legend i{width:14px;height:3px;border-radius:2px;display:block}
+.legend i.sq{width:10px;height:10px}
+.plot{flex:1;min-height:0;position:relative;margin-top:8px}
+.plot svg{display:block;position:absolute;inset:0;overflow:visible}
+.fnote{font-size:11.5px;color:var(--muted);margin:6px 0 0;min-height:16px}
+.fig.swap .plot,.fig.swap h2,.fig.swap .sub,.fig.swap .legend{animation:fadein .35s ease both}
+@keyframes fadein{from{opacity:0}to{opacity:1}}
+
+.steps{order:1;padding-bottom:20vh}
+.step{min-height:88vh;display:flex;align-items:center}
+.step:first-child{min-height:72vh}
+.step .card{opacity:.32;transition:opacity .3s}
+.step.on .card{opacity:1}
+.beat{font-family:var(--font-display);font-size:12px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted);margin:0 0 8px}
+.step h3{font-size:clamp(21px,2.3vw,27px);line-height:1.15;font-weight:600;margin:0 0 12px}
+.step p{margin:0 0 12px;color:var(--ink-2);font-size:16px;line-height:1.55}
+.step p b,.step p strong{color:var(--ink);font-weight:600}
+.step .big{font-family:var(--font-display);font-variant-numeric:tabular-nums;font-weight:600;color:var(--ink)}
+.read{border-left:3px solid var(--accent);padding:2px 0 2px 12px;font-size:15px!important}
+.read::before{content:"My reading";display:block;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink);margin-bottom:2px}
+.care{border-left:3px solid var(--warn);padding:2px 0 2px 12px;font-size:15px!important}
+.care::before{content:"Treat with care";display:block;font-family:var(--font-display);font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--warn);margin-bottom:2px}
+
+.plot .grid{stroke:var(--grid);stroke-width:1}
+.plot .base{stroke:var(--line);stroke-width:1}
+.plot .ax{fill:var(--muted);font:11.5px var(--font-body);font-variant-numeric:tabular-nums}
+.plot .lab{fill:var(--ink-2);font:12px var(--font-body)}
+.plot .val{fill:var(--ink);font:600 11.5px var(--font-display);font-variant-numeric:tabular-nums;paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.plot .annb,.plot .end{paint-order:stroke;stroke:var(--surface);stroke-width:3px;stroke-linejoin:round}
+.plot .end{fill:var(--ink);font:600 13px var(--font-display);font-variant-numeric:tabular-nums}
+.plot .ann{fill:var(--ink-2);font:12px var(--font-body)}
+.plot .annb{fill:var(--ink);font:600 12px var(--font-display);font-variant-numeric:tabular-nums}
+.plot .ref{stroke:var(--muted);stroke-width:1;stroke-dasharray:3 3}
+.plot .ln{fill:none;stroke-width:2.25;stroke-linejoin:round;stroke-linecap:round}
+.plot .ln.est{stroke-dasharray:5 4}
+.plot .ln.draw{stroke-dasharray:1;stroke-dashoffset:1;animation:draw .9s ease forwards}
+@keyframes draw{to{stroke-dashoffset:0}}
+.plot .dot{stroke:var(--surface);stroke-width:2}
+.plot .pop{animation:fadein .5s ease .25s both}
+.plot .bar{transform-box:fill-box}
+.plot .bar.grow{animation:growx .6s ease both}
+.plot .col.grow{transform-box:fill-box;transform-origin:bottom;animation:growy .6s ease both}
+@keyframes growx{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+@keyframes growy{from{transform:scaleY(0)}to{transform:scaleY(1)}}
+.plot .mute{fill:var(--muted);opacity:.32}
+.plot .cross{stroke:var(--muted);stroke-width:1;visibility:hidden}
+.tip{position:absolute;pointer-events:none;z-index:4;background:var(--ink);color:var(--bg);font-size:12px;line-height:1.4;padding:7px 9px;border-radius:5px;white-space:nowrap;visibility:hidden;box-shadow:0 4px 14px rgba(0,0,0,.18)}
+.tip b{font-family:var(--font-display);font-weight:600;display:block;margin-bottom:2px}
+.tip span{display:flex;align-items:center;gap:6px}
+.tip i{width:8px;height:8px;border-radius:2px;display:block;flex:none}
+
+.after{max-width:76ch;margin-top:clamp(28px,6vw,64px)}
+.after h2{font-size:22px;font-weight:600;display:flex;align-items:center;gap:12px;margin:36px 0 10px}
+.after p{color:var(--ink-2);margin:0 0 12px}
+.after ul{margin:0 0 12px;padding-left:20px;color:var(--ink-2);display:grid;gap:7px}
+.after b{color:var(--ink);font-weight:600}
+.after a{color:var(--accent-ink);text-underline-offset:2px}
+.next{background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r);padding:14px 16px}
+details.data{margin-top:14px;font-size:13.5px}
+details.data summary{cursor:pointer;font-family:var(--font-display);font-weight:600;color:var(--accent-ink)}
+details.data table{border-collapse:collapse;margin:12px 0 18px;width:100%;font-variant-numeric:tabular-nums}
+details.data caption{text-align:left;font-family:var(--font-display);font-weight:600;color:var(--ink);padding-bottom:4px}
+details.data th,details.data td{text-align:right;padding:4px 8px;border-bottom:1px solid var(--line);color:var(--ink-2)}
+details.data th:first-child,details.data td:first-child{text-align:left}
+details.data .scroll{overflow-x:auto}
+
+@media (max-width:900px){
+  .scrolly{display:block;border-top:0}
+  .fig{--fh:56vh;top:0;z-index:5;margin-inline:calc(-1*clamp(16px,3vw,32px));border-radius:0;border-width:1px 0;padding:12px clamp(16px,3vw,32px) 8px;box-shadow:0 10px 18px -12px rgba(0,0,0,.25)}
+  .fig h2{font-size:16.5px}
+  .fig .sub{font-size:12px;margin-top:3px}
+  .legend{font-size:11.5px;margin-top:6px;gap:2px 12px}
+  .fnote{font-size:10.5px;margin-top:3px}
+  .steps{padding-bottom:10vh}
+  .step,.step:first-child{min-height:74vh;align-items:flex-start;padding-top:22px}
+  .step .card{opacity:1}
+  .step p{font-size:15.5px}
+  .plot .ax{font-size:10.5px}.plot .lab{font-size:10.5px}.plot .val{font-size:10.5px}.plot .end{font-size:12px}.plot .ann,.plot .annb{font-size:10.5px}
+}
+@media (prefers-reduced-motion:reduce){.fig.swap .plot,.fig.swap h2,.fig.swap .sub,.fig.swap .legend,.plot .ln.draw,.plot .pop,.plot .bar.grow,.plot .col.grow{animation:none;stroke-dashoffset:0}.step .card{transition:none}}
+@media print{.fig{position:static;height:420px}.step{min-height:0;padding-block:12px}.step .card{opacity:1}}
+</style>
+</head>
+<body>
+<!-- Story 01, built 2026-11-16 from the dashboard export generated 2026-11-03 and ALNAP's GHA 2026 chart data.
+     This page is a fixed snapshot. It is not produced by pages.py and does not change when the data refreshes. -->
+<header class="site" id="site">
+  <div class="site-in">
+    <a class="site-logo" href="https://www.curinta.com/"><img src="curinta-logo.png" alt="Curinta" width="317" height="112"></a>
+    <button class="site-burger" type="button" aria-label="Menu" aria-expanded="false" aria-controls="siteMenu"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.6" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16"/></svg></button>
+    <div class="site-menu" id="siteMenu">
+      <ul class="site-nav">
+        <li><a href="https://www.curinta.com/">Home</a></li>
+        <li><a href="https://trendlines.curinta.com/" aria-current="page">Humanitarian Trendlines</a></li>
+        <li class="site-dd"><button type="button" aria-haspopup="true" aria-expanded="false">Products</button>
+          <ul class="site-dd-menu"><li><a href="https://www.curinta.com/consultancy-services">Consultancy services</a></li></ul></li>
+        <li><a href="https://www.curinta.com/contact">Contact</a></li>
+      </ul>
+      <div class="site-social">
+        <a href="mailto:rorycrew@curinta.com" aria-label="Email Curinta"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linejoin="round" aria-hidden="true"><rect x="3" y="5.5" width="18" height="13" rx="1"/><path d="M3.5 6.5 12 13l8.5-6.5"/></svg></a>
+        <a href="https://www.linkedin.com/company/curinta" aria-label="Curinta on LinkedIn" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><rect x="3.5" y="9" width="3.6" height="11.5"/><circle cx="5.3" cy="5.3" r="2.1"/><path d="M9.6 9h3.4v1.6c.5-.9 1.7-1.9 3.6-1.9 3.6 0 4.3 2.3 4.3 5.4v6.4h-3.6v-5.7c0-1.4 0-3.1-1.9-3.1s-2.2 1.5-2.2 3v5.8H9.6z"/></svg></a>
+      </div>
+    </div>
+  </div>
+</header>
+
+<div class="wrap">
+  <header class="brand">
+    <a class="prod" href="index.html"><span class="pix" aria-hidden="true"></span>Humanitarian Trendlines</a>
+    <nav aria-label="Trendlines pages"><a href="index.html">Dashboard</a><a href="where-the-cuts-bit.html" class="nav-hl" aria-current="page">Stories</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
+    <span class="stamp">Data to end Oct 2026</span>
+  </header>
+
+  <div class="s-hero">
+    <p class="kick"><span class="pix" aria-hidden="true"></span>Trendlines stories · Part one</p>
+    <h1>Where the <em>cuts</em> bit</h1>
+    <p class="dek">Between 2022 and 2025, international humanitarian funding fell by <b>30%</b>. Job adverts on ReliefWeb fell by <b>64%</b>. This is when the fall came, and which jobs, places and organisations it hit hardest.</p>
+    <p class="byline">Job adverts: ReliefWeb, to end Oct 2026. Funding: ALNAP, Global Humanitarian Assistance Report 2026.</p>
+    <p class="cue" aria-hidden="true">Scroll ↓</p>
+  </div>
+
+  <noscript><p class="care">This story draws its charts with JavaScript. The text below still reads in order, and every figure is on the <a href="index.html">dashboard</a>.</p></noscript>
+
+  <div class="scrolly" id="scrolly">
+    <figure class="fig" id="fig">
+      <h2 id="figTitle" aria-live="polite"></h2>
+      <p class="sub" id="figSub"></p>
+      <ul class="legend" id="figLegend"></ul>
+      <div class="plot" id="plot"></div>
+      <p class="fnote" id="figNote"></p>
+      <div class="tip" id="tip" role="presentation"></div>
+    </figure>
+
+    <div class="steps" id="steps">
+
+      <section class="step"><div class="card">
+        <p class="beat">1 · The totals</p>
+        <h3>The same peak</h3>
+        <p>In 2022 international humanitarian assistance reached <span class="big">US$47.5 billion</span>, the highest ALNAP has recorded.</p>
+        <p>The same year ReliefWeb carried <span class="big">52,965</span> job adverts, the most in a series that starts in 2011.</p>
+        <p>They had not always moved together. In 2020, the first Covid year, adverts fell 16% while funding held at about US$35.6 billion.</p>
+        <p>To compare money with adverts, both lines are set to 100 in 2022.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">1 · The totals</p>
+        <h3>Then the gap</h3>
+        <p>By 2025 funding was down <span class="big">30%</span>, to US$33.3 billion.</p>
+        <p>Adverts were down <span class="big">64%</span>, to 19,254. That is fewer than in 2012.</p>
+        <p><b>Hiring fell about twice as far as the money.</b></p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">2 · The timing</p>
+        <h3>Adverts moved first</h3>
+        <p>In 2023 funding was flat (down 0.3%) while adverts fell 12%. In 2024 funding fell 13% and adverts 22%. In 2025, 20% and 47%.</p>
+        <p>Some of the early fall is a surge unwinding. Adverts for Ukraine and Poland went from 295 in 2021 to 3,064 in 2022, and adverts for epidemic control fell by 33% in 2023.</p>
+        <p class="read">Organisations stop hiring before they stop spending, because a frozen vacancy is the cheapest cut there is. That would make adverts an early signal. But this is three year-on-year changes, which is a pattern and not a tested lead indicator.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">2 · The timing</p>
+        <h3>Then a step down</h3>
+        <p>Annual figures hide when 2025 happened. Through 2024, ReliefWeb averaged <span class="big">3,040</span> adverts a month.</p>
+        <p>January 2025 had 2,328. The United States paused its foreign assistance on 20 January. February had <span class="big">1,576</span>, a third fewer in one month.</p>
+        <p>From February to November the monthly count stayed between 1,418 and 1,870. It stepped down and did not come back.</p>
+        <p class="care">There's a noticeable dip in December 2025 (726). I checked it against the source. I can't tell the cause from this data.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">3 · Job types</p>
+        <h3>Staff posts fell furthest</h3>
+        <p>Adverts for jobs fell <span class="big">67%</span> between 2022 and 2025. Adverts for consultancies fell <span class="big">45%</span>.</p>
+        <p>So consultancies grew from 15% of all adverts to 23%, without growing in number.</p>
+        <p class="read">This fits organisations swapping payroll for short contracts when income is uncertain. It could also reflect how ReliefWeb is used: I don't know how organisations choose between posting here, on their own sites and on national job boards.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">4 · Seniority</p>
+        <h3>Junior roles went first</h3>
+        <p>Adverts asking for 0–2 years of experience fell <span class="big">73%</span>. Those asking for 10 or more fell <span class="big">55%</span>.</p>
+        <p>The timing differs more than the totals. Entry-level adverts fell 18% in 2023 and 35% in 2024, before the US cuts. Senior adverts barely moved in those years (down 2% and 5%), then fell 52% in 2025.</p>
+        <p class="read">The slow squeeze narrowed the entry routes for people starting humanitarian careers. The 2025 shock was the first to reach senior posts.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">5 · Countries</p>
+        <h3>Almost everywhere fell</h3>
+        <p>These are the 20 countries with the most adverts in 2022, by where the job is based. Nineteen fell by half or more. Syria is the exception; more on Syria below.</p>
+        <p>Kenya fell least of the nineteen, by 51%. The dashed line is the fall across all adverts, 64%.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">5 · Countries</p>
+        <h3>Three headquarters countries near the top</h3>
+        <p>Adverts based in the United States fell 78%, in the United Kingdom 77% and in France 83%. Switzerland, another headquarters country, fell a more modest 59%.</p>
+        <p class="care">France's 2022 was unusually high (3,788 adverts, up from 1,881 in 2021). Measured from 2021 its fall is 66%. And adverts based in the US include domestic programmes such as refugee resettlement, not only head-office roles.</p>
+        <p class="read">Head offices and home-country programmes were cut at least as hard as field operations. I can't separate the two from the location alone.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">5 · Countries</p>
+        <h3>One country went the other way</h3>
+        <p>Adverts based in Syria rose from 869 in 2022 to <span class="big">1,584</span> in 2025, up 82%. The first ten months of 2026 already have 1,527.</p>
+        <p>The Assad government fell in December 2024.</p>
+        <p class="read">The timing fits organisations hiring to work in parts of Syria they could not reach before. I have not yet checked how many organisations account for the rise.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">5 · Countries</p>
+        <h3>Where funding rose, hiring didn't follow</h3>
+        <p>ALNAP finds that funding fell in 2025 for 18 of the 20 largest recipients. The two exceptions were the Occupied Palestinian territory (oPt), up 15%, and Myanmar, up 11%.</p>
+        <p>Myanmar's adverts fell 11% that year (210 to 187), against 47% for all adverts. It held up far better than the rest.</p>
+        <p>oPt did not. Adverts there fell 56%, from 958 to 420, in the year its funding rose.</p>
+        <p class="care">Small numbers, and a country's funding and its job adverts need not move in the same year.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">6 · Who held up</p>
+        <h3>Local organisations fell least</h3>
+        <p>International NGOs post 67% of adverts, so they set the average: down 64%. UN and other international organisations fell 71%.</p>
+        <p>Locally based NGOs fell <span class="big">24%</span>, and regional NGOs based in the global South 36%.</p>
+        <p class="care">The local figures are small (1,304 adverts in 2022, 990 in 2025). And much of the Red Cross and Red Crescent fall (81%) is a surge unwinding: its adverts more than doubled in 2022, from 1,404 to 3,258.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">6 · What held up</p>
+        <h3>Climate fell late, not little</h3>
+        <p>Of the 36 topics with at least 300 adverts in 2022, coordination fell most (83%), then epidemic control (80%), refugees and asylum (78%) and cash and voucher assistance (78%).</p>
+        <p>Climate, environment and energy fell least (38%). But it held until 2024 (1,312 adverts in 2022, 1,416 in 2024) and then fell 42% in a single year.</p>
+        <p>By career category there is little to see: 7 of 9 fell between 64% and 70%. Information management is the exception, down 29%.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">6 · What held up</p>
+        <h3>One small topic grew</h3>
+        <p>The last chart left out topics with fewer than 300 adverts in 2022. Of the 19 smaller ones with at least 50 adverts in either year, one grew: AI and machine learning, from 26 adverts to <span class="big">53</span>.</p>
+        <p>Remote and third-party monitoring held level (67 to 65), and urban response nearly so (63 to 57). Localisation fell 32%, half the rate for all adverts, so its share nearly doubled, from 0.28% to 0.53%.</p>
+        <p>Small did not mean safe. Multi-purpose cash fell 80%, from 66 adverts to 13.</p>
+        <p class="care">These are a few dozen adverts a year, so one organisation's hiring round can move them. A further 10 topics with fewer than 50 adverts, such as interoperability (14 to 18), are too thin to chart.</p>
+        <p class="read">Remote monitoring holding while field posts fell fits organisations pulling staff back and paying others to check on programmes.</p>
+      </div></section>
+
+      <section class="step"><div class="card">
+        <p class="beat">Where it stands</p>
+        <h3>It hasn't stopped</h3>
+        <p>The first ten months of 2026 carried <span class="big">13,306</span> adverts, 22% fewer than the same months of 2025.</p>
+        <p>ALNAP's two scenarios for public donor funding in 2026 are falls of 2% and 11%.</p>
+        <p class="read">Either hiring is overshooting the money again, as it did on the way down, or the funding scenarios are optimistic. The 2026 funding figures will say which.</p>
+      </div></section>
+
+    </div>
+  </div>
+
+  <div class="after">
+    <h2><span class="pix" aria-hidden="true"></span>How far to trust this</h2>
+    <ul>
+      <li><b>Adverts are not hires.</b> They count posts advertised on ReliefWeb, which is not all humanitarian hiring. Organisations post there unevenly, and some have moved recruitment to their own sites.</li>
+      <li><b>2022 is a high base.</b> It was the peak for both series and included the Ukraine surge, so every "since 2022" figure here is measured from the top.</li>
+      <li><b>The funding series is annual and short.</b> ALNAP's 2026 report gives five years (2021 to 2025) in constant 2024 prices, and the 2025 figure is preliminary. Monthly adverts are being set against yearly money.</li>
+      <li><b>Funding for 2019 and 2020 is an estimate.</b> ALNAP's published totals in constant prices start in 2021. For the two earlier years, its public-donor figures in 2024 prices are added to its private-funding figures, which are adjusted with the same deflator. Private giving is about a sixth of the total, so the effect is small: run on 2021 to 2025, the same method lands within 0.6% of the published totals.</li>
+      <li><b>Nothing here shows cause.</b> The falls are consistent with the funding cuts biting where the text says. Organisations also differ in size, donors and country mix.</li>
+      <li><b>Topics are a language model's tags.</b> Topic counts run a little low, so trends are safer than levels. The <a href="methodology.html">methodology</a> has the checks.</li>
+    </ul>
+    <details class="data"><summary>The figures behind the charts</summary><div id="tables"></div></details>
+
+    <h2><span class="pix" aria-hidden="true"></span>Sources</h2>
+    <ul>
+      <li>Job adverts: <a href="https://reliefweb.int/jobs">ReliefWeb</a> jobs API, June 2011 to Oct 2026, as processed for the <a href="index.html">Trendlines dashboard</a>. This page is a snapshot of that data and does not update.</li>
+      <li>Funding: ALNAP (2026) <a href="https://alnap.org/help-library/resources/global-humanitarian-assistance-gha-report-2026/">Global Humanitarian Assistance Report 2026</a>. London: ALNAP/ODI. Totals, recipient changes and 2026 scenarios are from the report's <a href="https://github.com/ALNAP-Comms/gha_2026">published chart data</a> (figures 1.1, 1.2 and 2.1). The 2019 and 2020 totals are estimated from the public and private figures behind the report. ALNAP's recipient data uses the name Palestine; this page uses Occupied Palestinian territory (oPt), as ReliefWeb does.</li>
+    </ul>
+  </div>
+
+  <aside class="signup" aria-labelledby="suTitle2">
+    <div><h3 id="suTitle2">Follow the trendlines</h3><p>One email a month when new data lands: what rose, what fell, and who changed course.</p></div>
+    <div>
+      <form class="signup-form" novalidate>
+        <label class="sr-only" for="suEmail2">Email address</label>
+        <input id="suEmail2" type="email" name="email" placeholder="you@organisation.org" autocomplete="email" required>
+        <input class="hp" type="text" name="website" tabindex="-1" autocomplete="off" aria-hidden="true">
+        <button type="submit">Get the updates</button>
+      </form>
+      <p class="fine">Double opt-in required. Unsubscribe any time. <a href="https://www.curinta.com/privacy">Privacy notice</a></p>
+      <p class="msg" role="status" aria-live="polite"></p>
+    </div>
+  </aside>
+
+  <footer class="colophon">
+    <span><img src="data:image/png;base64,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" alt="">Humanitarian Trendlines · by <a href="https://www.curinta.com/">Curinta</a> · <a href="methodology.html">Methodology</a> · <a href="glossary.html">Glossary</a> · <a href="about.html">About</a> · <a href="https://www.curinta.com/privacy">Privacy</a></span>
+    <span>Sources: <a href="https://reliefweb.int/jobs">ReliefWeb</a>, used under ReliefWeb's terms; ALNAP GHA Report 2026. Data generated 2026-11-03.</span>
+  </footer>
+</div>
+<script>
+(function(){
+  var site=document.getElementById("site"); if(!site) return;
+  var burger=site.querySelector(".site-burger");
+  burger.addEventListener("click",function(){var o=site.classList.toggle("open");burger.setAttribute("aria-expanded",o?"true":"false");});
+  var dd=site.querySelector(".site-dd"), ddb=dd.querySelector("button");
+  ddb.addEventListener("click",function(e){e.stopPropagation();var o=dd.classList.toggle("open");ddb.setAttribute("aria-expanded",o?"true":"false");});
+  document.addEventListener("click",function(e){if(!dd.contains(e.target)){dd.classList.remove("open");ddb.setAttribute("aria-expanded","false");}});
+  document.addEventListener("keydown",function(e){if(e.key==="Escape"){dd.classList.remove("open");site.classList.remove("open");burger.setAttribute("aria-expanded","false");}});
+})();
+</script>
+<script>
+(function(){
+  var URL="https://assets.mailerlite.com/jsonp/2721455/forms/201630916907369586/subscribe";
+  var OK="Nearly done: check your inbox and click the link to confirm. If it isn't there in a few minutes, look in spam or promotions.";
+  document.querySelectorAll(".signup-form").forEach(function(f){
+    var box=f.parentNode, msg=box.querySelector(".msg"), btn=f.querySelector("button"), em=f.querySelector("input[type=email]");
+    function show(t,ok){msg.textContent=t;msg.className="msg "+(ok?"ok":"err");}
+    f.addEventListener("submit",function(e){
+      e.preventDefault();
+      if(f.website && f.website.value) return;
+      var v=em.value.trim();
+      if(!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(v)){show("Please enter a valid email address.",false);em.focus();return;}
+      var label=btn.textContent; btn.disabled=true; btn.textContent="Sending…"; show("",true);
+      var body=new URLSearchParams();
+      body.append("fields[email]",v); body.append("ml-submit","1"); body.append("anticsrf","true");
+      fetch(URL,{method:"POST",body:body,headers:{"Accept":"application/json"}})
+        .then(function(r){return r.json();})
+        .then(function(d){
+          if(d && d.success){f.hidden=true;var fp=box.querySelector(".fine");if(fp)fp.hidden=true;show(OK,true);return;}
+          var m=d && d.errors && d.errors.fields && d.errors.fields.email && d.errors.fields.email[0];
+          show(m||"Something went wrong. Please try again.",false);
+        })
+        .catch(function(){show("Couldn't reach the signup service. Please try again, or email rorycrew@curinta.com.",false);})
+        .then(function(){btn.disabled=false;btn.textContent=label;});
+    });
+  });
+})();
+</script>
+<script>
+(function(){
+"use strict";
+var D={"last_month":"2026-10","generated":"2026-11-03","years":[2019,2020,2021,2022,2023,2024,2025],"total":[43853,36897,45896,52965,46646,36485,19254],"monthly":{"start":"2022-01","jobs":[4117,4422,5370,4237,4483,4156,4671,4970,4424,4262,4237,3616,3770,4270,4781,4059,4174,4194,3897,4133,3453,3822,3157,2936,3383,3458,3449,3268,3042,2787,3251,2711,2785,3315,2553,2483,2328,1576,1518,1418,1650,1597,1870,1612,1676,1801,1482,726,978,1071,1475,1399,1253,1417,1533,1223,1405,1552]},"job_type":{"Job":[33086,28055,34978,42752,37393,28125,14003],"Consultancy":[8550,7415,9033,8006,7213,6688,4365]},"experience":{"0-2 years":[8662,7112,9303,12343,10089,6536,3283],"3-4 years":[14203,10829,13751,16818,15305,11594,6052],"5-9 years":[16943,15141,18496,19850,17375,14672,8136],"10+ years":[4045,3815,4346,3954,3877,3683,1783]},"org_type":[["International NGO",35566,12848],["International Organization",5885,1731],["Other",4190,1521],["Red Cross/Red Crescent Movement",3258,626],["Academic and Research Institution",1348,745],["Locally based NGO",1304,990],["Regional NGO (global South base)",850,546],["Government",502,209]],"countries":[["United States of America",3531,4480,976],["France",1881,3788,632],["Kenya",2827,3406,1679],["Ukraine",258,2408,638],["United Kingdom of Great Britain and Northern Ireland",1877,2041,475],["Jordan",1310,1497,590],["Somalia",1071,1288,434],["Nigeria",1326,1129,490],["Philippines",1097,1118,481],["Democratic Republic of the Congo",879,1105,421],["Switzerland",841,1021,419],["Colombia",1218,1010,326],["Türkiye",979,936,134],["South Sudan",905,933,323],["Iraq",1020,918,207],["Uganda",625,872,404],["Syrian Arab Republic",1013,869,1584],["Ethiopia",868,799,339],["Senegal",709,797,264],["Afghanistan",622,788,175]],"topics":[["Accountability & community engagement (AAP)",571,166],["Cash & voucher assistance (CVA)",498,109],["Child protection",666,264],["Climate, environment & energy",1312,818],["Compliance, audit & risk",864,356],["Data collection & analytics",1218,596],["Digital transformation, innovation & ICT4D",855,355],["Disability inclusion",615,206],["Disaster risk reduction & early warning",313,185],["Education",1706,691],["Epidemics & disease control",852,167],["Food security & agriculture",1331,530],["Gender equality",889,417],["Gender-based violence (GBV)",485,158],["Health",4767,1571],["Human rights & humanitarian law",900,293],["Humanitarian coordination",383,67],["Legal aid, documentation & HLP",301,129],["Livelihoods & early recovery",1150,458],["Logistics & emergency telecoms",309,109],["Markets & value chains",677,272],["Mental health & psychosocial support (MHPSS)",803,298],["Migration",784,277],["Nutrition",830,235],["Partnerships & partner capacity",888,378],["Peacebuilding & conflict sensitivity",521,214],["Protection (general)",1138,307],["Refugees & asylum",1556,339],["Research, studies & evaluation",1793,961],["Resilience",385,181],["Safeguarding & PSEA",330,108],["Safety & security management",728,273],["Sexual & reproductive health",405,188],["Shelter & settlements",404,144],["Water, sanitation & hygiene (WASH)",998,384],["Youth & adolescents",583,257]],"funding":{"years":[2019,2020,2021,2022,2023,2024,2025],"total":[35.0306,35.5817,41.4396,47.5286,47.3837,41.4605,33.3134],"est":[2019,2020]},"small_topics":[["AI & machine learning",26,53],["Anticipatory action & risk financing",60,28],["Camp coordination & camp management (CCCM)",260,44],["Cybersecurity",94,38],["Diversity & inclusion (age, SOGI, DEI)",173,61],["Durable solutions & statelessness",107,45],["Financial inclusion & savings groups",162,74],["GIS & remote sensing",127,85],["Human trafficking",96,52],["Humanitarian access & civil-military coordination",196,123],["Humanitarian-development-peace nexus",55,19],["Internal displacement",161,39],["Localisation & local leadership",149,102],["Mine action",205,107],["Multi-purpose cash (MPCA)",66,13],["Needs assessment & analysis",250,147],["Remote & third-party monitoring",67,65],["Social protection",107,49],["Urban & area-based response",63,57]],"exceptions":{"Syrian Arab Republic":[1013,869,1051,592,1584],"Occupied Palestinian territory":[263,309,397,958,420],"Myanmar":[455,424,320,210,187]}};
+var $=function(s){return document.querySelector(s);};
+var fig=$("#fig"),holder=$("#plot"),tEl=$("#figTitle"),sEl=$("#figSub"),lEl=$("#figLegend"),nEl=$("#figNote"),tip=$("#tip");
+var Y=D.years,i22=Y.indexOf(2022),iLast=Y.length-1;
+var fmt=function(n){return Math.round(n).toLocaleString("en-GB");};
+var chg=function(a,b){return Math.round((b/a-1)*100);};
+var sgn=function(p){return (p>0?"+":p<0?"−":"")+Math.abs(p)+"%";};
+var esc=function(s){return String(s).replace(/&/g,"&amp;").replace(/</g,"&lt;").replace(/"/g,"&quot;");};
+var idx=function(a,base){return a.map(function(v){return v==null?null:v/base*100;});};
+var fundY=Y.map(function(y){var i=D.funding.years.indexOf(y);return i<0?null:D.funding.total[i];});
+var MON=["Jan","Feb","Mar","Apr","May","Jun","Jul","Aug","Sep","Oct","Nov","Dec"];
+var SHORT={"United States of America":"United States","United Kingdom of Great Britain and Northern Ireland":"United Kingdom","Democratic Republic of the Congo":"DR Congo","Syrian Arab Republic":"Syria","Red Cross/Red Crescent Movement":"Red Cross / Red Crescent","International Organization":"International orgs","International NGO":"International NGOs","Locally based NGO":"Locally based NGOs","Regional NGO (global South base)":"Regional NGOs","Academic and Research Institution":"Academic and research","Other":"Other organisations","Government":"Governments",
+ "Accountability & community engagement (AAP)":"Accountability (AAP)","Cash & voucher assistance (CVA)":"Cash & vouchers (CVA)","Disaster risk reduction & early warning":"DRR & early warning","Research, studies & evaluation":"Research & evaluation","Climate, environment & energy":"Climate & environment","Human rights & humanitarian law":"Human rights & IHL","Epidemics & disease control":"Epidemic control","Sexual & reproductive health":"Sexual & repro. health","Data collection & analytics":"Data & analytics","Remote & third-party monitoring":"Remote monitoring","Urban & area-based response":"Urban response","Localisation & local leadership":"Localisation","Humanitarian access & civil-military coordination":"Access & civil-military","Needs assessment & analysis":"Needs assessment","Anticipatory action & risk financing":"Anticipatory action","Financial inclusion & savings groups":"Financial inclusion","Durable solutions & statelessness":"Durable solutions","Diversity & inclusion (age, SOGI, DEI)":"Diversity & inclusion","Humanitarian-development-peace nexus":"HDP nexus","Camp coordination & camp management (CCCM)":"Camp management (CCCM)","Multi-purpose cash (MPCA)":"Multi-purpose cash"};
+var nm=function(s){return SHORT[s]||s;};
+var size=function(){return {W:holder.clientWidth,H:holder.clientHeight,small:holder.clientWidth<480};};
+
+/* ---------- tooltip ---------- */
+function showTip(html,x,y){
+  tip.innerHTML=html;tip.style.visibility="visible";
+  var fr=fig.getBoundingClientRect(),pr=holder.getBoundingClientRect(),w=tip.offsetWidth,h=tip.offsetHeight;
+  var left=pr.left-fr.left+x+12; if(left+w>fr.width-6) left=pr.left-fr.left+x-w-12; if(left<6) left=6;
+  var top=pr.top-fr.top+y-h-10; if(top<4) top=pr.top-fr.top+y+14;
+  tip.style.left=left+"px";tip.style.top=top+"px";
+}
+function hideTip(){tip.style.visibility="hidden";}
+function legend(items){lEl.innerHTML=items.map(function(it){return '<li><i class="'+(it.sq?"sq":"")+'" style="background:'+it.c+(it.o?";opacity:"+it.o:"")+'"></i>'+esc(it.t)+"</li>";}).join("");}
+
+/* ---------- line chart ---------- */
+function lineChart(o){
+  var z=size(),W=z.W,H=z.H,small=z.small;
+  var m={l:small?28:36,r:small?42:56,t:o.top||10,b:24},xs=o.x,n=xs.length;
+  var x=function(i){return m.l+(W-m.l-m.r)*i/(n-1);},y=function(v){return m.t+(H-m.t-m.b)*(1-v/o.yMax);};
+  var g="";
+  o.ticks.forEach(function(t){g+='<line class="'+(t===0?"base":"grid")+'" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(t)+'" y2="'+y(t)+'"/><text class="ax" x="'+(m.l-6)+'" y="'+(y(t)+4)+'" text-anchor="end">'+(o.tickFmt?o.tickFmt(t):t)+"</text>";});
+  xs.forEach(function(yr,i){g+='<text class="ax" x="'+x(i)+'" y="'+(H-5)+'" text-anchor="middle">'+yr+"</text>";});
+  if(o.ref!=null) g+='<line class="ref" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(o.ref)+'" y2="'+y(o.ref)+'"/>';
+  var ends=[];
+  o.series.forEach(function(s){
+    if(s.hide) return;
+    var pts=[];s.vals.forEach(function(v,i){if(v!=null&&i<=o.upto) pts.push([x(i),y(v),v,i]);});
+    if(!pts.length) return;
+    var path=function(a){return a.map(function(p,j){return (j?"L":"M")+p[0].toFixed(1)+" "+p[1].toFixed(1);}).join("");};
+    if(s.dashTo!=null){var dp=pts.filter(function(p){return p[3]<=s.dashTo;});if(dp.length>1) g+='<path class="ln est" style="stroke:'+s.c+'" d="'+path(dp)+'"/>';pts=pts.filter(function(p){return p[3]>=s.dashTo;});}
+    var from=o.from==null?-1:o.from,oldp=pts.filter(function(p){return p[3]<=from;}),newp=pts.filter(function(p){return p[3]>=from;});
+    if(o.anim&&from>=0&&oldp.length>1&&!s.fresh){
+      g+='<path class="ln" style="stroke:'+s.c+'" d="'+path(oldp)+'"/>';
+      if(newp.length>1) g+='<path class="ln draw" pathLength="1" style="stroke:'+s.c+'" d="'+path(newp)+'"/>';
+    } else g+='<path class="ln'+(o.anim?" draw":"")+'" pathLength="1" style="stroke:'+s.c+'" d="'+path(pts)+'"/>';
+    var e=pts[pts.length-1];
+    g+='<circle class="dot'+(o.anim?" pop":"")+'" cx="'+e[0]+'" cy="'+e[1]+'" r="4.5" style="fill:'+s.c+'"/>';
+    ends.push({x:e[0],y:e[1],ly:e[1],t:o.endFmt(e[2])});
+  });
+  ends.sort(function(a,b){return a.y-b.y;});
+  for(var i=1;i<ends.length;i++) if(ends[i].ly-ends[i-1].ly<15) ends[i].ly=ends[i-1].ly+15;
+  var over=ends.length?ends[ends.length-1].ly-(H-m.b-2):0; if(over>0) ends.forEach(function(e){e.ly-=over;});
+  ends.forEach(function(e){g+='<text class="end'+(o.anim?" pop":"")+'" x="'+(e.x+9)+'" y="'+(e.ly+4.5)+'">'+e.t+"</text>";});
+  if(o.yoy){
+    var rows=o.series.filter(function(s){return !s.hide;});
+    g+='<text class="ann pop" x="'+(x(i22+1)-34)+'" y="'+(m.t-16)+'" text-anchor="end">Change on the year before</text>';
+    rows.forEach(function(s,k){
+      for(var j=i22+1;j<=iLast;j++){
+        var p=(s.raw[j]/s.raw[j-1]-1)*100,txt=Math.abs(p)<1?sgn(Math.round(p*10)/10):sgn(Math.round(p)),yy=m.t-16+k*15;
+        g+='<circle class="pop" cx="'+(x(j)-22)+'" cy="'+(yy-4)+'" r="3.5" style="fill:'+s.c+'"/><text class="annb pop" x="'+(x(j)-15)+'" y="'+yy+'">'+txt+"</text>";
+      }
+    });
+  }
+  g+='<line class="cross" y1="'+m.t+'" y2="'+(H-m.b)+'"/><rect class="hit" x="'+m.l+'" y="'+m.t+'" width="'+(W-m.l-m.r)+'" height="'+(H-m.t-m.b)+'" fill="transparent"/>';
+  holder.innerHTML='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+" "+H+'" role="img" aria-label="'+esc(o.aria)+'">'+g+"</svg>";
+  var hit=holder.querySelector(".hit"),cross=holder.querySelector(".cross");
+  hit.addEventListener("pointermove",function(ev){
+    var r=holder.getBoundingClientRect(),px=ev.clientX-r.left,i=Math.max(0,Math.min(o.upto,Math.round((px-m.l)/((W-m.l-m.r)/(n-1)))));
+    cross.setAttribute("x1",x(i));cross.setAttribute("x2",x(i));cross.style.visibility="visible";
+    var h="<b>"+xs[i]+"</b>";
+    o.series.forEach(function(s){if(s.hide||s.vals[i]==null) return;h+='<span><i style="background:'+s.c+'"></i>'+esc(s.name)+": "+o.tipFmt(s,i)+"</span>";});
+    showTip(h,x(i),ev.clientY-r.top);
+  });
+  hit.addEventListener("pointerleave",function(){cross.style.visibility="hidden";hideTip();});
+}
+
+/* ---------- monthly columns ---------- */
+function monthChart(o){
+  var z=size(),W=z.W,H=z.H,small=z.small,J=D.monthly.jobs,n=J.length;
+  var m={l:small?32:40,r:8,t:44,b:24},yMax=5600,bw=(W-m.l-m.r)/n,gap=bw>7?2:1;
+  var y=function(v){return m.t+(H-m.t-m.b)*(1-v/yMax);},ym=function(i){var yr=2022+Math.floor(i/12);return [yr,i%12];};
+  var at=function(yr,mo){return (yr-2022)*12+mo;};
+  var g="";
+  [0,2000,4000].forEach(function(t){g+='<line class="'+(t===0?"base":"grid")+'" x1="'+m.l+'" x2="'+(W-m.r)+'" y1="'+y(t)+'" y2="'+y(t)+'"/><text class="ax" x="'+(m.l-6)+'" y="'+(y(t)+4)+'" text-anchor="end">'+fmt(t)+"</text>";});
+  for(var i=0;i<n;i++){
+    var k=ym(i),cls=o.cls(k[0],k[1]);
+    g+='<rect class="col'+(o.anim?" grow":"")+(cls==="mute"?" mute":"")+'" data-i="'+i+'" x="'+(m.l+i*bw+gap/2).toFixed(1)+'" y="'+y(J[i]).toFixed(1)+'" width="'+(bw-gap).toFixed(1)+'" height="'+(y(0)-y(J[i])).toFixed(1)+'" rx="'+(bw>6?1.5:0.5)+'"'+(cls==="mute"?"":' style="fill:'+(cls==="hl"?"var(--s2)":"var(--s1)")+'"')+"/>";
+    if(k[1]===0) g+='<text class="ax" x="'+(m.l+i*bw+bw*6)+'" y="'+(H-5)+'" text-anchor="middle">'+k[0]+"</text>"+(i?'<line class="grid" x1="'+(m.l+i*bw)+'" x2="'+(m.l+i*bw)+'" y1="'+y(0)+'" y2="'+(y(0)+5)+'"/>':"");
+  }
+  (o.avgs||[]).forEach(function(a){
+    var x1=m.l+a.from*bw,x2=m.l+(a.to+1)*bw;
+    g+='<line class="ref pop" x1="'+x1+'" x2="'+x2+'" y1="'+y(a.v)+'" y2="'+y(a.v)+'" style="stroke:var(--ink);stroke-dasharray:none;stroke-width:1.5"/><text class="annb pop" x="'+(a.anchor==="end"?x2:x1)+'" y="'+(y(Math.max.apply(null,J.slice(a.from,a.to+1)))-7)+'" text-anchor="'+(a.anchor||"start")+'">'+a.t+"</text>";
+  });
+  if(o.mark){var xm=m.l+at(2025,0)*bw+bw*0.65;g+='<line class="ref pop" x1="'+xm+'" x2="'+xm+'" y1="'+(m.t-24)+'" y2="'+y(0)+'"/><text class="ann pop" x="'+(xm-6)+'" y="'+(m.t-18)+'" text-anchor="end">'+(small?"20 Jan 2025: US aid pause":"20 January 2025: US pauses foreign assistance")+"</text>";}
+  holder.innerHTML='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+" "+H+'" role="img" aria-label="'+esc(o.aria)+'">'+g+'<rect class="hit" x="'+m.l+'" y="'+m.t+'" width="'+(W-m.l-m.r)+'" height="'+(H-m.t-m.b)+'" fill="transparent"/></svg>';
+  var hit=holder.querySelector(".hit");
+  hit.addEventListener("pointermove",function(ev){
+    var r=holder.getBoundingClientRect(),i=Math.max(0,Math.min(n-1,Math.floor((ev.clientX-r.left-m.l)/bw))),k=ym(i);
+    showTip("<b>"+MON[k[1]]+" "+k[0]+"</b><span>"+fmt(J[i])+" adverts</span>",m.l+i*bw+bw/2,y(J[i]));
+  });
+  hit.addEventListener("pointerleave",hideTip);
+}
+
+/* ---------- ranked change bars ---------- */
+function barChart(o){
+  var z=size(),W=z.W,H=z.H,small=z.small,rows=o.rows,pos=o.max>0;
+  var lw=small?(o.wide?140:100):(o.wide?190:150),nc=small?34:100,m={l:lw,r:nc+(pos?(small?40:48):8),t:22,b:4};
+  var pw=W-m.l-m.r,pad=small?40:44,pmin=Math.min.apply(null,rows.filter(function(r){return !r.sep;}).map(function(r){return r.p;}));
+  var lo=Math.min(o.min,(pmin*pw-pad*o.max)/(pw-pad)),x=function(v){return m.l+pw*(v-lo)/(o.max-lo);};
+  var rh=(H-m.t-m.b)/rows.length,bh=Math.max(5,Math.min(18,rh-(rh>14?5:3)));
+  var anyHl=rows.some(function(r){return r.hl;}),mixed=anyHl&&rows.some(function(r){return !r.sep&&!r.hl;}),g="";
+  g+='<line class="base" x1="'+x(0)+'" x2="'+x(0)+'" y1="'+(m.t-4)+'" y2="'+(H-m.b)+'"/>';
+  if(o.ref!=null) g+='<line class="ref" x1="'+x(o.ref)+'" x2="'+x(o.ref)+'" y1="'+(m.t-4)+'" y2="'+(H-m.b)+'"/><text class="ann" x="'+x(o.ref)+'" y="'+(m.t-9)+'" text-anchor="middle">'+o.refLabel+"</text>";
+  g+='<text class="ax" x="'+(W-1)+'" y="'+(m.t-9)+'" text-anchor="end">'+(small?"n, 2022":"Adverts, 2022 to 2025")+"</text>";
+  rows.forEach(function(r,i){
+    var cy=m.t+rh*i+rh/2;
+    if(r.sep){g+='<text class="ax" x="'+(m.l-8)+'" y="'+(cy+4)+'" text-anchor="end" font-style="italic">'+esc(r.sep)+"</text>";return;}
+    var x0=x(0),x1=x(r.p),bx=Math.min(x0,x1),bwid=Math.max(1,Math.abs(x1-x0)),dim=anyHl&&!r.hl;
+    g+='<text class="lab" x="'+(m.l-8)+'" y="'+(cy+4)+'" text-anchor="end"'+(r.hl&&mixed?' style="fill:var(--ink);font-weight:600"':"")+">"+esc(r.label)+"</text>";
+    g+='<rect class="bar'+(o.anim?" grow":"")+(dim?" mute":"")+'" data-i="'+i+'" x="'+bx.toFixed(1)+'" y="'+(cy-bh/2).toFixed(1)+'" width="'+bwid.toFixed(1)+'" height="'+bh.toFixed(1)+'" rx="2" style="'+(dim?"":"fill:"+(r.c||"var(--s1)")+";")+"transform-origin:"+(r.p<0?"right":"left")+'"/>';
+    g+='<text class="val'+(o.anim?" pop":"")+'" x="'+(r.p<0?x1-5:x1+5)+'" y="'+(cy+4)+'" text-anchor="'+(r.p<0?"end":"start")+'"'+(dim?' style="fill:var(--muted);font-weight:400"':"")+">"+sgn(r.p)+"</text>";
+    g+='<text class="ax'+(o.anim?" pop":"")+'" x="'+(W-1)+'" y="'+(cy+4)+'" text-anchor="end">'+(small?fmt(r.a):fmt(r.a)+" to "+fmt(r.b))+"</text>";
+    g+='<rect class="rowhit" data-i="'+i+'" x="0" y="'+(m.t+rh*i)+'" width="'+W+'" height="'+rh+'" fill="transparent"/>';
+  });
+  holder.innerHTML='<svg width="'+W+'" height="'+H+'" viewBox="0 0 '+W+" "+H+'" role="img" aria-label="'+esc(o.aria)+'">'+g+"</svg>";
+  holder.querySelectorAll(".rowhit").forEach(function(el){
+    el.addEventListener("pointermove",function(ev){
+      var r=rows[+el.getAttribute("data-i")],pr=holder.getBoundingClientRect();
+      showTip("<b>"+esc(r.full||r.label)+"</b><span>2022: "+fmt(r.a)+" adverts</span><span>2025: "+fmt(r.b)+" adverts ("+sgn(r.p)+")</span>",ev.clientX-pr.left,m.t+rh*(+el.getAttribute("data-i")));
+    });
+    el.addEventListener("pointerleave",hideTip);
+  });
+}
+function ranked(list,opt){ /* list: [name,a,b] */
+  return list.map(function(r){return {label:nm(r[0]),full:r[0],a:r[1],b:r[2],p:chg(r[1],r[2])};}).sort(function(a,b){return a.b/a.a-b.b/b.a;});
+}
+
+/* ---------- the states ---------- */
+var C1="var(--s1)",C2="var(--s2)",C3="var(--s3)",C4="var(--s4)";
+var allFall=chg(D.total[i22],D.total[iLast]);
+var adS={name:"Job adverts",c:C1,vals:idx(D.total,D.total[i22]),raw:D.total},fuS={name:"Humanitarian funding",c:C2,vals:idx(fundY,fundY[i22]),raw:fundY,dashTo:Y.indexOf(2021),est:D.funding.est};
+var idxTip=function(s,i){return Math.round(s.vals[i])+" ("+(s.unit?s.unit(s.raw[i]):fmt(s.raw[i]))+(s.est&&s.est.indexOf(Y[i])>=0?", estimated":"")+")";};
+fuS.unit=function(v){return "US$"+v.toFixed(1)+"bn";};
+function indexState(upto,yoy){return function(a){
+  legend([{t:"Job adverts on ReliefWeb",c:C1},{t:"International humanitarian assistance",c:C2}]);
+  lineChart({x:Y,series:[adS,fuS],yMax:yoy?112:120,ticks:[0,25,50,75,100],ref:100,upto:upto,from:a.from,anim:a.anim,yoy:yoy,top:yoy?46:10,
+    endFmt:function(v){return Math.round(v);},tipFmt:idxTip,aria:"Line chart, 2022 = 100. By 2025 job adverts stand at "+Math.round(adS.vals[iLast])+" and humanitarian funding at "+Math.round(fuS.vals[iLast])+"."});
+};}
+function seriesState(group,names,cols,short){return function(a){
+  var ss=names.map(function(k,j){var v=D[group][k];return {name:short?short[j]:k,c:cols[j],vals:idx(v,v[i22]),raw:v};});
+  legend(ss.map(function(s){return {t:s.name,c:s.c};}));
+  lineChart({x:Y,series:ss,yMax:120,ticks:[0,25,50,75,100],ref:100,upto:iLast,anim:a.anim,endFmt:function(v){return Math.round(v);},tipFmt:idxTip,
+    aria:"Line chart, 2022 = 100. 2025 values: "+ss.map(function(s){return s.name+" "+Math.round(s.vals[iLast]);}).join(", ")+"."});
+};}
+var EXY=[2021,2022,2023,2024,2025],EX=[["Syrian Arab Republic","Syria",C1],["Occupied Palestinian territory","Occupied Palestinian territory",C2],["Myanmar","Myanmar",C3]];
+function exceptState(showAll){return function(a){
+  var ss=EX.map(function(e,j){return {name:e[1],c:e[2],vals:D.exceptions[e[0]],raw:D.exceptions[e[0]],hide:!showAll&&j>0,fresh:j>0};});
+  legend(ss.filter(function(s){return !s.hide;}).map(function(s){return {t:s.name,c:s.c};}));
+  lineChart({x:EXY,series:ss,yMax:1800,ticks:[0,500,1000,1500],tickFmt:fmt,upto:4,from:a.same?4:null,anim:a.anim,endFmt:fmt,tipFmt:function(s,i){return fmt(s.raw[i])+" adverts";},
+    aria:"Line chart of job adverts per year, 2021 to 2025, for "+ss.filter(function(s){return !s.hide;}).map(function(s){return s.name+" ("+fmt(s.raw[4])+" in 2025)";}).join(", ")+"."});
+};}
+var HQ=["United States of America","United Kingdom of Great Britain and Northern Ireland","France","Switzerland"];
+function countryState(mode){return function(a){
+  var rows=ranked(D.countries.map(function(c){return [c[0],c[2],c[3]];}));
+  rows.forEach(function(r){
+    if(mode==="hq"&&HQ.indexOf(r.full)>=0){r.hl=true;r.c=C2;}
+    if(mode==="syria"&&r.p>0){r.hl=true;r.c=C2;}
+  });
+  legend(mode==="hq"?[{t:"Headquarters countries",c:C2,sq:1},{t:"Other countries",c:"var(--muted)",o:.4,sq:1}]:mode==="syria"?[{t:"Rose",c:C2,sq:1},{t:"Fell",c:"var(--muted)",o:.4,sq:1}]:[{t:"Change in adverts, 2022 to 2025",c:C1,sq:1}]);
+  barChart({rows:rows,min:-132,max:100,ref:allFall,refLabel:"All adverts "+sgn(allFall),anim:a.anim,aria:"Bar chart of the change in job adverts from 2022 to 2025 for 20 countries, from "+rows[0].label+" ("+sgn(rows[0].p)+") to "+rows[rows.length-1].label+" ("+sgn(rows[rows.length-1].p)+")."});
+};}
+function orgState(a){
+  var rows=ranked(D.org_type);
+  rows.forEach(function(r){if(/Locally|Regional/.test(r.full)){r.hl=true;r.c=C3;}});
+  legend([{t:"NGOs based in the global South",c:C3,sq:1},{t:"Other organisation types",c:"var(--muted)",o:.4,sq:1}]);
+  barChart({rows:rows,wide:true,min:-118,max:0,ref:allFall,refLabel:"All adverts "+sgn(allFall),anim:a.anim,aria:"Bar chart of the change in job adverts from 2022 to 2025 by type of organisation, from "+rows[0].label+" ("+sgn(rows[0].p)+") to "+rows[rows.length-1].label+" ("+sgn(rows[rows.length-1].p)+")."});
+}
+function topicState(a){
+  var all=ranked(D.topics),k=8,rows=all.slice(0,k).concat([{sep:(all.length-2*k)+" topics in between"}],all.slice(-k));
+  rows.forEach(function(r){if(r.full==="Climate, environment & energy"){r.hl=true;r.c=C3;}});
+  rows.forEach(function(r){if(!r.sep&&!r.hl){r.hl=true;r.c=C1;}});
+  legend([{t:"Fell most and least, of "+all.length+" topics",c:C1,sq:1},{t:"Climate",c:C3,sq:1}]);
+  barChart({rows:rows,wide:true,min:-118,max:0,ref:allFall,refLabel:"All adverts "+sgn(allFall),anim:a.anim,aria:"Bar chart of the change in job adverts from 2022 to 2025 for the eight topics that fell most and the eight that fell least."});
+}
+function smallState(a){
+  var rows=ranked(D.small_topics);
+  rows.forEach(function(r){r.hl=true;r.c=r.p>0?C2:C1;});
+  legend([{t:"Rose",c:C2,sq:1},{t:"Fell",c:C1,sq:1}]);
+  barChart({rows:rows.reverse(),wide:true,min:-132,max:112,ref:allFall,refLabel:"All adverts "+sgn(allFall),anim:a.anim,aria:"Bar chart of the change in job adverts from 2022 to 2025 for "+rows.length+" smaller topics. Only AI and machine learning rose."});
+}
+function monthState(mode){return function(a){
+  var avg24=D.total[Y.indexOf(2024)]/12,J=D.monthly.jobs,f=J.slice(37,47),avg25=f.reduce(function(p,c){return p+c;},0)/f.length;
+  if(mode==="step"){
+    legend([{t:"Adverts per month",c:C1,sq:1},{t:"January and February 2025",c:C2,sq:1}]);
+    monthChart({anim:a.anim,mark:true,cls:function(yr,mo){return yr===2025&&mo<2?"hl":"n";},
+      avgs:[{from:24,to:35,v:avg24,t:"2024 average: "+fmt(avg24)},{from:37,to:46,v:avg25,t:"Feb to Nov 2025: "+fmt(avg25),anchor:"start"}],
+      aria:"Column chart of job adverts per month from January 2022 to October 2026. The 2024 average was "+fmt(avg24)+"; from February to November 2025 it was "+fmt(avg25)+"."});
+  } else {
+    legend([{t:"January to October 2026",c:C2,sq:1},{t:"January to October 2025",c:C1,sq:1},{t:"Other months",c:"var(--muted)",o:.4,sq:1}]);
+    monthChart({anim:a.anim,cls:function(yr,mo){return yr===2026?"hl":yr===2025&&mo<10?"n":"mute";},
+      aria:"Column chart of job adverts per month from January 2022 to October 2026, with the first ten months of 2025 and 2026 highlighted."});
+  }
+};}
+
+var SRC_RW="Source: ReliefWeb jobs, Humanitarian Trendlines.",SRC_BOTH="Sources: ReliefWeb jobs; ALNAP, GHA Report 2026 (constant 2024 prices; 2019 and 2020 estimated, 2025 preliminary).";
+var S=[
+ {k:"index",t:"Funding and job adverts peaked together",s:"Index, 2022 = 100. Funding for 2019 and 2020 is estimated (dashed).",n:SRC_BOTH,r:indexState(i22,false),upto:i22},
+ {k:"index",t:"Funding fell "+Math.abs(chg(fundY[i22],fundY[iLast]))+"%. Adverts fell "+Math.abs(allFall)+"%.",s:"Index, 2022 = 100. Funding for 2019 and 2020 is estimated (dashed).",n:SRC_BOTH,r:indexState(iLast,false),upto:iLast},
+ {k:"index",t:"Each year, adverts fell further than funding",s:"Index, 2022 = 100, with the change on the year before. Funding for 2019 and 2020 is estimated.",n:SRC_BOTH,r:indexState(iLast,true),upto:iLast},
+ {k:"month",t:"In February 2025 adverts dropped by a third and stayed there",s:"Job adverts posted on ReliefWeb each month, January 2022 to October 2026.",n:SRC_RW,r:monthState("step")},
+ {k:"jobtype",t:"Staff jobs fell further than consultancies",s:"Adverts by ReliefWeb job type. Index, 2022 = 100.",n:SRC_RW,r:seriesState("job_type",["Job","Consultancy"],[C1,C2],["Jobs","Consultancies"])},
+ {k:"exp",t:"Junior adverts fell first, senior adverts last",s:"Adverts by years of experience asked for. Index, 2022 = 100.",n:SRC_RW,r:seriesState("experience",["0-2 years","3-4 years","5-9 years","10+ years"],[C1,C2,C3,C4],["0–2 years","3–4 years","5–9 years","10+ years"])},
+ {k:"country",t:"Nineteen of the twenty biggest locations fell by half or more",s:"Change in adverts, 2022 to 2025, by country the job is based in.",n:SRC_RW,r:countryState("all")},
+ {k:"country",t:"Three headquarters countries are among the biggest falls",s:"Change in adverts, 2022 to 2025, by country the job is based in.",n:SRC_RW,r:countryState("hq")},
+ {k:"except",t:"Adverts based in Syria nearly doubled",s:"Job adverts per year, by country the job is based in.",n:SRC_RW,r:exceptState(false)},
+ {k:"except",t:"Funding rose for oPt and Myanmar in 2025. Adverts did not.",s:"Job adverts per year, by country the job is based in.",n:SRC_RW,r:exceptState(true)},
+ {k:"org",t:"NGOs based in the global South fell least",s:"Change in adverts, 2022 to 2025, by type of organisation.",n:SRC_RW+" Types with fewer than 500 adverts in 2022 are left out.",r:orgState},
+ {k:"topic",t:"Climate fell least, coordination most",s:"Change in adverts, 2022 to 2025, where the topic is the main subject of the job.",n:SRC_RW+" Topics tagged by a language model.",r:topicState},
+ {k:"small",t:"Among the smaller topics, only AI grew",s:"Change in adverts, 2022 to 2025. Topics with under 300 adverts in 2022 and at least 50 in either year.",n:SRC_RW+" Topics tagged by a language model.",r:smallState},
+ {k:"month2",t:"2026 is running below 2025",s:"Job adverts posted on ReliefWeb each month, January 2022 to October 2026.",n:SRC_RW,r:monthState("y2026")}
+];
+
+var cur=-1,prevUpto=null;
+function show(i,force){
+  if(i===cur&&!force) return;
+  var st=S[i],prev=cur>=0?S[cur]:null,same=!!prev&&prev.k===st.k&&!force;
+  tEl.textContent=st.t;sEl.textContent=st.s;nEl.textContent=st.n;hideTip();
+  st.r({anim:!force,same:same,from:same&&prev.upto!=null&&st.upto>prev.upto?prev.upto:(same?st.upto:null)});
+  if(!force){fig.classList.remove("swap");if(!same){void fig.offsetWidth;fig.classList.add("swap");}}
+  cur=i;
+}
+var steps=[].slice.call(document.querySelectorAll(".step"));
+function onScroll(){
+  var line=window.innerHeight*(window.matchMedia("(max-width:900px)").matches?0.80:0.5),act=0;
+  for(var i=0;i<steps.length;i++){if(steps[i].getBoundingClientRect().top<=line) act=i;}
+  steps.forEach(function(s,i){s.classList.toggle("on",i===act);});
+  show(act);
+}
+var tick=false;
+window.addEventListener("scroll",function(){if(!tick){tick=true;requestAnimationFrame(function(){tick=false;onScroll();});}},{passive:true});
+var rz;window.addEventListener("resize",function(){clearTimeout(rz);rz=setTimeout(function(){if(cur>=0) show(cur,true);onScroll();},120);});
+if(document.fonts&&document.fonts.ready) document.fonts.ready.then(function(){if(cur>=0) show(cur,true);});
+onScroll();
+
+/* ---------- table view ---------- */
+(function(){
+  var h="",tbl=function(cap,head,rows){return '<div class="scroll"><table><caption>'+cap+"</caption><thead><tr>"+head.map(function(c){return "<th>"+c+"</th>";}).join("")+"</tr></thead><tbody>"+rows.map(function(r){return "<tr>"+r.map(function(c){return "<td>"+c+"</td>";}).join("")+"</tr>";}).join("")+"</tbody></table></div>";};
+  h+=tbl("Job adverts and funding by year",["Year","Job adverts","Funding, US$ bn"],Y.map(function(y,i){return [y,fmt(D.total[i]),fundY[i]==null?"":fundY[i].toFixed(1)+(D.funding.est.indexOf(y)>=0?" (estimate)":"")];}));
+  var by=function(g){return Object.keys(D[g]).map(function(k){return [esc(k)].concat(D[g][k].map(fmt));});};
+  h+=tbl("Adverts by job type",["Type"].concat(Y),by("job_type"));
+  h+=tbl("Adverts by experience asked for",["Experience"].concat(Y),by("experience"));
+  h+=tbl("Adverts by country, 20 largest in 2022",["Country","2021","2022","2025","Change 2022–25"],D.countries.map(function(c){return [esc(c[0]),fmt(c[1]),fmt(c[2]),fmt(c[3]),sgn(chg(c[2],c[3]))];}));
+  h+=tbl("Adverts per year: Syria, Occupied Palestinian territory, Myanmar",["Country"].concat(EXY),Object.keys(D.exceptions).map(function(k){return [esc(k)].concat(D.exceptions[k].map(fmt));}));
+  h+=tbl("Adverts by organisation type",["Type","2022","2025","Change"],ranked(D.org_type).map(function(r){return [esc(r.full),fmt(r.a),fmt(r.b),sgn(r.p)];}));
+  h+=tbl("Adverts by topic (main subject of the job), topics with 300 or more in 2022",["Topic","2022","2025","Change"],ranked(D.topics).map(function(r){return [esc(r.full),fmt(r.a),fmt(r.b),sgn(r.p)];}));
+  h+=tbl("Smaller topics: under 300 adverts in 2022, at least 50 in 2022 or 2025",["Topic","2022","2025","Change"],ranked(D.small_topics).reverse().map(function(r){return [esc(r.full),fmt(r.a),fmt(r.b),sgn(r.p)];}));
+  var mrows=[];D.monthly.jobs.forEach(function(v,i){mrows.push([MON[i%12]+" "+(2022+Math.floor(i/12)),fmt(v)]);});
+  h+=tbl("Adverts per month",["Month","Job adverts"],mrows);
+  $("#tables").innerHTML=h;
+})();
+})();
+</script>
+</body>
+</html>

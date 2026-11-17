@@ -218,6 +218,18 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 .method h3{font-size:15px;margin-bottom:8px}
 .method ul{margin:0;padding-left:18px;color:var(--ink-2);font-size:13.5px;display:grid;gap:6px}
 /* Monthly-update signup (posts to the MailerLite form "Trendlines signup") */
+.brand nav a.nav-hl,.brand nav a.nav-hl:hover{background:var(--accent-soft);color:var(--accent-ink)}
+.brand nav a.nav-hl:hover{filter:brightness(.96)}
+/* Nine links in the strip: tighter spacing keeps the data stamp on the same line at desktop width */
+.wrap .brand nav{gap:0}
+.wrap .brand nav a{padding:6px 7px}
+.storycard{margin-top:16px;display:grid;grid-template-columns:auto minmax(0,1fr) auto;gap:6px 20px;align-items:center;background:var(--surface);border:1px solid var(--line);border-left:3px solid var(--accent);border-radius:var(--r);padding:14px 18px;text-decoration:none;color:var(--ink)}
+.storycard:hover{background:var(--accent-soft)}
+.storycard .sc-k{font-family:var(--font-display);font-size:11.5px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--accent-ink)}
+.storycard .sc-t{display:block;font-family:var(--font-display);font-weight:600;font-size:17px;letter-spacing:-.01em}
+.storycard .sc-d{display:block;font-size:13.5px;color:var(--ink-2);margin-top:2px}
+.storycard .sc-go{font-family:var(--font-display);font-weight:600;font-size:13.5px;color:var(--accent-ink);white-space:nowrap}
+@media (max-width:640px){.storycard{grid-template-columns:minmax(0,1fr)}}
 .signup{margin-top:40px;display:grid;grid-template-columns:minmax(0,1fr) minmax(0,440px);gap:14px 32px;align-items:center;background:var(--accent-soft);border:1px solid var(--line);border-radius:var(--r);padding:20px 22px}
 .signup h3{font-size:18px;font-weight:600;margin-bottom:4px}
 .signup p{margin:0;color:var(--ink-2);font-size:13.5px}
@@ -303,7 +315,7 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
 <div class="wrap">
   <header class="brand">
     <a class="prod" href="index.html" title="Reset all filters" onclick="try{localStorage.removeItem('tv3')}catch(e){}"><span class="pix" aria-hidden="true"></span>Humanitarian Trendlines</a>
-    <nav aria-label="Sections"><a href="#volume">Volume</a><a href="#topics">Topics</a><a href="#roles">Roles</a><a href="#countries">Countries</a><a href="#orgs">Organisations</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
+    <nav aria-label="Sections"><a href="#volume">Volume</a><a href="#topics">Topics</a><a href="#roles">Roles</a><a href="#countries">Countries</a><a href="#orgs">Organisations</a><a href="where-the-cuts-bit.html" class="nav-hl">Stories</a><a href="methodology.html">Methodology</a><a href="glossary.html">Glossary</a><a href="about.html">About</a></nav>
     <span class="stamp" id="stamp">Data to end Oct 2026</span>
   </header>
 
@@ -327,6 +339,12 @@ select{font:inherit;font-size:14px;padding:6px 10px;border:1px solid var(--line)
       <div class="chart" id="volChart"></div>
     </div>
   </section>
+
+  <a class="storycard" href="where-the-cuts-bit.html">
+    <span class="sc-k">Latest story</span>
+    <span><span class="sc-t">Where the cuts bit</span><span class="sc-d">Funding fell 30% between 2022 and 2025. Job adverts fell 64%. When the fall came, and which jobs, places and organisations it hit hardest.</span></span>
+    <span class="sc-go">Read the story &rarr;</span>
+  </a>
 
   <section class="block" id="hot">
     <div class="sec-head"><span class="pix" aria-hidden="true"></span><h2>Hot <span class="recLab">since Jan 2025</span></h2>

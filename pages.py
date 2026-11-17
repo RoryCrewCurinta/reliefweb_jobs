@@ -56,8 +56,8 @@ n_groups = len({t["group"] for t in topics})
 
 def page(slug, title, desc, body, extra_js=""):
     nav = "".join(
-        '<a href="%s"%s>%s</a>' % (href, ' aria-current="page"' if s == slug else "", label)
-        for s, href, label in [("dash", "index.html", "Dashboard"), ("methodology", "methodology.html", "Methodology"),
+        '<a href="%s"%s%s>%s</a>' % (href, ' class="nav-hl"' if s == "stories" else "", ' aria-current="page"' if s == slug else "", label)
+        for s, href, label in [("dash", "index.html", "Dashboard"), ("stories", "where-the-cuts-bit.html", "Stories"), ("methodology", "methodology.html", "Methodology"),
                                ("glossary", "glossary.html", "Glossary"), ("about", "about.html", "About")])
     return f"""<!doctype html>
 <html lang="en">
