@@ -48,3 +48,15 @@ The topic list, with definitions, is `review/topics_v2_definitions.csv`; the mod
 Counts are advertised posts on ReliefWeb, not hires, and not all humanitarian hiring. Some organisations stopped posting to ReliefWeb (UNICEF almost entirely from mid-2020), which affects topic mix. Use shares, not counts, for trends.
 
 Source: ReliefWeb (reliefweb.int), used under ReliefWeb's terms.
+
+## Stories
+
+Scrolling stories are hand-built pages in `docs/`, one per story, linked from the Stories item in the nav and the Latest story card on the dashboard. Each is a fixed snapshot of the data on the day it was built: `pages.py` does not generate them and the routine above does not change them.
+
+- **Where the cuts bit** (16 Nov 2026): `docs/where-the-cuts-bit.html`, live at trendlines.curinta.com/where-the-cuts-bit. Build files, sources and rules are in [`stories/where-the-cuts-bit`](stories/where-the-cuts-bit/README.md).
+
+The Stories nav link is set in `pages.py` (sub-pages) and by hand in `docs/index.html` (dashboard). When a second story is added, build a stories index page and point the link there.
+
+## One-off analyses
+
+- **Organisation specialisms** (18 Nov 2026): `python org_specialisms.py` finds what each organisation hires for far more than the sector does, for every organisation with 20 or more ads and across all years (the dashboard's topic concentration covers only the 150 largest and two four-year windows). It reads the database read-only and writes `org_specialisms_all.csv` and `org_specialisms_shortlist.csv` to `Claude outputs/` (git-ignored). Method and thresholds are in the docstring at the top of the script. First used for the LinkedIn post "We didn't know they hired for that!"; the animation for it and the script that draws it are also in `Claude outputs/`.
